@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Conta</title>
+    <style>
+        body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f2f5; margin: 0; }
+        .box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 320px; }
+        .campo { width: 100%; padding: 10px; box-sizing: border-box; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; }
+        .botao { width: 100%; padding: 10px; background: #007bff; color: white; border: none; cursor: pointer; border-radius: 4px; font-weight: bold; }
+        .link { text-align: center; margin-top: 15px; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h2>Criar Conta</h2>
+        <form action="/auth/registo" method="POST">
+            <input type="text" name="nome" placeholder="Nome Completo" required class="campo">
+            <input type="email" name="email" placeholder="E-mail" required class="campo">
+            <input type="password" name="senha" placeholder="Palavra-passe" required class="campo">
+            <button type="submit" class="botao">Registar</button>
+        </form>
+        <p class="link"><a href="/index.html">Já tem conta? Iniciar sessão</a></p>
+    </div>
+</body>
+</html>
