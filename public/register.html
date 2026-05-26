@@ -1,27 +1,48 @@
 <!DOCTYPE html>
-<html lang="pt-PT">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Criar Conta</title>
-    <style>
-        body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f2f5; margin: 0; }
-        .box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 320px; }
-        .campo { width: 100%; padding: 10px; box-sizing: border-box; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; }
-        .botao { width: 100%; padding: 10px; background: #007bff; color: white; border: none; cursor: pointer; border-radius: 4px; font-weight: bold; }
-        .link { text-align: center; margin-top: 15px; }
-    </style>
+    <title>Registo</title>
 </head>
 <body>
-    <div class="box">
-        <h2>Criar Conta</h2>
-        <form action="/auth/registo" method="POST">
-            <input type="text" name="nome" placeholder="Nome Completo" required class="campo">
-            <input type="email" name="email" placeholder="E-mail" required class="campo">
-            <input type="password" name="senha" placeholder="Palavra-passe" required class="campo">
-            <button type="submit" class="botao">Registar</button>
-        </form>
-        <p class="link"><a href="/index.html">Já tem conta? Iniciar sessão</a></p>
-    </div>
+
+<h2>Registar Conta</h2>
+
+<div id="erro" style="color:red;font-weight:bold;margin-bottom:10px;"></div>
+
+<form id="form-registo">
+    <input type="text" name="nome" placeholder="Nome" required><br><br>
+    <input type="email" name="email" placeholder="Email" required><br><br>
+    <input type="password" name="senha" placeholder="Senha" required><br><br>
+    <button type="submit">Registar</button>
+</form>
+
+<script>
+const form = document.getElementById("form-registo");
+const erroDiv = document.getElementById("erro");
+
+form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    erroDiv.textContent = "";
+
+    const dados = new URLSearchParams(new FormData(form));
+
+    const resp = await fetch("/auth/registo", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: dados
+    });
+
+    const data = await resp.json();
+
+    if (!resp.ok) {
+        erroDiv.textContent = data.error;
+        return;
+    }
+
+    window.location.href = "/verificar.html";
+});
+</script>
+
 </body>
 </html>

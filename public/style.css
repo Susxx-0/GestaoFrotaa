@@ -1,0 +1,129 @@
+/* ======== GLOBAL ======== */
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #4e73df, #1cc88a);
+    margin: 0;
+    animation: fadeIn 0.8s ease-out;
+}
+
+/* Fade-in geral */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ======== CAIXAS ======== */
+.box {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    width: 330px;
+    text-align: center;
+    animation: popIn 0.5s ease-out;
+}
+
+.box-large {
+    width: 360px;
+}
+
+/* Animação da caixa */
+@keyframes popIn {
+    0% { transform: scale(0.9); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* ======== CAMPOS ======== */
+.campo, .campo-codigo {
+    width: 100%;
+    padding: 12px;
+    box-sizing: border-box;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    transition: 0.2s;
+}
+
+.campo:focus, .campo-codigo:focus {
+    border-color: #4e73df;
+    box-shadow: 0 0 6px rgba(78,115,223,0.5);
+    outline: none;
+}
+
+.campo-codigo {
+    font-size: 22px;
+    text-align: center;
+    letter-spacing: 6px;
+}
+
+/* ======== BOTÕES ======== */
+.botao {
+    width: 100%;
+    padding: 12px;
+    background: #4e73df;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 15px;
+    transition: 0.25s;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Efeito hover */
+.botao:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+}
+
+/* Efeito click */
+.botao:active {
+    transform: scale(0.95);
+}
+
+/* Botões coloridos */
+.botao-verde { background: #1cc88a; }
+.botao-amarelo { background: #f6c23e; color: black; }
+
+/* ======== EFEITO DE ONDA NO CLICK ======== */
+.botao::after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    background: rgba(255,255,255,0.4);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    top: var(--y);
+    left: var(--x);
+    transition: width 0.4s ease, height 0.4s ease;
+}
+
+.botao:active::after {
+    width: 200px;
+    height: 200px;
+}
+
+/* ======== LINKS ======== */
+.link {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.link a {
+    color: #4e73df;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.link a:hover {
+    text-decoration: underline;
+    color: #1cc88a;
+}

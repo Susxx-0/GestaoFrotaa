@@ -3,21 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sessão</title>
+    <title>Menu Principal</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="box">
-        <h2>Iniciar Sessão</h2>
+        <h2>Menu Principal</h2>
 
-        <form action="/auth/login" method="POST">
-            <input type="email" name="email" placeholder="E-mail" required class="campo">
-            <input type="password" name="senha" placeholder="Palavra-passe" required class="campo">
-            <button type="submit" class="botao botao-verde">Avançar</button>
-        </form>
-
-        <p class="link"><a href="/register.html">Não tem conta? Registe-se</a></p>
-        <p class="link"><a href="/menu.html">Voltar ao Menu Principal</a></p>
+        <button class="botao" onclick="location.href='/index.html'">Iniciar Sessão</button>
+        <button class="botao botao-verde" onclick="location.href='/register.html'">Criar Conta</button>
     </div>
 
     <script>

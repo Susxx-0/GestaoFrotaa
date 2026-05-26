@@ -4,21 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verificação 2FA</title>
-    <style>
-        body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f2f5; margin: 0; }
-        .box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 350px; text-align: center; }
-        .campo-codigo { width: 100%; padding: 10px; font-size: 20px; text-align: center; letter-spacing: 5px; box-sizing: border-box; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; }
-        .botao { width: 100%; padding: 10px; background: #ffc107; color: black; border: none; cursor: pointer; font-weight: bold; border-radius: 4px; }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="box">
+    <div class="box box-large">
         <h2>Introduza o código de verificação</h2>
         <p>Enviámos um código de 6 dígitos para o seu <strong>e-mail</strong>.</p>
+
         <form action="/auth/verificar-2fa" method="POST">
             <input type="text" name="codigo" placeholder="000000" maxlength="6" required class="campo-codigo">
-            <button type="submit" class="botao">Verificar e Entrar</button>
+            <button type="submit" class="botao botao-amarelo">Verificar e Entrar</button>
         </form>
+
+        <p class="link"><a href="/menu.html">Cancelar e Voltar ao Menu Principal</a></p>
     </div>
+
+    <script>
+    document.querySelectorAll(".botao").forEach(btn => {
+        btn.addEventListener("click", function(e) {
+            let rect = this.getBoundingClientRect();
+            this.style.setProperty("--x", (e.clientX - rect.left) + "px");
+            this.style.setProperty("--y", (e.clientY - rect.top) + "px");
+        });
+    });
+    </script>
 </body>
 </html>
