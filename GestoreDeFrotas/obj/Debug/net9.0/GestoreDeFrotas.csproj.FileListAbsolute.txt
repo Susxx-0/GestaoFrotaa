@@ -54,3 +54,4 @@ C:\Users\harri\OneDrive\Escritorio\Visual Studio\GestoreDeFrotas\GestoreDeFrotas
 C:\Users\harri\OneDrive\Escritorio\Visual Studio\GestoreDeFrotas\GestoreDeFrotas\obj\Debug\net9.0\GestoreDeFrotas.pdb
 C:\Users\harri\OneDrive\Escritorio\Visual Studio\GestoreDeFrotas\GestoreDeFrotas\obj\Debug\net9.0\GestoreDeFrotas.genruntimeconfig.cache
 C:\Users\harri\OneDrive\Escritorio\Visual Studio\GestoreDeFrotas\GestoreDeFrotas\obj\Debug\net9.0\ref\GestoreDeFrotas.dll
+C:\Users\harri\OneDrive\Escritorio\Visual Studio\GestoreDeFrotas\GestoreDeFrotas\obj\Debug\net9.0\GestoreDeFrotas.sourcelink.json

@@ -23,7 +23,7 @@
   },
   {
     "ContainingType": "GestaoDeFrotas.Controllers.ManutencaoController",
-    "Method": "ObterHistorico",
+    "Method": "GetAll",
     "RelativePath": "api/maintenance",
     "HttpMethod": "GET",
     "IsController": true,
@@ -33,7 +33,7 @@
   },
   {
     "ContainingType": "GestaoDeFrotas.Controllers.ManutencaoController",
-    "Method": "CriarRegisto",
+    "Method": "Create",
     "RelativePath": "api/maintenance",
     "HttpMethod": "POST",
     "IsController": true,
@@ -49,7 +49,7 @@
   },
   {
     "ContainingType": "GestaoDeFrotas.Controllers.VeiculosController",
-    "Method": "ObterTodos",
+    "Method": "GetAll",
     "RelativePath": "api/vehicles",
     "HttpMethod": "GET",
     "IsController": true,
@@ -59,7 +59,7 @@
   },
   {
     "ContainingType": "GestaoDeFrotas.Controllers.VeiculosController",
-    "Method": "Criar",
+    "Method": "Create",
     "RelativePath": "api/vehicles",
     "HttpMethod": "POST",
     "IsController": true,
@@ -75,28 +75,7 @@
   },
   {
     "ContainingType": "GestaoDeFrotas.Controllers.VeiculosController",
-    "Method": "Atualizar",
-    "RelativePath": "api/vehicles/{id}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "veiculoAtualizado",
-        "Type": "GestaoDeFrotas.Models.Veiculo",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "GestaoDeFrotas.Controllers.VeiculosController",
-    "Method": "Apagar",
+    "Method": "Delete",
     "RelativePath": "api/vehicles/{id}",
     "HttpMethod": "DELETE",
     "IsController": true,

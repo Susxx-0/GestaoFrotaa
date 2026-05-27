@@ -9,7 +9,7 @@ namespace GestaoDeFrotas.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-        // Tabelas em português do projeto
+       
         public DbSet<Veiculo> Veiculos { get; set; }
         public DbSet<RegistoManutencao> RegistosManutencao { get; set; }
 

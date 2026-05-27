@@ -11,6 +11,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseInMemoryDatabase("FrotaDB"));
 
+builder.Services.AddScoped<GestaoDeFrotas.Services.VeiculosService>();
+builder.Services.AddScoped<GestaoDeFrotas.Services.ManutencaoService>();
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 

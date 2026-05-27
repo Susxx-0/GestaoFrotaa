@@ -1,64 +1,45 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using GestaoDeFrotas.Data;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using GestaoDeFrotas.Models;
-using System.Linq;
+using GestaoDeFrotas.Services;
 
 namespace GestaoDeFrotas.Controllers
 {
     [ApiController]
-    [Route("api/vehicles")] 
+    [Route("api/vehicles")]
     [Authorize]
     public class VeiculosController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly VeiculosService _veiculosService;
 
-        public VeiculosController(AppDbContext context) => _context = context;
+        // O construtor agora recebe o Serviço e não o DbContext
+        public VeiculosController(VeiculosService veiculosService)
+        {
+            _veiculosService = veiculosService;
+        }
 
-        // GET /vehicles -> Todos os cargos podem ver
         [HttpGet]
-        [Authorize(Roles = "Admin,Gerente,Técnico,Visualizador")]
-        public IActionResult ObterTodos() => Ok(_context.Veiculos.ToList());
+        [Authorize(Roles = "Admin,Gerente,Tecnico,Visualizador")]
+        public async Task<IActionResult> GetAll()
+        {
+            var veiculos = await _veiculosService.ObterTodosAsync();
+            return Ok(veiculos);
+        }
 
-        // POST /vehicles -> Apenas Admin e Gerente criam viaturas
         [HttpPost]
         [Authorize(Roles = "Admin,Gerente")]
-        public IActionResult Criar([FromBody] Veiculo veiculo)
+        public async Task<IActionResult> Create([FromBody] Veiculo veiculo)
         {
-            _context.Veiculos.Add(veiculo);
-            _context.SaveChanges();
-            return CreatedAtAction(nameof(ObterTodos), new { id = veiculo.Id }, veiculo);
+            await _veiculosService.AdicionarAsync(veiculo);
+            return Ok(veiculo);
         }
 
-        // PUT /vehicles/{id} -> Apenas Admin e Gerente editam viaturas
-        [HttpPut("{id}")]
-        [Authorize(Roles = "Admin,Gerente")]
-        public IActionResult Atualizar(int id, [FromBody] Veiculo veiculoAtualizado)
-        {
-            var existente = _context.Veiculos.Find(id);
-            if (existente == null) return NotFound("Veículo não encontrado.");
-
-            existente.Marca = veiculoAtualizado.Marca;
-            existente.Modelo = veiculoAtualizado.Modelo;
-            existente.Matricula = veiculoAtualizado.Matricula;
-            existente.Cor = veiculoAtualizado.Cor;
-            existente.Ano = veiculoAtualizado.Ano;
-            existente.Estado = veiculoAtualizado.Estado;
-
-            _context.SaveChanges();
-            return NoContent();
-        }
-
-        // DELETE /vehicles/{id} -> SÓ O ADMIN APAGA!
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
-        public IActionResult Apagar(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var veiculo = _context.Veiculos.Find(id);
-            if (veiculo == null) return NotFound("Veículo não encontrado.");
-
-            _context.Veiculos.Remove(veiculo);
-            _context.SaveChanges();
+            var eliminado = await _veiculosService.EliminarAsync(id);
+            if (!eliminado) return NotFound();
             return NoContent();
         }
     }
