@@ -1,0 +1,139 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\harri\\OneDrive\\Escritorio\\Visual Studio\\GestoreDeFrotas\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{87F1682D-8F9D-4976-8F33-C8ECC8F1AD1B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|c:\\users\\harri\\onedrive\\escritorio\\visual studio\\gestoredefrotas\\gestoredefrotas\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87F1682D-8F9D-4976-8F33-C8ECC8F1AD1B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|solutionrelative:gestoredefrotas\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87F1682D-8F9D-4976-8F33-C8ECC8F1AD1B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|c:\\users\\harri\\onedrive\\escritorio\\visual studio\\gestoredefrotas\\gestoredefrotas\\controllers\\veiculoscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87F1682D-8F9D-4976-8F33-C8ECC8F1AD1B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|solutionrelative:gestoredefrotas\\controllers\\veiculoscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87F1682D-8F9D-4976-8F33-C8ECC8F1AD1B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|c:\\users\\harri\\onedrive\\escritorio\\visual studio\\gestoredefrotas\\gestoredefrotas\\controllers\\manutencaocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87F1682D-8F9D-4976-8F33-C8ECC8F1AD1B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|solutionrelative:gestoredefrotas\\controllers\\manutencaocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87F1682D-8F9D-4976-8F33-C8ECC8F1AD1B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|c:\\users\\harri\\onedrive\\escritorio\\visual studio\\gestoredefrotas\\gestoredefrotas\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87F1682D-8F9D-4976-8F33-C8ECC8F1AD1B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|solutionrelative:gestoredefrotas\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87F1682D-8F9D-4976-8F33-C8ECC8F1AD1B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|c:\\users\\harri\\onedrive\\escritorio\\visual studio\\gestoredefrotas\\gestoredefrotas\\gestoredefrotas.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{87F1682D-8F9D-4976-8F33-C8ECC8F1AD1B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|solutionrelative:gestoredefrotas\\gestoredefrotas.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87F1682D-8F9D-4976-8F33-C8ECC8F1AD1B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|c:\\users\\harri\\onedrive\\escritorio\\visual studio\\gestoredefrotas\\gestoredefrotas\\models\\maintenancerecord.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87F1682D-8F9D-4976-8F33-C8ECC8F1AD1B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|solutionrelative:gestoredefrotas\\models\\maintenancerecord.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87F1682D-8F9D-4976-8F33-C8ECC8F1AD1B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|c:\\users\\harri\\onedrive\\escritorio\\visual studio\\gestoredefrotas\\gestoredefrotas\\models\\vehicle.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87F1682D-8F9D-4976-8F33-C8ECC8F1AD1B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|solutionrelative:gestoredefrotas\\models\\vehicle.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "VeiculosController.cs",
+              "DocumentMoniker": "C:\\Users\\harri\\OneDrive\\Escritorio\\Visual Studio\\GestoreDeFrotas\\GestoreDeFrotas\\Controllers\\VeiculosController.cs",
+              "RelativeDocumentMoniker": "GestoreDeFrotas\\Controllers\\VeiculosController.cs",
+              "ToolTip": "C:\\Users\\harri\\OneDrive\\Escritorio\\Visual Studio\\GestoreDeFrotas\\GestoreDeFrotas\\Controllers\\VeiculosController.cs",
+              "RelativeToolTip": "GestoreDeFrotas\\Controllers\\VeiculosController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAcAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-27T08:36:53.657Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\harri\\OneDrive\\Escritorio\\Visual Studio\\GestoreDeFrotas\\GestoreDeFrotas\\Program.cs",
+              "RelativeDocumentMoniker": "GestoreDeFrotas\\Program.cs",
+              "ToolTip": "C:\\Users\\harri\\OneDrive\\Escritorio\\Visual Studio\\GestoreDeFrotas\\GestoreDeFrotas\\Program.cs",
+              "RelativeToolTip": "GestoreDeFrotas\\Program.cs",
+              "ViewState": "AgIAABUAAAAAAAAAAAAAACsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-27T08:28:23.531Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "GestoreDeFrotas",
+              "DocumentMoniker": "C:\\Users\\harri\\OneDrive\\Escritorio\\Visual Studio\\GestoreDeFrotas\\GestoreDeFrotas\\GestoreDeFrotas.csproj",
+              "RelativeDocumentMoniker": "GestoreDeFrotas\\GestoreDeFrotas.csproj",
+              "ToolTip": "C:\\Users\\harri\\OneDrive\\Escritorio\\Visual Studio\\GestoreDeFrotas\\GestoreDeFrotas\\GestoreDeFrotas.csproj",
+              "RelativeToolTip": "GestoreDeFrotas\\GestoreDeFrotas.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-05-27T08:15:41.832Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ManutencaoController.cs",
+              "DocumentMoniker": "C:\\Users\\harri\\OneDrive\\Escritorio\\Visual Studio\\GestoreDeFrotas\\GestoreDeFrotas\\Controllers\\ManutencaoController.cs",
+              "RelativeDocumentMoniker": "GestoreDeFrotas\\Controllers\\ManutencaoController.cs",
+              "ToolTip": "C:\\Users\\harri\\OneDrive\\Escritorio\\Visual Studio\\GestoreDeFrotas\\GestoreDeFrotas\\Controllers\\ManutencaoController.cs",
+              "RelativeToolTip": "GestoreDeFrotas\\Controllers\\ManutencaoController.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAAAoAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-27T08:37:50.997Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "AppDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\harri\\OneDrive\\Escritorio\\Visual Studio\\GestoreDeFrotas\\GestoreDeFrotas\\Data\\AppDbContext.cs",
+              "RelativeDocumentMoniker": "GestoreDeFrotas\\Data\\AppDbContext.cs",
+              "ToolTip": "C:\\Users\\harri\\OneDrive\\Escritorio\\Visual Studio\\GestoreDeFrotas\\GestoreDeFrotas\\Data\\AppDbContext.cs",
+              "RelativeToolTip": "GestoreDeFrotas\\Data\\AppDbContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADEAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-27T08:25:42.395Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "MaintenanceRecord.cs",
+              "DocumentMoniker": "C:\\Users\\harri\\OneDrive\\Escritorio\\Visual Studio\\GestoreDeFrotas\\GestoreDeFrotas\\Models\\MaintenanceRecord.cs",
+              "RelativeDocumentMoniker": "GestoreDeFrotas\\Models\\MaintenanceRecord.cs",
+              "ToolTip": "C:\\Users\\harri\\OneDrive\\Escritorio\\Visual Studio\\GestoreDeFrotas\\GestoreDeFrotas\\Models\\MaintenanceRecord.cs",
+              "RelativeToolTip": "GestoreDeFrotas\\Models\\MaintenanceRecord.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-27T08:17:39.963Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Vehicle.cs",
+              "DocumentMoniker": "C:\\Users\\harri\\OneDrive\\Escritorio\\Visual Studio\\GestoreDeFrotas\\GestoreDeFrotas\\Models\\Vehicle.cs",
+              "RelativeDocumentMoniker": "GestoreDeFrotas\\Models\\Vehicle.cs",
+              "ToolTip": "C:\\Users\\harri\\OneDrive\\Escritorio\\Visual Studio\\GestoreDeFrotas\\GestoreDeFrotas\\Models\\Vehicle.cs",
+              "RelativeToolTip": "GestoreDeFrotas\\Models\\Vehicle.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-27T08:17:12.769Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
