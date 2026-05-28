@@ -7,9 +7,9 @@ using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Configurar Base de Dados em Memória
+// 1. Configurar Base de Dados REAL no SQL Server (Substituiu o In-Memory)
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseInMemoryDatabase("FrotaDB"));
+    options.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=GestaoFrotasDB;Trusted_Connection=True;MultipleActiveResultSets=true"));
 
 builder.Services.AddScoped<GestaoDeFrotas.Services.VeiculosService>();
 builder.Services.AddScoped<GestaoDeFrotas.Services.ManutencaoService>();
@@ -58,14 +58,13 @@ builder.Services.AddAuthentication(options =>
     options.SaveToken = true;
     options.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuerSigningKey = false, // Permite ler tanto os tokens manuais como os do dotnet user-jwts
+        ValidateIssuerSigningKey = false,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(chaveSecretaGlobal)),
         ValidateIssuer = false,
         ValidateAudience = false,
-        RoleClaimType = "roles" // Mapeia por defeito a nossa chave de cargos do Swagger
+        RoleClaimType = "roles"
     };
 
-    // Evento especial para ler também o formato de role da consola se for usado!
     options.Events = new JwtBearerEvents
     {
         OnTokenValidated = context =>
@@ -73,7 +72,6 @@ builder.Services.AddAuthentication(options =>
             var identity = context.Principal?.Identity as ClaimsIdentity;
             if (identity != null)
             {
-                // Se o token veio do 'user-jwts' da consola, extrai o cargo e sincroniza
                 var consolaRole = identity.FindFirst("http://schemas.microsoft.com/ws/2008/06/identity/claims/role")?.Value;
                 if (!string.IsNullOrEmpty(consolaRole) && !identity.HasClaim(c => c.Type == "roles"))
                 {
@@ -87,10 +85,14 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
-// 3. Alimentar a API com os 32 veículos fakes
+// 3. Executa as Migrações e Alimenta a API com os 32 veículos fakes
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+    // Cria a Base de Dados real caso ela não exista no SQL Server
+    context.Database.Migrate();
+
     AppDbContext.SeedData(context);
 }
 
@@ -102,8 +104,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication(); // Valida quem é o utilizador
-app.UseAuthorization();  // Valida o cargo (Admin, Gerente, etc)
+app.UseAuthentication();
+app.UseAuthorization();
 
 // Endpoint temporário para gerar um Token de teste diretamente no Swagger
 app.MapPost("/api/auth/teste-token", [Microsoft.AspNetCore.Authorization.AllowAnonymous] (string cargo) =>
@@ -116,7 +118,7 @@ app.MapPost("/api/auth/teste-token", [Microsoft.AspNetCore.Authorization.AllowAn
         Subject = new System.Security.Claims.ClaimsIdentity(new[]
         {
             new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Name, "EstagiarioFrotas"),
-            new System.Security.Claims.Claim("roles", cargo) // Define se és: Admin, Gerente, Técnico ou Visualizador
+            new System.Security.Claims.Claim("roles", cargo)
         }),
         Expires = DateTime.UtcNow.AddHours(2),
         SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(chave), SecurityAlgorithms.HmacSha256Signature)
@@ -128,4 +130,4 @@ app.MapPost("/api/auth/teste-token", [Microsoft.AspNetCore.Authorization.AllowAn
 
 app.MapControllers();
 
-app.Run(); // Sempre no fim de tudo!
+app.Run();

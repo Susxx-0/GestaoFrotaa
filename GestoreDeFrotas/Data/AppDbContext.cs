@@ -9,7 +9,6 @@ namespace GestaoDeFrotas.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-       
         public DbSet<Veiculo> Veiculos { get; set; }
         public DbSet<RegistoManutencao> RegistosManutencao { get; set; }
 
@@ -29,7 +28,7 @@ namespace GestaoDeFrotas.Data
 
                     context.Veiculos.Add(new Veiculo
                     {
-                        Id = i,
+                        // O ID foi removido aqui para o SQL Server gerir sozinho
                         Marca = escolhaCarro[0],
                         Modelo = escolhaCarro.Length > 1 ? string.Join(" ", escolhaCarro.Skip(1)) : "Modelo X",
                         Matricula = $"{(char)rand.Next(65, 91)}{(char)rand.Next(65, 91)}-{rand.Next(10, 99)}-{(char)rand.Next(65, 91)}{(char)rand.Next(65, 91)}", // Ex: AA-12-BB
@@ -44,17 +43,33 @@ namespace GestaoDeFrotas.Data
             // Se não houver registos de mecânica, cria o primeiro
             if (!context.RegistosManutencao.Any())
             {
-                context.RegistosManutencao.Add(new RegistoManutencao
+                // Vamos buscar o ID do primeiro veículo inserido para garantir que a relação funciona
+                var primeiroVeiculoId = context.Veiculos.Select(v => v.Id).FirstOrDefault();
+
+                if (primeiroVeiculoId != 0)
                 {
-                    Id = 1,
-                    VeiculoId = 3, 
-                    Data = DateTime.Now.AddDays(-2),
-                    Descricao = "Mudança preventiva de óleo e filtros.",
-                    Custo = 150.00m,
-                    RealizadoPor = "Técnico Administrador"
-                });
-                context.SaveChanges();
+                    context.RegistosManutencao.Add(new RegistoManutencao
+                    {
+                        // O ID automático também foi removido daqui
+                        VeiculoId = primeiroVeiculoId,
+                        Data = DateTime.Now.AddDays(-2),
+                        Descricao = "Mudança preventiva de óleo e filtros.",
+                        Custo = 150.00m,
+                        RealizadoPor = "Técnico Administrador"
+                    });
+                    context.SaveChanges();
+                }
             }
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // Configura o campo Custo para decimal com 2 casas decimais no SQL Server
+            modelBuilder.Entity<RegistoManutencao>()
+                .Property(m => m.Custo)
+                .HasColumnType("decimal(18,2)");
         }
     }
 }
