@@ -5,6 +5,18 @@
     "version": "1.0"
   },
   "paths": {
+    "/api/Dashboard": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/auth/teste-token": {
       "post": {
         "tags": [
@@ -136,6 +148,11 @@
   "components": {
     "schemas": {
       "RegistoManutencao": {
+        "required": [
+          "data",
+          "descricao",
+          "veiculoId"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -151,10 +168,13 @@
             "format": "date-time"
           },
           "descricao": {
-            "type": "string",
-            "nullable": true
+            "maxLength": 250,
+            "minLength": 0,
+            "type": "string"
           },
           "custo": {
+            "maximum": 100000,
+            "minimum": 0,01,
             "type": "number",
             "format": "double"
           },
@@ -166,6 +186,12 @@
         "additionalProperties": false
       },
       "Veiculo": {
+        "required": [
+          "estado",
+          "marca",
+          "matricula",
+          "modelo"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -173,28 +199,32 @@
             "format": "int32"
           },
           "marca": {
-            "type": "string",
-            "nullable": true
+            "maxLength": 50,
+            "minLength": 0,
+            "type": "string"
           },
           "modelo": {
-            "type": "string",
-            "nullable": true
+            "minLength": 1,
+            "type": "string"
           },
           "matricula": {
-            "type": "string",
-            "nullable": true
+            "minLength": 1,
+            "pattern": "^[A-Z0-9]{2}-[A-Z0-9]{2}-[A-Z0-9]{2}$",
+            "type": "string"
           },
           "cor": {
             "type": "string",
             "nullable": true
           },
           "ano": {
+            "maximum": 2027,
+            "minimum": 1970,
             "type": "integer",
             "format": "int32"
           },
           "estado": {
-            "type": "string",
-            "nullable": true
+            "minLength": 1,
+            "type": "string"
           }
         },
         "additionalProperties": false

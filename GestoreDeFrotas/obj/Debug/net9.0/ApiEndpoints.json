@@ -22,6 +22,16 @@
     ]
   },
   {
+    "ContainingType": "GestaoDeFrotas.Controllers.DashboardController",
+    "Method": "GetEstatisticas",
+    "RelativePath": "api/Dashboard",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "GestaoDeFrotas.Controllers.ManutencaoController",
     "Method": "GetAll",
     "RelativePath": "api/maintenance",
