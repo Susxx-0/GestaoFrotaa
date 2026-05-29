@@ -12,6 +12,8 @@ namespace GestaoDeFrotas.Data
         public DbSet<Veiculo> Veiculos { get; set; }
         public DbSet<RegistoManutencao> RegistosManutencao { get; set; }
 
+        public DbSet<Abastecimento> Abastecimentos { get; set; }
+
         public static void SeedData(AppDbContext context)
         {
             // Se não houver veículos, gera as 32 viaturas fakes

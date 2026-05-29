@@ -1,5 +1,63 @@
 [
   {
+    "ContainingType": "GestaoDeFrotas.Controllers.AbastecimentosController",
+    "Method": "GetAll",
+    "RelativePath": "api/Abastecimentos",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "GestaoDeFrotas.Controllers.AbastecimentosController",
+    "Method": "Create",
+    "RelativePath": "api/Abastecimentos",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "ab",
+        "Type": "GestaoDeFrotas.Models.Abastecimento",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "GestaoDeFrotas.Controllers.AbastecimentosController",
+    "Method": "Delete",
+    "RelativePath": "api/Abastecimentos/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "GestaoDeFrotas.Controllers.AbastecimentosController",
+    "Method": "GetByVeiculo",
+    "RelativePath": "api/Abastecimentos/veiculo/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "Program\u002B\u003C\u003Ec__DisplayClass0_0",
     "Method": "\u003C\u003CMain\u003E$\u003Eb__4",
     "RelativePath": "api/auth/teste-token",

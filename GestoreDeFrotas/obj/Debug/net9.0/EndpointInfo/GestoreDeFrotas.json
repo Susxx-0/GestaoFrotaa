@@ -5,6 +5,93 @@
     "version": "1.0"
   },
   "paths": {
+    "/api/Abastecimentos": {
+      "get": {
+        "tags": [
+          "Abastecimentos"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Abastecimentos"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Abastecimento"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Abastecimento"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Abastecimento"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Abastecimentos/veiculo/{id}": {
+      "get": {
+        "tags": [
+          "Abastecimentos"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Abastecimentos/{id}": {
+      "delete": {
+        "tags": [
+          "Abastecimentos"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Dashboard": {
       "get": {
         "tags": [
@@ -212,6 +299,78 @@
   },
   "components": {
     "schemas": {
+      "Abastecimento": {
+        "required": [
+          "combustivel",
+          "kmAtual",
+          "litros",
+          "precoPorLitro",
+          "veiculoId"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "veiculoId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "veiculo": {
+            "$ref": "#/components/schemas/Veiculo"
+          },
+          "litros": {
+            "maximum": 200,
+            "minimum": 1,
+            "type": "number",
+            "format": "double"
+          },
+          "precoPorLitro": {
+            "maximum": 10,
+            "minimum": 0,1,
+            "type": "number",
+            "format": "double"
+          },
+          "custoTotal": {
+            "type": "number",
+            "format": "double"
+          },
+          "kmAtual": {
+            "maximum": 1000000,
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32"
+          },
+          "consumoMedio": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "kmPorLitro": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "combustivel": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "posto": {
+            "type": "string",
+            "nullable": true
+          },
+          "data": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "faturaPath": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "RegistoManutencao": {
         "required": [
           "data",

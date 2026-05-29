@@ -1,11 +1,12 @@
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.EntityFrameworkCore;
 using GestaoDeFrotas.Data;
-using System.Security.Claims;
-using Serilog;
+using GestaoDeFrotas.Services;
 using GestoreDeFrotas.Middleware;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Serilog;
+using System.Security.Claims;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,7 +32,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<GestaoDeFrotas.Services.VeiculosService>();
 builder.Services.AddScoped<GestaoDeFrotas.Services.ManutencaoService>();
 builder.Services.AddScoped<GestaoDeFrotas.Services.LoggingService>();
-
+builder.Services.AddScoped <GestaoDeFrotas.Services.AbastecimentosService>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
