@@ -12,17 +12,27 @@ namespace GestaoDeFrotas.Controllers
     {
         private readonly VeiculosService _veiculosService;
 
-        // O construtor agora recebe o Serviço e não o DbContext
         public VeiculosController(VeiculosService veiculosService)
         {
             _veiculosService = veiculosService;
         }
 
+        // GET COM FILTROS
         [HttpGet]
         [Authorize(Roles = "Admin,Gerente,Tecnico,Visualizador")]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(
+            [FromQuery] string? marca,
+            [FromQuery] string? modelo,
+            [FromQuery] string? matricula,
+            [FromQuery] string? estado,
+            [FromQuery] string? cor,
+            [FromQuery] int? anoMin,
+            [FromQuery] int? anoMax)
         {
-            var veiculos = await _veiculosService.ObterTodosAsync();
+            var veiculos = await _veiculosService.FiltrarAsync(
+                marca, modelo, matricula, estado, cor, anoMin, anoMax
+            );
+
             return Ok(veiculos);
         }
 

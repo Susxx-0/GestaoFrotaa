@@ -4,20 +4,40 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore;
 using GestaoDeFrotas.Data;
 using System.Security.Claims;
+using Serilog;
+using GestoreDeFrotas.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Configurar Base de Dados REAL no SQL Server (Substituiu o In-Memory)
+// -----------------------------
+// 🔹 CONFIGURAR SERILOG
+// -----------------------------
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File("logs/api.log", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
+
+// -----------------------------
+// 🔹 BASE DE DADOS SQL SERVER
+// -----------------------------
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=GestaoFrotasDB;Trusted_Connection=True;MultipleActiveResultSets=true"));
 
+// -----------------------------
+// 🔹 SERVICES
+// -----------------------------
 builder.Services.AddScoped<GestaoDeFrotas.Services.VeiculosService>();
 builder.Services.AddScoped<GestaoDeFrotas.Services.ManutencaoService>();
+builder.Services.AddScoped<GestaoDeFrotas.Services.LoggingService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-// Configuração do Swagger com suporte para colar o Token (Cadeado)
+// -----------------------------
+// 🔹 SWAGGER + TOKEN
+// -----------------------------
 builder.Services.AddSwaggerGen(c =>
 {
     c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
@@ -45,6 +65,9 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+// -----------------------------
+// 🔹 AUTENTICAÇÃO JWT
+// -----------------------------
 var chaveSecretaGlobal = "CHAVE_SECRETA_CENTRALIZADA_DO_PORTAL_INTERNO_2026";
 
 builder.Services.AddAuthentication(options =>
@@ -85,17 +108,19 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
-// 3. Executa as Migrações e Alimenta a API com os 32 veículos fakes
+// -----------------------------
+// 🔹 MIGRAÇÕES AUTOMÁTICAS
+// -----------------------------
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-    // Cria a Base de Dados real caso ela não exista no SQL Server
     context.Database.Migrate();
-
     AppDbContext.SeedData(context);
 }
 
+// -----------------------------
+// 🔹 SWAGGER
+// -----------------------------
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -104,10 +129,17 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// -----------------------------
+// 🔹 MIDDLEWARE DE LOGGING
+// -----------------------------
+app.UseMiddleware<LoggingMiddleware>();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Endpoint temporário para gerar um Token de teste diretamente no Swagger
+// -----------------------------
+// 🔹 ENDPOINT PARA TESTAR TOKEN
+// -----------------------------
 app.MapPost("/api/auth/teste-token", [Microsoft.AspNetCore.Authorization.AllowAnonymous] (string cargo) =>
 {
     var tokenHandler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
