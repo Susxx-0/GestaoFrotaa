@@ -16,7 +16,10 @@ namespace GestaoDeFrotas.Services
             _context = context;
         }
 
-        public async Task RegistarLogAsync(string? utilizador, string metodo, string rota, string descricao, int statusCode)
+        // -----------------------------------------
+        // 🔹 REGISTAR LOG
+        // -----------------------------------------
+        public async Task RegistarLogAsync(string utilizador, string metodo, string rota, string descricao, int statusCode)
         {
             var log = new LogSistema
             {
@@ -24,13 +27,17 @@ namespace GestaoDeFrotas.Services
                 MetodoHttp = metodo,
                 Rota = rota,
                 Descricao = descricao,
-                StatusCode = statusCode
+                StatusCode = statusCode,
+                Data = DateTime.Now
             };
 
             _context.LogsSistema.Add(log);
             await _context.SaveChangesAsync();
         }
 
+        // -----------------------------------------
+        // 🔹 OBTER LOGS
+        // -----------------------------------------
         public async Task<IEnumerable<LogSistema>> ObterLogsAsync()
         {
             return await _context.LogsSistema
@@ -39,35 +46,47 @@ namespace GestaoDeFrotas.Services
                 .ToListAsync();
         }
 
-        public async Task CriarNotificacaoAsync(string titulo, string mensagem, string tipo = "Info")
-        {
-            var notif = new Notificacao
-            {
-                Titulo = titulo,
-                Mensagem = mensagem,
-                Tipo = tipo
-            };
-
-            _context.Notificacoes.Add(notif);
-            await _context.SaveChangesAsync();
-        }
-
+        // -----------------------------------------
+        // 🔹 OBTER NOTIFICAÇÕES ATIVAS
+        // -----------------------------------------
         public async Task<IEnumerable<Notificacao>> ObterNotificacoesAtivasAsync()
         {
             return await _context.Notificacoes
                 .Where(n => !n.Lida)
-                .OrderByDescending(n => n.DataCriacao)
+                .OrderByDescending(n => n.Data)
                 .ToListAsync();
         }
 
+        // -----------------------------------------
+        // 🔹 MARCAR NOTIFICAÇÃO COMO LIDA
+        // -----------------------------------------
         public async Task MarcarComoLidaAsync(int id)
         {
-            var notif = await _context.Notificacoes.FindAsync(id);
-            if (notif != null)
+            var notificacao = await _context.Notificacoes.FindAsync(id);
+
+            if (notificacao != null)
             {
-                notif.Lida = true;
+                notificacao.Lida = true;
                 await _context.SaveChangesAsync();
             }
+        }
+
+        // -----------------------------------------
+        // 🔹 CRIAR NOTIFICAÇÃO
+        // -----------------------------------------
+        public async Task CriarNotificacaoAsync(string titulo, string mensagem, string tipo)
+        {
+            var notificacao = new Notificacao
+            {
+                Titulo = titulo,
+                Mensagem = mensagem,
+                Tipo = tipo,
+                Data = DateTime.Now,
+                Lida = false
+            };
+
+            _context.Notificacoes.Add(notificacao);
+            await _context.SaveChangesAsync();
         }
     }
 }

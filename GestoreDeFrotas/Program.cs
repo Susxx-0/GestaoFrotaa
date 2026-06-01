@@ -1,7 +1,6 @@
 using GestaoDeFrotas.Data;
 using GestaoDeFrotas.Middleware;
 using GestaoDeFrotas.Services;
-using GestoreDeFrotas.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -12,7 +11,7 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // -----------------------------
-// 🔹 CONFIGURAR SERILOG
+// 🔹 SERILOG
 // -----------------------------
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -22,7 +21,7 @@ Log.Logger = new LoggerConfiguration()
 builder.Host.UseSerilog();
 
 // -----------------------------
-// 🔹 BASE DE DADOS SQL SERVER
+// 🔹 BASE DE DADOS
 // -----------------------------
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=GestaoFrotasDB;Trusted_Connection=True;MultipleActiveResultSets=true"));
@@ -30,13 +29,13 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // -----------------------------
 // 🔹 SERVICES
 // -----------------------------
-builder.Services.AddScoped<GestaoDeFrotas.Services.VeiculosService>();
-builder.Services.AddScoped<GestaoDeFrotas.Services.ManutencaoService>();
-builder.Services.AddScoped<GestaoDeFrotas.Services.AbastecimentosService>();
-builder.Services.AddScoped<GestaoDeFrotas.Services.AuditoriaService>();
+builder.Services.AddScoped<VeiculosService>();
+builder.Services.AddScoped<ManutencaoService>();
+builder.Services.AddScoped<AbastecimentosService>();
+builder.Services.AddScoped<AuditoriaService>();
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-
 
 // -----------------------------
 // 🔹 SWAGGER + TOKEN
@@ -113,7 +112,7 @@ var app = builder.Build();
 
 // -----------------------------
 // 🔹 MIGRAÇÕES AUTOMÁTICAS
-// -----------------------------
+// -----------------------------    
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -135,7 +134,7 @@ app.UseHttpsRedirection();
 // -----------------------------
 // 🔹 MIDDLEWARE DE LOGGING
 // -----------------------------
-app.UseMiddleware<GestaoDeFrotas.Middleware.LoggingMiddleware>();
+app.UseMiddleware<LoggingMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -150,10 +149,10 @@ app.MapPost("/api/auth/teste-token", [Microsoft.AspNetCore.Authorization.AllowAn
 
     var tokenDescriptor = new SecurityTokenDescriptor
     {
-        Subject = new System.Security.Claims.ClaimsIdentity(new[]
+        Subject = new ClaimsIdentity(new[]
         {
-            new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Name, "EstagiarioFrotas"),
-            new System.Security.Claims.Claim("roles", cargo)
+            new Claim(ClaimTypes.Name, "EstagiarioFrotas"),
+            new Claim("roles", cargo)
         }),
         Expires = DateTime.UtcNow.AddHours(2),
         SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(chave), SecurityAlgorithms.HmacSha256Signature)

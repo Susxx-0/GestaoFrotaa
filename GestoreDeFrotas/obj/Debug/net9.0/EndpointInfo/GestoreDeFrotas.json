@@ -173,6 +173,18 @@
         }
       }
     },
+    "/api/logs": {
+      "get": {
+        "tags": [
+          "Logs"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/maintenance": {
       "get": {
         "tags": [

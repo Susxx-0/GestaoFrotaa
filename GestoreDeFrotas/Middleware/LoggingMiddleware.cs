@@ -1,6 +1,5 @@
 ﻿using GestaoDeFrotas.Services;
 using Microsoft.AspNetCore.Http;
-using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 

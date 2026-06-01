@@ -3,6 +3,46 @@
   "WorkspaceRootPath": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{7D451798-2E85-6391-FAC9-6CEFD429420B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|c:\\users\\migro\\onedrive\\desktop\\codigosm11\\gestaofrota\\gestoredefrotas\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7D451798-2E85-6391-FAC9-6CEFD429420B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|solutionrelative:gestoredefrotas\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7D451798-2E85-6391-FAC9-6CEFD429420B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|c:\\users\\migro\\onedrive\\desktop\\codigosm11\\gestaofrota\\gestoredefrotas\\services\\auditoriaservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7D451798-2E85-6391-FAC9-6CEFD429420B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|solutionrelative:gestoredefrotas\\services\\auditoriaservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7D451798-2E85-6391-FAC9-6CEFD429420B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|c:\\users\\migro\\onedrive\\desktop\\codigosm11\\gestaofrota\\gestoredefrotas\\models\\notificacao.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7D451798-2E85-6391-FAC9-6CEFD429420B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|solutionrelative:gestoredefrotas\\models\\notificacao.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7D451798-2E85-6391-FAC9-6CEFD429420B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|c:\\users\\migro\\onedrive\\desktop\\codigosm11\\gestaofrota\\gestoredefrotas\\controllers\\auditoriacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7D451798-2E85-6391-FAC9-6CEFD429420B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|solutionrelative:gestoredefrotas\\controllers\\auditoriacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7D451798-2E85-6391-FAC9-6CEFD429420B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|c:\\users\\migro\\onedrive\\desktop\\codigosm11\\gestaofrota\\gestoredefrotas\\controllers\\logscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7D451798-2E85-6391-FAC9-6CEFD429420B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|solutionrelative:gestoredefrotas\\controllers\\logscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7D451798-2E85-6391-FAC9-6CEFD429420B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|c:\\users\\migro\\onedrive\\desktop\\codigosm11\\gestaofrota\\gestoredefrotas\\middleware\\loggingmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7D451798-2E85-6391-FAC9-6CEFD429420B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|solutionrelative:gestoredefrotas\\middleware\\loggingmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7D451798-2E85-6391-FAC9-6CEFD429420B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|c:\\users\\migro\\onedrive\\desktop\\codigosm11\\gestaofrota\\gestoredefrotas\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7D451798-2E85-6391-FAC9-6CEFD429420B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|solutionrelative:gestoredefrotas\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7D451798-2E85-6391-FAC9-6CEFD429420B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|c:\\users\\migro\\onedrive\\desktop\\codigosm11\\gestaofrota\\gestoredefrotas\\services\\loggingservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7D451798-2E85-6391-FAC9-6CEFD429420B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|solutionrelative:gestoredefrotas\\services\\loggingservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7D451798-2E85-6391-FAC9-6CEFD429420B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|c:\\users\\migro\\onedrive\\desktop\\codigosm11\\gestaofrota\\gestoredefrotas\\models\\logsistema.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7D451798-2E85-6391-FAC9-6CEFD429420B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|solutionrelative:gestoredefrotas\\models\\logsistema.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7D451798-2E85-6391-FAC9-6CEFD429420B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|c:\\users\\migro\\onedrive\\desktop\\codigosm11\\gestaofrota\\gestoredefrotas\\logs\\api20260529.log||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{7D451798-2E85-6391-FAC9-6CEFD429420B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|solutionrelative:gestoredefrotas\\logs\\api20260529.log||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{7D451798-2E85-6391-FAC9-6CEFD429420B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|c:\\users\\migro\\onedrive\\desktop\\codigosm11\\gestaofrota\\gestoredefrotas\\models\\vehicle.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{7D451798-2E85-6391-FAC9-6CEFD429420B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|solutionrelative:gestoredefrotas\\models\\vehicle.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -13,22 +53,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{7D451798-2E85-6391-FAC9-6CEFD429420B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|c:\\users\\migro\\onedrive\\desktop\\codigosm11\\gestaofrota\\gestoredefrotas\\services\\veiculoservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{7D451798-2E85-6391-FAC9-6CEFD429420B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|solutionrelative:gestoredefrotas\\services\\veiculoservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7D451798-2E85-6391-FAC9-6CEFD429420B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|c:\\users\\migro\\onedrive\\desktop\\codigosm11\\gestaofrota\\gestoredefrotas\\logs\\api20260529.log||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{7D451798-2E85-6391-FAC9-6CEFD429420B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|solutionrelative:gestoredefrotas\\logs\\api20260529.log||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7D451798-2E85-6391-FAC9-6CEFD429420B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|c:\\users\\migro\\onedrive\\desktop\\codigosm11\\gestaofrota\\gestoredefrotas\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7D451798-2E85-6391-FAC9-6CEFD429420B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|solutionrelative:gestoredefrotas\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7D451798-2E85-6391-FAC9-6CEFD429420B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|c:\\users\\migro\\onedrive\\desktop\\codigosm11\\gestaofrota\\gestoredefrotas\\controllers\\loggingcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7D451798-2E85-6391-FAC9-6CEFD429420B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|solutionrelative:gestoredefrotas\\controllers\\loggingcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7D451798-2E85-6391-FAC9-6CEFD429420B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|c:\\users\\migro\\onedrive\\desktop\\codigosm11\\gestaofrota\\gestoredefrotas\\services\\loggingservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7D451798-2E85-6391-FAC9-6CEFD429420B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|solutionrelative:gestoredefrotas\\services\\loggingservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{7D451798-2E85-6391-FAC9-6CEFD429420B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|c:\\users\\migro\\onedrive\\desktop\\codigosm11\\gestaofrota\\gestoredefrotas\\controllers\\dashboardcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -49,6 +73,10 @@
     {
       "AbsoluteMoniker": "D:0:0:{7D451798-2E85-6391-FAC9-6CEFD429420B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|c:\\users\\migro\\onedrive\\desktop\\codigosm11\\gestaofrota\\gestoredefrotas\\migrations\\20260528083228_inicializacaofrotas.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{7D451798-2E85-6391-FAC9-6CEFD429420B}|GestoreDeFrotas\\GestoreDeFrotas.csproj|solutionrelative:gestoredefrotas\\migrations\\20260528083228_inicializacaofrotas.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\Controllers\\LoggingController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:GestoreDeFrotas\\Controllers\\LoggingController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -58,7 +86,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 5,
           "Children": [
             {
               "$type": "Bookmark",
@@ -66,33 +94,124 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "VeiculosController.cs",
-              "DocumentMoniker": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\Controllers\\VeiculosController.cs",
-              "RelativeDocumentMoniker": "GestoreDeFrotas\\Controllers\\VeiculosController.cs",
-              "ToolTip": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\Controllers\\VeiculosController.cs",
-              "RelativeToolTip": "GestoreDeFrotas\\Controllers\\VeiculosController.cs",
-              "ViewState": "AgIAABsAAAAAAAAAAAAgwDgAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 5,
+              "Title": "LoggingMiddleware.cs",
+              "DocumentMoniker": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\Middleware\\LoggingMiddleware.cs",
+              "RelativeDocumentMoniker": "GestoreDeFrotas\\Middleware\\LoggingMiddleware.cs",
+              "ToolTip": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\Middleware\\LoggingMiddleware.cs",
+              "RelativeToolTip": "GestoreDeFrotas\\Middleware\\LoggingMiddleware.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAAA0wC4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-29T08:45:14.982Z",
+              "WhenOpened": "2026-06-01T09:39:12.533Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "veiculoservices.cs",
-              "DocumentMoniker": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\Services\\veiculoservices.cs",
-              "RelativeDocumentMoniker": "GestoreDeFrotas\\Services\\veiculoservices.cs",
-              "ToolTip": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\Services\\veiculoservices.cs",
-              "RelativeToolTip": "GestoreDeFrotas\\Services\\veiculoservices.cs",
-              "ViewState": "AgIAADgAAAAAAAAAAAAgwFUAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 6,
+              "Title": "AppDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\Data\\AppDbContext.cs",
+              "RelativeDocumentMoniker": "GestoreDeFrotas\\Data\\AppDbContext.cs",
+              "ToolTip": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\Data\\AppDbContext.cs",
+              "RelativeToolTip": "GestoreDeFrotas\\Data\\AppDbContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAE8AAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-29T08:58:35.906Z",
+              "WhenOpened": "2026-06-01T09:38:49.123Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "AuditoriaService.cs",
+              "DocumentMoniker": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\Services\\AuditoriaService.cs",
+              "RelativeDocumentMoniker": "GestoreDeFrotas\\Services\\AuditoriaService.cs",
+              "ToolTip": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\Services\\AuditoriaService.cs",
+              "RelativeToolTip": "GestoreDeFrotas\\Services\\AuditoriaService.cs",
+              "ViewState": "AgIAAD4AAAAAAAAAAAA0wFwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-01T09:38:02.907Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "LogsController.cs",
+              "DocumentMoniker": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\Controllers\\LogsController.cs",
+              "RelativeDocumentMoniker": "GestoreDeFrotas\\Controllers\\LogsController.cs",
+              "ToolTip": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\Controllers\\LogsController.cs",
+              "RelativeToolTip": "GestoreDeFrotas\\Controllers\\LogsController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-01T09:39:44.141Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\Program.cs",
+              "RelativeDocumentMoniker": "GestoreDeFrotas\\Program.cs",
+              "ToolTip": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\Program.cs",
+              "RelativeToolTip": "GestoreDeFrotas\\Program.cs",
+              "ViewState": "AgIAAGIAAAAAAAAAAAAAwHYAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-28T17:13:38.074Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "AuditoriaController.cs",
+              "DocumentMoniker": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\Controllers\\AuditoriaController.cs",
+              "RelativeDocumentMoniker": "GestoreDeFrotas\\Controllers\\AuditoriaController.cs",
+              "ToolTip": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\Controllers\\AuditoriaController.cs",
+              "RelativeToolTip": "GestoreDeFrotas\\Controllers\\AuditoriaController.cs",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAswCMAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-01T09:46:44.893Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Notificacao.cs",
+              "DocumentMoniker": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\Models\\Notificacao.cs",
+              "RelativeDocumentMoniker": "GestoreDeFrotas\\Models\\Notificacao.cs",
+              "ToolTip": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\Models\\Notificacao.cs",
+              "RelativeToolTip": "GestoreDeFrotas\\Models\\Notificacao.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-01T09:48:39.358Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "LoggingServices.cs",
+              "DocumentMoniker": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\Services\\LoggingServices.cs",
+              "RelativeDocumentMoniker": "GestoreDeFrotas\\Services\\LoggingServices.cs",
+              "ToolTip": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\Services\\LoggingServices.cs",
+              "RelativeToolTip": "GestoreDeFrotas\\Services\\LoggingServices.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAcwA4AAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-29T09:06:41.851Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "LogSistema.cs",
+              "DocumentMoniker": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\Models\\LogSistema.cs",
+              "RelativeDocumentMoniker": "GestoreDeFrotas\\Models\\LogSistema.cs",
+              "ToolTip": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\Models\\LogSistema.cs",
+              "RelativeToolTip": "GestoreDeFrotas\\Models\\LogSistema.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-01T09:35:22.339Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
               "Title": "Vehicle.cs",
               "DocumentMoniker": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\Models\\Vehicle.cs",
               "RelativeDocumentMoniker": "GestoreDeFrotas\\Models\\Vehicle.cs",
@@ -100,38 +219,48 @@
               "RelativeToolTip": "GestoreDeFrotas\\Models\\Vehicle.cs",
               "ViewState": "AgIAAAQAAAAAAAAAAAA6wAwAAAAzAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-29T08:26:50.382Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-29T08:26:50.382Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 9,
               "Title": "api20260529.log",
               "DocumentMoniker": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\logs\\api20260529.log",
               "RelativeDocumentMoniker": "GestoreDeFrotas\\logs\\api20260529.log",
               "ToolTip": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\logs\\api20260529.log",
               "RelativeToolTip": "GestoreDeFrotas\\logs\\api20260529.log",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAHcAAAAAAAAAAAAAAO4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
               "WhenOpened": "2026-05-29T09:36:49.493Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\Program.cs",
-              "RelativeDocumentMoniker": "GestoreDeFrotas\\Program.cs",
-              "ToolTip": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\Program.cs",
-              "RelativeToolTip": "GestoreDeFrotas\\Program.cs",
-              "ViewState": "AgIAAB4AAAAAAAAAAAAowAcAAAAWAAAAAAAAAA==",
+              "DocumentIndex": 12,
+              "Title": "veiculoservices.cs",
+              "DocumentMoniker": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\Services\\veiculoservices.cs",
+              "RelativeDocumentMoniker": "GestoreDeFrotas\\Services\\veiculoservices.cs",
+              "ToolTip": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\Services\\veiculoservices.cs",
+              "RelativeToolTip": "GestoreDeFrotas\\Services\\veiculoservices.cs",
+              "ViewState": "AgIAADgAAAAAAAAAAAAgwFUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-28T17:13:38.074Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-29T08:58:35.906Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 11,
+              "Title": "VeiculosController.cs",
+              "DocumentMoniker": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\Controllers\\VeiculosController.cs",
+              "RelativeDocumentMoniker": "GestoreDeFrotas\\Controllers\\VeiculosController.cs",
+              "ToolTip": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\Controllers\\VeiculosController.cs",
+              "RelativeToolTip": "GestoreDeFrotas\\Controllers\\VeiculosController.cs",
+              "ViewState": "AgIAABsAAAAAAAAAAAAgwDgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-29T08:45:14.982Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
               "Title": "LoggingController.cs",
               "DocumentMoniker": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\Controllers\\LoggingController.cs",
               "RelativeDocumentMoniker": "GestoreDeFrotas\\Controllers\\LoggingController.cs",
@@ -143,19 +272,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "LoggingServices.cs",
-              "DocumentMoniker": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\Services\\LoggingServices.cs",
-              "RelativeDocumentMoniker": "GestoreDeFrotas\\Services\\LoggingServices.cs",
-              "ToolTip": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\Services\\LoggingServices.cs",
-              "RelativeToolTip": "GestoreDeFrotas\\Services\\LoggingServices.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-29T09:06:41.851Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 13,
               "Title": "DashboardController.cs",
               "DocumentMoniker": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\Controllers\\DashboardController.cs",
               "RelativeDocumentMoniker": "GestoreDeFrotas\\Controllers\\DashboardController.cs",
@@ -167,7 +284,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 14,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\appsettings.json",
               "RelativeDocumentMoniker": "GestoreDeFrotas\\appsettings.json",
@@ -179,7 +296,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 15,
               "Title": "AppDbContextModelSnapshot.cs",
               "DocumentMoniker": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\Migrations\\AppDbContextModelSnapshot.cs",
               "RelativeDocumentMoniker": "GestoreDeFrotas\\Migrations\\AppDbContextModelSnapshot.cs",
@@ -191,7 +308,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 16,
               "Title": "20260528131240_AdicionarValidacoesModels.cs",
               "DocumentMoniker": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\Migrations\\20260528131240_AdicionarValidacoesModels.cs",
               "RelativeDocumentMoniker": "GestoreDeFrotas\\Migrations\\20260528131240_AdicionarValidacoesModels.cs",
@@ -203,7 +320,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 17,
               "Title": "20260528083228_InicializacaoFrotas.cs",
               "DocumentMoniker": "C:\\Users\\migro\\OneDrive\\Desktop\\codigosM11\\gestaofrota\\GestoreDeFrotas\\Migrations\\20260528083228_InicializacaoFrotas.cs",
               "RelativeDocumentMoniker": "GestoreDeFrotas\\Migrations\\20260528083228_InicializacaoFrotas.cs",

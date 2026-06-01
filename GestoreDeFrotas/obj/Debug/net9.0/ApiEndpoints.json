@@ -126,6 +126,16 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "GestaoDeFrotas.Controllers.LogsController",
+    "Method": "GetLogs",
+    "RelativePath": "api/logs",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "GestaoDeFrotas.Controllers.ManutencaoController",
     "Method": "GetAll",
     "RelativePath": "api/maintenance",

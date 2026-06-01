@@ -520,7 +520,6 @@ C:\Users\migro\OneDrive\Desktop\codigosM11\gestaofrota\GestoreDeFrotas\obj\Debug
 C:\Users\migro\OneDrive\Desktop\codigosM11\gestaofrota\GestoreDeFrotas\obj\Debug\net9.0\staticwebassets.build.json.cache
 C:\Users\migro\OneDrive\Desktop\codigosM11\gestaofrota\GestoreDeFrotas\obj\Debug\net9.0\staticwebassets.development.json
 C:\Users\migro\OneDrive\Desktop\codigosM11\gestaofrota\GestoreDeFrotas\obj\Debug\net9.0\staticwebassets.build.endpoints.json
-C:\Users\migro\OneDrive\Desktop\codigosM11\gestaofrota\GestoreDeFrotas\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
 C:\Users\migro\OneDrive\Desktop\codigosM11\gestaofrota\GestoreDeFrotas\obj\Debug\net9.0\GestoreD.93BBAA49.Up2Date
 C:\Users\migro\OneDrive\Desktop\codigosM11\gestaofrota\GestoreDeFrotas\obj\Debug\net9.0\GestoreDeFrotas.genruntimeconfig.cache
 C:\Users\migro\OneDrive\Desktop\codigosM11\gestaofrota\GestoreDeFrotas\obj\Debug\net9.0\ref\GestoreDeFrotas.dll
@@ -545,3 +544,4 @@ C:\Users\harri\OneDrive\Escritorio\Visual Studio\GestoreDeFrotas\GestoreDeFrotas
 C:\Users\harri\OneDrive\Escritorio\Visual Studio\GestoreDeFrotas\GestoreDeFrotas\bin\Debug\net9.0\System.Text.Json.dll
 C:\Users\harri\OneDrive\Escritorio\Visual Studio\GestoreDeFrotas\GestoreDeFrotas\bin\Debug\net9.0\runtimes\browser\lib\net8.0\System.Text.Encodings.Web.dll
 C:\Users\harri\OneDrive\Escritorio\Visual Studio\GestoreDeFrotas\GestoreDeFrotas\bin\Debug\net9.0\runtimes\win\lib\net9.0\System.Text.Encodings.Web.dll
+C:\Users\migro\OneDrive\Desktop\codigosM11\gestaofrota\GestoreDeFrotas\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
