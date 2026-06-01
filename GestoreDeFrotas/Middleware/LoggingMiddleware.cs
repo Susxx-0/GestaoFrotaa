@@ -1,45 +1,47 @@
-﻿using System.Diagnostics;
-using System.Text;
+﻿using GestaoDeFrotas.Services;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
+using System;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
-namespace GestoreDeFrotas.Middleware
+namespace GestaoDeFrotas.Middleware
 {
     public class LoggingMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly ILogger<LoggingMiddleware> _logger;
 
-        public LoggingMiddleware(RequestDelegate next, ILogger<LoggingMiddleware> logger)
+        public LoggingMiddleware(RequestDelegate next)
         {
             _next = next;
-            _logger = logger;
         }
 
-        public async Task InvokeAsync(HttpContext context)
+        public async Task InvokeAsync(HttpContext context, AuditoriaService auditoriaService)
         {
-            var stopwatch = Stopwatch.StartNew();
+            await _next(context);
 
-            var request = context.Request;
-            var user = context.User?.Identity?.Name ?? "Anónimo";
-
-            _logger.LogInformation("➡️ Request: {method} {path} | User: {user}",
-                request.Method, request.Path, user);
-
-            try
+            if (context.Request.Method != "GET")
             {
-                await _next(context);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "❌ Erro inesperado no processamento do request.");
-                throw;
-            }
+                var username = context.User.Identity?.IsAuthenticated == true
+                    ? context.User.FindFirst(ClaimTypes.Name)?.Value
+                    : "Anónimo";
 
-            stopwatch.Stop();
+                var rota = context.Request.Path;
+                var metodo = context.Request.Method;
+                var statusCode = context.Response.StatusCode;
 
-            _logger.LogInformation("⬅️ Response: {statusCode} | Tempo: {ms}ms",
-                context.Response.StatusCode, stopwatch.ElapsedMilliseconds);
+                string descricao = $"Executou uma operação no endpoint {rota}";
+
+                if (statusCode >= 400)
+                {
+                    await auditoriaService.CriarNotificacaoAsync(
+                        titulo: $"Erro detetado ({statusCode})",
+                        mensagem: $"O utilizador {username} falhou ao tentar fazer {metodo} em {rota}.",
+                        tipo: "Error"
+                    );
+                }
+
+                await auditoriaService.RegistarLogAsync(username, metodo, rota, descricao, statusCode);
+            }
         }
     }
 }

@@ -92,6 +92,53 @@
         }
       }
     },
+    "/api/auditoria/logs": {
+      "get": {
+        "tags": [
+          "Auditoria"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/auditoria/notificacoes": {
+      "get": {
+        "tags": [
+          "Auditoria"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/auditoria/notificacoes/{id}/ler": {
+      "put": {
+        "tags": [
+          "Auditoria"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Dashboard": {
       "get": {
         "tags": [
@@ -118,18 +165,6 @@
               "type": "string"
             }
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/logs/teste": {
-      "get": {
-        "tags": [
-          "Logging"
         ],
         "responses": {
           "200": {

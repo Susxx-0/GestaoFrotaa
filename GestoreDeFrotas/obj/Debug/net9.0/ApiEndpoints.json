@@ -58,6 +58,42 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "GestaoDeFrotas.Controllers.AuditoriaController",
+    "Method": "GetLogs",
+    "RelativePath": "api/auditoria/logs",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "GestaoDeFrotas.Controllers.AuditoriaController",
+    "Method": "GetNotificacoes",
+    "RelativePath": "api/auditoria/notificacoes",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "GestaoDeFrotas.Controllers.AuditoriaController",
+    "Method": "MarcarComoLida",
+    "RelativePath": "api/auditoria/notificacoes/{id}/ler",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "Program\u002B\u003C\u003Ec__DisplayClass0_0",
     "Method": "\u003C\u003CMain\u003E$\u003Eb__4",
     "RelativePath": "api/auth/teste-token",
@@ -83,16 +119,6 @@
     "ContainingType": "GestaoDeFrotas.Controllers.DashboardController",
     "Method": "GetEstatisticas",
     "RelativePath": "api/Dashboard",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "GestaoDeFrotas.Controllers.LoggingController",
-    "Method": "TestarLogs",
-    "RelativePath": "api/logs/teste",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,

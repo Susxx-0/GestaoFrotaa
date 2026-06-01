@@ -1,24 +1,47 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using GestaoDeFrotas.Services;
+using Microsoft.AspNetCore.Http;
+using System;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
-namespace GestaoDeFrotas.Services
+namespace GestoreDeFrotas.Middleware
 {
-    public class LoggingService
+    public class LoggingMiddleware
     {
-        private readonly ILogger<LoggingService> _logger;
+        private readonly RequestDelegate _next;
 
-        public LoggingService(ILogger<LoggingService> logger)
+        public LoggingMiddleware(RequestDelegate next)
         {
-            _logger = logger;
+            _next = next;
         }
 
-        public void Info(string mensagem)
+        public async Task InvokeAsync(HttpContext context, AuditoriaService auditoriaService)
         {
-            _logger.LogInformation(mensagem);
-        }
+            await _next(context);
 
-        public void Erro(string mensagem, Exception ex)
-        {
-            _logger.LogError(ex, mensagem);
+            if (context.Request.Method != "GET")
+            {
+                var username = context.User.Identity?.IsAuthenticated == true
+                    ? context.User.FindFirst(ClaimTypes.Name)?.Value
+                    : "Anónimo";
+
+                var rota = context.Request.Path;
+                var metodo = context.Request.Method;
+                var statusCode = context.Response.StatusCode;
+
+                string descricao = $"Executou uma operação no endpoint {rota}";
+
+                if (statusCode >= 400)
+                {
+                    await auditoriaService.CriarNotificacaoAsync(
+                        titulo: $"Erro detetado ({statusCode})",
+                        mensagem: $"O utilizador {username} falhou ao tentar fazer {metodo} em {rota}.",
+                        tipo: "Error"
+                    );
+                }
+
+                await auditoriaService.RegistarLogAsync(username, metodo, rota, descricao, statusCode);
+            }
         }
     }
 }

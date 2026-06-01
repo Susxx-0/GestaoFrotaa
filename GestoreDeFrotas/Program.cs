@@ -1,4 +1,5 @@
 using GestaoDeFrotas.Data;
+using GestaoDeFrotas.Middleware;
 using GestaoDeFrotas.Services;
 using GestoreDeFrotas.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -31,10 +32,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // -----------------------------
 builder.Services.AddScoped<GestaoDeFrotas.Services.VeiculosService>();
 builder.Services.AddScoped<GestaoDeFrotas.Services.ManutencaoService>();
-builder.Services.AddScoped<GestaoDeFrotas.Services.LoggingService>();
-builder.Services.AddScoped <GestaoDeFrotas.Services.AbastecimentosService>();
+builder.Services.AddScoped<GestaoDeFrotas.Services.AbastecimentosService>();
+builder.Services.AddScoped<GestaoDeFrotas.Services.AuditoriaService>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
 
 // -----------------------------
 // 🔹 SWAGGER + TOKEN
@@ -133,7 +135,7 @@ app.UseHttpsRedirection();
 // -----------------------------
 // 🔹 MIDDLEWARE DE LOGGING
 // -----------------------------
-app.UseMiddleware<LoggingMiddleware>();
+app.UseMiddleware<GestaoDeFrotas.Middleware.LoggingMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();

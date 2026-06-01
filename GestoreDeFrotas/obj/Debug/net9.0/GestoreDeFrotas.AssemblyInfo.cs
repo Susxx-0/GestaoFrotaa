@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GestoreDeFrotas")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+abee68aaabc7d71b6456b5c7b2c687212589001c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+85d3e3b63236c8c28ba71b8b31053d5e4e939cf4")]
 [assembly: System.Reflection.AssemblyProductAttribute("GestoreDeFrotas")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GestoreDeFrotas")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

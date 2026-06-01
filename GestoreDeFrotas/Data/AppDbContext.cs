@@ -12,6 +12,9 @@ namespace GestaoDeFrotas.Data
         public DbSet<Veiculo> Veiculos { get; set; }
         public DbSet<RegistoManutencao> RegistosManutencao { get; set; }
 
+        public DbSet<Notificacao> Notificacoes { get; set; }
+        public DbSet<LogSistema> LogsSistema { get; set; }
+
         public DbSet<Abastecimento> Abastecimentos { get; set; }
 
         public static void SeedData(AppDbContext context)
