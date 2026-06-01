@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using GestaoDeFrotas.Data;
+using System;
 using System.Linq;
 
 namespace GestaoDeFrotas.Controllers
@@ -21,6 +22,7 @@ namespace GestaoDeFrotas.Controllers
         public IActionResult GetEstatisticas()
         {
             var totalVeiculos = _context.Veiculos.Count();
+            var hoje = DateTime.Now;
 
             var estatisticas = new
             {
@@ -30,7 +32,11 @@ namespace GestaoDeFrotas.Controllers
                 EmManutencao = _context.Veiculos.Count(v => v.Estado == "Em Manutenção"),
 
                 TotalGastoManutencoes = _context.RegistosManutencao.Sum(m => m.Custo),
-                NumeroTotalManutencoes = _context.RegistosManutencao.Count()
+                NumeroTotalManutencoes = _context.RegistosManutencao.Count(),
+
+                // ---- NOVAS MÉTRICAS DE DOCUMENTAÇÃO ----
+                TotalDocumentos = _context.DocumentosVeiculos.Count(),
+                DocumentosExpirados = _context.DocumentosVeiculos.Count(d => d.DataValidade != null && d.DataValidade < hoje)
             };
 
             return Ok(estatisticas);

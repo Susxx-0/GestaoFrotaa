@@ -11,7 +11,7 @@ namespace GestaoDeFrotas.Data
 
         public DbSet<Veiculo> Veiculos { get; set; }
         public DbSet<RegistoManutencao> RegistosManutencao { get; set; }
-
+        public DbSet<DocumentoVeiculo> DocumentosVeiculos { get; set; }
         public DbSet<Notificacao> Notificacoes { get; set; }
         public DbSet<LogSistema> LogsSistema { get; set; }
 

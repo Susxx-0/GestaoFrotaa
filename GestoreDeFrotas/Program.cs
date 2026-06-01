@@ -4,6 +4,7 @@ using GestaoDeFrotas.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Scalar.AspNetCore;
 using Serilog;
 using System.Security.Claims;
 using System.Text;
@@ -126,7 +127,15 @@ using (var scope = app.Services.CreateScope())
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(); // Mantém o swagger clássico ativo por segurança
+
+    // Configuração limpa e ultra-compatível para o Scalar ler o Swagger
+    app.MapScalarApiReference(options =>
+    {
+        options.WithTitle("Gestão de Frotas API")
+               .WithTheme(ScalarTheme.DeepSpace)
+               .WithOpenApiRoutePattern("/swagger/v1/swagger.json");
+    });
 }
 
 app.UseHttpsRedirection();
@@ -138,6 +147,7 @@ app.UseMiddleware<LoggingMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseStaticFiles();
 
 // -----------------------------
 // 🔹 ENDPOINT PARA TESTAR TOKEN

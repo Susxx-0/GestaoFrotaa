@@ -59,7 +59,7 @@
   },
   {
     "ContainingType": "GestaoDeFrotas.Controllers.AuditoriaController",
-    "Method": "GetLogs",
+    "Method": "ObterLogs",
     "RelativePath": "api/auditoria/logs",
     "HttpMethod": "GET",
     "IsController": true,
@@ -95,7 +95,7 @@
   },
   {
     "ContainingType": "Program\u002B\u003C\u003Ec__DisplayClass0_0",
-    "Method": "\u003C\u003CMain\u003E$\u003Eb__4",
+    "Method": "\u003C\u003CMain\u003E$\u003Eb__5",
     "RelativePath": "api/auth/teste-token",
     "HttpMethod": "POST",
     "IsController": false,
@@ -123,6 +123,95 @@
     "IsController": true,
     "Order": 0,
     "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "GestaoDeFrotas.Controllers.DocumentosController",
+    "Method": "ApagarDocumento",
+    "RelativePath": "api/documentos/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "GestaoDeFrotas.Controllers.DocumentosController",
+    "Method": "DescarregarDocumento",
+    "RelativePath": "api/documentos/{id}/download",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "GestaoDeFrotas.Controllers.DocumentosController",
+    "Method": "ObterDocumentosExpirados",
+    "RelativePath": "api/documentos/expirados",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "GestaoDeFrotas.Controllers.DocumentosController",
+    "Method": "UploadDocumento",
+    "RelativePath": "api/documentos/upload",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "veiculoId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "tipoDocumento",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "dataValidade",
+        "Type": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "ficheiro",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "GestaoDeFrotas.Controllers.DocumentosController",
+    "Method": "ObterDocumentosPorVeiculo",
+    "RelativePath": "api/documentos/veiculo/{veiculoId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "veiculoId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
     "ReturnTypes": []
   },
   {

@@ -1,6 +1,8 @@
-﻿using GestaoDeFrotas.Services;
+﻿using GestaoDeFrotas.Data;
+using GestaoDeFrotas.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
 namespace GestaoDeFrotas.Controllers
@@ -18,10 +20,16 @@ namespace GestaoDeFrotas.Controllers
         }
 
         [HttpGet("logs")]
-        public async Task<IActionResult> GetLogs()
+        public async Task<IActionResult> ObterLogs([FromServices] AppDbContext context)
         {
-            return Ok(await _service.ObterLogsAsync());
+            var logs = await context.LogsSistema
+                .OrderByDescending(l => l.Id) // Ordena pelo ID mais alto (mais recente)
+                .Take(100)
+                .ToListAsync();
+
+            return Ok(logs);
         }
+        
 
         [HttpGet("notificacoes")]
         public async Task<IActionResult> GetNotificacoes()
