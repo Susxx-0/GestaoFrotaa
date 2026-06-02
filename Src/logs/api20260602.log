@@ -1,0 +1,141 @@
+2026-06-02 11:58:30.918 +01:00 [INF] Executed DbCommand (165ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2026-06-02 11:58:31.046 +01:00 [INF] Acquiring an exclusive lock for migration application. See https://aka.ms/efcore-docs-migrations-lock for more information if this takes too long.
+2026-06-02 11:58:31.089 +01:00 [INF] Executed DbCommand (38ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DECLARE @result int;
+EXEC @result = sp_getapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session', @LockMode = 'Exclusive';
+SELECT @result
+2026-06-02 11:58:31.186 +01:00 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+IF OBJECT_ID(N'[__EFMigrationsHistory]') IS NULL
+BEGIN
+    CREATE TABLE [__EFMigrationsHistory] (
+        [MigrationId] nvarchar(150) NOT NULL,
+        [ProductVersion] nvarchar(32) NOT NULL,
+        CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
+    );
+END;
+2026-06-02 11:58:31.205 +01:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2026-06-02 11:58:31.212 +01:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+2026-06-02 11:58:31.231 +01:00 [INF] Executed DbCommand (13ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [MigrationId], [ProductVersion]
+FROM [__EFMigrationsHistory]
+ORDER BY [MigrationId];
+2026-06-02 11:58:31.250 +01:00 [INF] Applying migration '20260601162555_AdicionarMotoristas'.
+2026-06-02 11:58:31.297 +01:00 [INF] Executed DbCommand (13ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE TABLE [Motoristas] (
+    [Id] int NOT NULL IDENTITY,
+    [Nome] nvarchar(100) NOT NULL,
+    [NumeroCarta] nvarchar(20) NOT NULL,
+    [ValidadeCarta] datetime2 NOT NULL,
+    [Telefone] nvarchar(15) NOT NULL,
+    [VeiculoId] int NULL,
+    CONSTRAINT [PK_Motoristas] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_Motoristas_Veiculos_VeiculoId] FOREIGN KEY ([VeiculoId]) REFERENCES [Veiculos] ([Id])
+);
+2026-06-02 11:58:31.305 +01:00 [INF] Executed DbCommand (4ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE INDEX [IX_Motoristas_VeiculoId] ON [Motoristas] ([VeiculoId]);
+2026-06-02 11:58:31.316 +01:00 [INF] Executed DbCommand (6ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20260601162555_AdicionarMotoristas', N'9.0.16');
+2026-06-02 11:58:31.321 +01:00 [INF] Applying migration '20260602105809_AjusteModelo'.
+2026-06-02 11:58:31.354 +01:00 [INF] Executed DbCommand (6ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DROP TABLE [Motoristas];
+2026-06-02 11:58:31.360 +01:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20260602105809_AjusteModelo', N'9.0.16');
+2026-06-02 11:58:31.394 +01:00 [INF] Executed DbCommand (28ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DECLARE @result int;
+EXEC @result = sp_releaseapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session';
+SELECT @result
+2026-06-02 11:59:09.834 +01:00 [INF] Executed DbCommand (39ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2026-06-02 11:59:09.949 +01:00 [INF] Acquiring an exclusive lock for migration application. See https://aka.ms/efcore-docs-migrations-lock for more information if this takes too long.
+2026-06-02 11:59:10.003 +01:00 [INF] Executed DbCommand (47ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DECLARE @result int;
+EXEC @result = sp_getapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session', @LockMode = 'Exclusive';
+SELECT @result
+2026-06-02 11:59:10.199 +01:00 [INF] Executed DbCommand (36ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+IF OBJECT_ID(N'[__EFMigrationsHistory]') IS NULL
+BEGIN
+    CREATE TABLE [__EFMigrationsHistory] (
+        [MigrationId] nvarchar(150) NOT NULL,
+        [ProductVersion] nvarchar(32) NOT NULL,
+        CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
+    );
+END;
+2026-06-02 11:59:10.218 +01:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2026-06-02 11:59:10.223 +01:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+2026-06-02 11:59:10.247 +01:00 [INF] Executed DbCommand (17ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [MigrationId], [ProductVersion]
+FROM [__EFMigrationsHistory]
+ORDER BY [MigrationId];
+2026-06-02 11:59:10.263 +01:00 [INF] No migrations were applied. The database is already up to date.
+2026-06-02 11:59:10.269 +01:00 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DECLARE @result int;
+EXEC @result = sp_releaseapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session';
+SELECT @result
+2026-06-02 11:59:10.730 +01:00 [INF] Executed DbCommand (9ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN EXISTS (
+        SELECT 1
+        FROM [Veiculos] AS [v]) THEN CAST(1 AS bit)
+    ELSE CAST(0 AS bit)
+END
+2026-06-02 11:59:10.746 +01:00 [INF] Executed DbCommand (4ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN EXISTS (
+        SELECT 1
+        FROM [RegistosManutencao] AS [r]) THEN CAST(1 AS bit)
+    ELSE CAST(0 AS bit)
+END
+2026-06-02 11:59:11.169 +01:00 [INF] User profile is available. Using 'C:\Users\harri\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2026-06-02 11:59:12.103 +01:00 [INF] Now listening on: https://localhost:7231
+2026-06-02 11:59:12.105 +01:00 [INF] Now listening on: http://localhost:5256
+2026-06-02 11:59:12.372 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-06-02 11:59:12.374 +01:00 [INF] Hosting environment: Development
+2026-06-02 11:59:12.376 +01:00 [INF] Content root path: C:\Users\harri\OneDrive\Escritorio\Visual Studio\GestoreDeFrotas\Src
+2026-06-02 11:59:20.878 +01:00 [INF] Request starting HTTP/2 GET https://localhost:7231/swagger/index.html - null null
+2026-06-02 11:59:21.053 +01:00 [INF] Request finished HTTP/2 GET https://localhost:7231/swagger/index.html - 200 null text/html;charset=utf-8 189.0351ms
+2026-06-02 11:59:21.274 +01:00 [INF] Request starting HTTP/2 GET https://localhost:7231/swagger/index.js - null null
+2026-06-02 11:59:21.274 +01:00 [INF] Request starting HTTP/2 GET https://localhost:7231/_framework/aspnetcore-browser-refresh.js - null null
+2026-06-02 11:59:21.285 +01:00 [INF] Request finished HTTP/2 GET https://localhost:7231/swagger/index.js - 200 null application/javascript;charset=utf-8 11.4136ms
+2026-06-02 11:59:21.315 +01:00 [INF] Request finished HTTP/2 GET https://localhost:7231/_framework/aspnetcore-browser-refresh.js - 200 14935 application/javascript; charset=utf-8 40.7779ms
+2026-06-02 11:59:24.350 +01:00 [INF] Request starting HTTP/2 GET https://localhost:7231/swagger/v1/swagger.json - null null
+2026-06-02 11:59:24.376 +01:00 [INF] Request finished HTTP/2 GET https://localhost:7231/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 25.5113ms
+2026-06-02 11:59:31.730 +01:00 [INF] Request starting HTTP/2 GET https://localhost:7231/api/Dashboard - null null
+2026-06-02 11:59:31.892 +01:00 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2026-06-02 11:59:31.897 +01:00 [INF] AuthenticationScheme: Bearer was challenged.
+2026-06-02 11:59:31.900 +01:00 [INF] Request finished HTTP/2 GET https://localhost:7231/api/Dashboard - 401 0 null 170.1961ms
+2026-06-02 11:59:42.669 +01:00 [INF] Request starting HTTP/2 GET https://localhost:7231/api/Estatisticas/resumo-geral - null null
+2026-06-02 11:59:42.701 +01:00 [INF] Executing endpoint 'GestoreDeFrotas.Controllers.EstatisticasController.GetResumoGeral (GestoreDeFrotas)'
+2026-06-02 11:59:42.737 +01:00 [INF] Route matched with {action = "GetResumoGeral", controller = "Estatisticas"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetResumoGeral() on controller GestoreDeFrotas.Controllers.EstatisticasController (GestoreDeFrotas).
+2026-06-02 11:59:42.866 +01:00 [INF] Executed DbCommand (46ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Veiculos] AS [v]
+2026-06-02 11:59:42.953 +01:00 [INF] Executed DbCommand (28ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COALESCE(SUM(CAST([r].[Custo] AS float)), 0.0E0)
+FROM [RegistosManutencao] AS [r]
+2026-06-02 11:59:42.975 +01:00 [INF] Executed DbCommand (8ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COALESCE(SUM([a].[CustoTotal]), 0.0E0)
+FROM [Abastecimentos] AS [a]
+2026-06-02 11:59:42.996 +01:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType2`3[[System.Int32, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Double, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[<>f__AnonymousType3`2[[System.Double, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Double, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], GestoreDeFrotas, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-06-02 11:59:43.025 +01:00 [INF] Executed action GestoreDeFrotas.Controllers.EstatisticasController.GetResumoGeral (GestoreDeFrotas) in 277.4444ms
+2026-06-02 11:59:43.029 +01:00 [INF] Executed endpoint 'GestoreDeFrotas.Controllers.EstatisticasController.GetResumoGeral (GestoreDeFrotas)'
+2026-06-02 11:59:43.035 +01:00 [INF] Request finished HTTP/2 GET https://localhost:7231/api/Estatisticas/resumo-geral - 200 null application/json; charset=utf-8 366.1503ms
+2026-06-02 12:03:43.841 +01:00 [INF] Request starting HTTP/2 GET https://localhost:7231/api/logs - null null
+2026-06-02 12:03:43.852 +01:00 [INF] Executing endpoint 'GestaoDeFrotas.Controllers.LogsController.GetLogs (GestoreDeFrotas)'
+2026-06-02 12:03:43.861 +01:00 [INF] Route matched with {action = "GetLogs", controller = "Logs"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetLogs() on controller GestaoDeFrotas.Controllers.LogsController (GestoreDeFrotas).
+2026-06-02 12:03:44.142 +01:00 [INF] Executed DbCommand (115ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(@__p_0) [l].[Id], [l].[Data], [l].[Descricao], [l].[MetodoHttp], [l].[Rota], [l].[StatusCode], [l].[Utilizador]
+FROM [LogsSistema] AS [l]
+ORDER BY [l].[Data] DESC
+2026-06-02 12:03:44.201 +01:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[GestaoDeFrotas.Models.LogSistema, GestoreDeFrotas, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-06-02 12:03:44.215 +01:00 [INF] Executed action GestaoDeFrotas.Controllers.LogsController.GetLogs (GestoreDeFrotas) in 347.9232ms
+2026-06-02 12:03:44.274 +01:00 [INF] Executed endpoint 'GestaoDeFrotas.Controllers.LogsController.GetLogs (GestoreDeFrotas)'
+2026-06-02 12:03:44.275 +01:00 [INF] Request finished HTTP/2 GET https://localhost:7231/api/logs - 200 null application/json; charset=utf-8 460.2073ms
+2026-06-02 12:04:46.695 +01:00 [INF] Application is shutting down...
