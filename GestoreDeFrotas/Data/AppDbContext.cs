@@ -19,7 +19,6 @@ namespace GestaoDeFrotas.Data
 
         public static void SeedData(AppDbContext context)
         {
-            // Se não houver veículos, gera as 32 viaturas fakes
             if (!context.Veiculos.Any())
             {
                 var marcasModelos = new[] { "Renault Clio", "Peugeot 208", "BMW Serie 3", "Tesla Model 3", "Mercedes Classe A", "Ford Fiesta" };
@@ -33,7 +32,6 @@ namespace GestaoDeFrotas.Data
 
                     context.Veiculos.Add(new Veiculo
                     {
-                        // O ID foi removido aqui para o SQL Server gerir sozinho
                         Marca = escolhaCarro[0],
                         Modelo = escolhaCarro.Length > 1 ? string.Join(" ", escolhaCarro.Skip(1)) : "Modelo X",
                         Matricula = $"{(char)rand.Next(65, 91)}{(char)rand.Next(65, 91)}-{rand.Next(10, 99)}-{(char)rand.Next(65, 91)}{(char)rand.Next(65, 91)}", // Ex: AA-12-BB
@@ -45,17 +43,14 @@ namespace GestaoDeFrotas.Data
                 context.SaveChanges();
             }
 
-            // Se não houver registos de mecânica, cria o primeiro
             if (!context.RegistosManutencao.Any())
             {
-                // Vamos buscar o ID do primeiro veículo inserido para garantir que a relação funciona
                 var primeiroVeiculoId = context.Veiculos.Select(v => v.Id).FirstOrDefault();
 
                 if (primeiroVeiculoId != 0)
                 {
                     context.RegistosManutencao.Add(new RegistoManutencao
                     {
-                        // O ID automático também foi removido daqui
                         VeiculoId = primeiroVeiculoId,
                         Data = DateTime.Now.AddDays(-2),
                         Descricao = "Mudança preventiva de óleo e filtros.",
@@ -71,7 +66,6 @@ namespace GestaoDeFrotas.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Configura o campo Custo para decimal com 2 casas decimais no SQL Server
             modelBuilder.Entity<RegistoManutencao>()
                 .Property(m => m.Custo)
                 .HasColumnType("decimal(18,2)");

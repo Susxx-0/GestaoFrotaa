@@ -21,5 +21,9 @@ namespace GestaoDeFrotas.Models
         public decimal Custo { get; set; }
 
         public string RealizadoPor { get; set; } = "Técnico";
+
+        // 🔥 Necessário para manutenção inteligente
+        [Required(ErrorMessage = "O KM da manutenção é obrigatório.")]
+        public int Km { get; set; }
     }
 }

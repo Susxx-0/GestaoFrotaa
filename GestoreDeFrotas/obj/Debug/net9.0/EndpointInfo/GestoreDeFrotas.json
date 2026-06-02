@@ -139,7 +139,55 @@
         }
       }
     },
-    "/api/Dashboard": {
+    "/api/Dashboard/resumo": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Dashboard/combustivel": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Dashboard/utilizacao": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Dashboard/alertas": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Dashboard/manutencao": {
       "get": {
         "tags": [
           "Dashboard"
@@ -359,6 +407,18 @@
         }
       }
     },
+    "/api/maintenance/estado": {
+      "get": {
+        "tags": [
+          "Manutencao"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/vehicles": {
       "get": {
         "tags": [
@@ -555,6 +615,7 @@
         "required": [
           "data",
           "descricao",
+          "km",
           "veiculoId"
         ],
         "type": "object",
@@ -585,6 +646,10 @@
           "realizadoPor": {
             "type": "string",
             "nullable": true
+          },
+          "km": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -629,6 +694,24 @@
           "estado": {
             "minLength": 1,
             "type": "string"
+          },
+          "kmAtual": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "intervaloManutencaoKm": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ultimaManutencaoData": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ultimaManutencaoKm": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false

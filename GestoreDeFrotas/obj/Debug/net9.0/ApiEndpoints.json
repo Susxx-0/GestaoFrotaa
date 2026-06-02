@@ -117,8 +117,48 @@
   },
   {
     "ContainingType": "GestaoDeFrotas.Controllers.DashboardController",
-    "Method": "GetEstatisticas",
-    "RelativePath": "api/Dashboard",
+    "Method": "GetAlertas",
+    "RelativePath": "api/Dashboard/alertas",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "GestaoDeFrotas.Controllers.DashboardController",
+    "Method": "GetCombustivel",
+    "RelativePath": "api/Dashboard/combustivel",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "GestaoDeFrotas.Controllers.DashboardController",
+    "Method": "GetManutencao",
+    "RelativePath": "api/Dashboard/manutencao",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "GestaoDeFrotas.Controllers.DashboardController",
+    "Method": "GetResumo",
+    "RelativePath": "api/Dashboard/resumo",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "GestaoDeFrotas.Controllers.DashboardController",
+    "Method": "GetUtilizacao",
+    "RelativePath": "api/Dashboard/utilizacao",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -248,6 +288,16 @@
         "IsRequired": true
       }
     ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "GestaoDeFrotas.Controllers.ManutencaoController",
+    "Method": "Estado",
+    "RelativePath": "api/maintenance/estado",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
     "ReturnTypes": []
   },
   {

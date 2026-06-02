@@ -11,9 +11,6 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// -----------------------------
-// 🔹 SERILOG
-// -----------------------------
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .WriteTo.File("logs/api.log", rollingInterval: RollingInterval.Day)
@@ -21,26 +18,24 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Host.UseSerilog();
 
-// -----------------------------
-// 🔹 BASE DE DADOS
-// -----------------------------
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=GestaoFrotasDB;Trusted_Connection=True;MultipleActiveResultSets=true"));
 
-// -----------------------------
-// 🔹 SERVICES
-// -----------------------------
 builder.Services.AddScoped<VeiculosService>();
 builder.Services.AddScoped<ManutencaoService>();
 builder.Services.AddScoped<AbastecimentosService>();
 builder.Services.AddScoped<AuditoriaService>();
 
+// 🔹 Serviços de Dashboard
+builder.Services.AddScoped<DashboardService>();              // Resumo geral
+builder.Services.AddScoped<DashboardCombustivelService>();   // Combustível
+builder.Services.AddScoped<DashboardUtilizacaoService>();    // Utilização da frota
+builder.Services.AddScoped<DashboardAlertasService>();       // Alertas
+builder.Services.AddScoped<DashboardManutencaoService>();    // Manutenção inteligente
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-// -----------------------------
-// 🔹 SWAGGER + TOKEN
-// -----------------------------
 builder.Services.AddSwaggerGen(c =>
 {
     c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
@@ -68,9 +63,6 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// -----------------------------
-// 🔹 AUTENTICAÇÃO JWT
-// -----------------------------
 var chaveSecretaGlobal = "CHAVE_SECRETA_CENTRALIZADA_DO_PORTAL_INTERNO_2026";
 
 builder.Services.AddAuthentication(options =>
@@ -111,9 +103,6 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
-// -----------------------------
-// 🔹 MIGRAÇÕES AUTOMÁTICAS
-// -----------------------------    
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -121,15 +110,11 @@ using (var scope = app.Services.CreateScope())
     AppDbContext.SeedData(context);
 }
 
-// -----------------------------
-// 🔹 SWAGGER
-// -----------------------------
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(); // Mantém o swagger clássico ativo por segurança
+    app.UseSwaggerUI();
 
-    // Configuração limpa e ultra-compatível para o Scalar ler o Swagger
     app.MapScalarApiReference(options =>
     {
         options.WithTitle("Gestão de Frotas API")
@@ -140,18 +125,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// -----------------------------
-// 🔹 MIDDLEWARE DE LOGGING
-// -----------------------------
 app.UseMiddleware<LoggingMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseStaticFiles();
 
-// -----------------------------
-// 🔹 ENDPOINT PARA TESTAR TOKEN
-// -----------------------------
 app.MapPost("/api/auth/teste-token", [Microsoft.AspNetCore.Authorization.AllowAnonymous] (string cargo) =>
 {
     var tokenHandler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();

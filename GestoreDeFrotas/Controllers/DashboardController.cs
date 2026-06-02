@@ -1,45 +1,59 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using GestaoDeFrotas.Data;
-using System;
-using System.Linq;
+using GestaoDeFrotas.Services;
 
 namespace GestaoDeFrotas.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize] // Qualquer utilizador autenticado (com token) pode ver o painel
+    [Authorize]
     public class DashboardController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly DashboardService _dashboardService;
 
-        public DashboardController(AppDbContext context)
+        public DashboardController(DashboardService dashboardService)
         {
-            _context = context;
+            _dashboardService = dashboardService;
         }
 
-        [HttpGet]
-        public IActionResult GetEstatisticas()
+        [HttpGet("resumo")]
+        public async Task<IActionResult> GetResumo()
         {
-            var totalVeiculos = _context.Veiculos.Count();
-            var hoje = DateTime.Now;
+            var resumo = await _dashboardService.ObterResumoGeralAsync();
+            return Ok(resumo);
+        }
 
-            var estatisticas = new
-            {
-                TotalVeiculos = totalVeiculos,
-                Disponiveis = _context.Veiculos.Count(v => v.Estado == "Disponível"),
-                Alugados = _context.Veiculos.Count(v => v.Estado == "Alugado"),
-                EmManutencao = _context.Veiculos.Count(v => v.Estado == "Em Manutenção"),
+        [HttpGet("combustivel")]
+        public async Task<IActionResult> GetCombustivel(
+            [FromServices] DashboardCombustivelService combustivelService)
+        {
+            var dados = await combustivelService.ObterEstatisticasAsync();
+            return Ok(dados);
+        }
 
-                TotalGastoManutencoes = _context.RegistosManutencao.Sum(m => m.Custo),
-                NumeroTotalManutencoes = _context.RegistosManutencao.Count(),
+        [HttpGet("utilizacao")]
+        public async Task<IActionResult> GetUtilizacao(
+            [FromServices] DashboardUtilizacaoService utilizacaoService)
+        {
+            var dados = await utilizacaoService.ObterEstatisticasAsync();
+            return Ok(dados);
+        }
 
-                // ---- NOVAS MÉTRICAS DE DOCUMENTAÇÃO ----
-                TotalDocumentos = _context.DocumentosVeiculos.Count(),
-                DocumentosExpirados = _context.DocumentosVeiculos.Count(d => d.DataValidade != null && d.DataValidade < hoje)
-            };
+        [HttpGet("alertas")]
+        public async Task<IActionResult> GetAlertas(
+            [FromServices] DashboardAlertasService alertasService)
+        {
+            var dados = await alertasService.ObterAlertasAsync();
+            return Ok(dados);
+        }
 
-            return Ok(estatisticas);
+        // 🔥 NOVO ENDPOINT — MANUTENÇÃO INTELIGENTE
+        [HttpGet("manutencao")]
+        public async Task<IActionResult> GetManutencao(
+            [FromServices] DashboardManutencaoService manutencaoService)
+        {
+            var dados = await manutencaoService.ObterEstadoManutencoesAsync();
+            return Ok(dados);
         }
     }
 }

@@ -9,7 +9,7 @@ namespace GestaoDeFrotas.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize] // Protegido por Token JWT
+    [Authorize]
     public class AbastecimentosController : ControllerBase
     {
         private readonly AbastecimentosService _service;

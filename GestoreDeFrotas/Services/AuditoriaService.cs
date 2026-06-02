@@ -16,9 +16,7 @@ namespace GestaoDeFrotas.Services
             _context = context;
         }
 
-        // -----------------------------------------
-        // 🔹 REGISTAR LOG
-        // -----------------------------------------
+        
         public async Task RegistarLogAsync(string utilizador, string metodo, string rota, string descricao, int statusCode)
         {
             var log = new LogSistema
@@ -35,9 +33,7 @@ namespace GestaoDeFrotas.Services
             await _context.SaveChangesAsync();
         }
 
-        // -----------------------------------------
-        // 🔹 OBTER LOGS
-        // -----------------------------------------
+      
         public async Task<IEnumerable<LogSistema>> ObterLogsAsync()
         {
             return await _context.LogsSistema
@@ -46,9 +42,7 @@ namespace GestaoDeFrotas.Services
                 .ToListAsync();
         }
 
-        // -----------------------------------------
-        // 🔹 OBTER NOTIFICAÇÕES ATIVAS
-        // -----------------------------------------
+       
         public async Task<IEnumerable<Notificacao>> ObterNotificacoesAtivasAsync()
         {
             return await _context.Notificacoes
@@ -57,9 +51,6 @@ namespace GestaoDeFrotas.Services
                 .ToListAsync();
         }
 
-        // -----------------------------------------
-        // 🔹 MARCAR NOTIFICAÇÃO COMO LIDA
-        // -----------------------------------------
         public async Task MarcarComoLidaAsync(int id)
         {
             var notificacao = await _context.Notificacoes.FindAsync(id);
@@ -71,9 +62,7 @@ namespace GestaoDeFrotas.Services
             }
         }
 
-        // -----------------------------------------
-        // 🔹 CRIAR NOTIFICAÇÃO
-        // -----------------------------------------
+       
         public async Task CriarNotificacaoAsync(string titulo, string mensagem, string tipo)
         {
             var notificacao = new Notificacao

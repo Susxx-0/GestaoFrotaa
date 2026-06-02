@@ -17,7 +17,6 @@ namespace GestaoDeFrotas.Controllers
             _veiculosService = veiculosService;
         }
 
-        // GET COM FILTROS
         [HttpGet]
         [Authorize(Roles = "Admin,Gerente,Tecnico,Visualizador")]
         public async Task<IActionResult> GetAll(

@@ -32,7 +32,6 @@ namespace GestaoDeFrotas.Controllers
             if (ficheiro == null || ficheiro.Length == 0)
                 return BadRequest("Nenhum ficheiro foi enviado.");
 
-            // ---- IDEIA 1: VALIDAÇÃO DE SEGURANÇA (EXTENSÕES) ----
             var extensao = Path.GetExtension(ficheiro.FileName).ToLower();
             var extensoesPermitidas = new[] { ".pdf", ".jpg", ".jpeg", ".png" };
 
@@ -41,38 +40,33 @@ namespace GestaoDeFrotas.Controllers
                 return BadRequest("Apenas são permitidos ficheiros em formato PDF, JPG, JPEG ou PNG por motivos de segurança.");
             }
 
-            // Criar a pasta 'wwwroot/uploads' caso ela não exista
             var pastaUploads = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
             if (!Directory.Exists(pastaUploads))
             {
                 Directory.CreateDirectory(pastaUploads);
             }
 
-            // Gerar um nome único para o ficheiro não ser sobreposto
             var nomeFicheiroUnico = $"{Guid.NewGuid()}_{Path.GetFileName(ficheiro.FileName)}";
             var caminhoCompleto = Path.Combine(pastaUploads, nomeFicheiroUnico);
 
-            // Guardar o ficheiro fisicamente na pasta
             using (var stream = new FileStream(caminhoCompleto, FileMode.Create))
             {
                 await ficheiro.CopyToAsync(stream);
             }
 
-            // Guardar o registo com o link na Base de Dados
             var novoDocumento = new DocumentoVeiculo
             {
                 VeiculoId = veiculoId,
                 TipoDocumento = tipoDocumento,
                 NomeFicheiroOriginal = ficheiro.FileName,
-                CaminhoFicheiro = $"/uploads/{nomeFicheiroUnico}", // Link público do anexo
+                CaminhoFicheiro = $"/uploads/{nomeFicheiroUnico}",
                 DataValidade = dataValidade
             };
 
             _context.DocumentosVeiculos.Add(novoDocumento);
             await _context.SaveChangesAsync();
 
-            // ---- IDEIA 2: ALERTA DE NOTIFICAÇÃO AUTOMÁTICA ----
-            // Se o documento anexado já estiver fora da validade, cria um alerta no sistema
+           
             if (dataValidade.HasValue && dataValidade.Value < DateTime.Now)
             {
                 var auditoriaService = HttpContext.RequestServices.GetService(typeof(GestaoDeFrotas.Services.AuditoriaService)) as GestaoDeFrotas.Services.AuditoriaService;
@@ -120,7 +114,6 @@ namespace GestaoDeFrotas.Controllers
             var documento = await _context.DocumentosVeiculos.FindAsync(id);
             if (documento == null) return NotFound("Documento não encontrado.");
 
-            // Apagar o ficheiro físico da pasta se ele existir
             var caminhoFisico = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", documento.CaminhoFicheiro.TrimStart('/'));
             if (System.IO.File.Exists(caminhoFisico))
             {
@@ -144,7 +137,6 @@ namespace GestaoDeFrotas.Controllers
 
             var bytes = await System.IO.File.ReadAllBytesAsync(caminhoFisico);
 
-            // Devolve o ficheiro real (PDF ou Imagem) para o navegador abrir/fazer download
             return File(bytes, "application/octet-stream", doc.NomeFicheiroOriginal);
         }
     }

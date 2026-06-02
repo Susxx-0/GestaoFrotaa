@@ -12,7 +12,6 @@ namespace GestaoDeFrotas.Controllers
     {
         private readonly ManutencaoService _manutencaoService;
 
-        // O construtor agora recebe o Serviço e não o DbContext
         public ManutencaoController(ManutencaoService manutencaoService)
         {
             _manutencaoService = manutencaoService;
@@ -32,6 +31,15 @@ namespace GestaoDeFrotas.Controllers
         {
             await _manutencaoService.AdicionarAsync(registo);
             return Ok(registo);
+        }
+
+        // 🔥 Endpoint de manutenção inteligente
+        [HttpGet("estado")]
+        [Authorize(Roles = "Admin,Gerente,Tecnico,Visualizador")]
+        public async Task<IActionResult> Estado()
+        {
+            var estado = await _manutencaoService.ObterEstadoManutencaoAsync();
+            return Ok(estado);
         }
     }
 }
