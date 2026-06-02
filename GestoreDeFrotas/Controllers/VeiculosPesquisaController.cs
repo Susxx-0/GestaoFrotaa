@@ -1,30 +1,24 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using GestaoDeFrotas.Data;
 using Microsoft.AspNetCore.Authorization;
-using GestaoDeFrotas.Models;
-using GestaoDeFrotas.Services;
-using GestaoDeFrotas.Data;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace GestaoDeFrotas.Controllers
 {
     [ApiController]
-    [Route("api/vehicles")]
+    [Route("api/veiculos")]
     [Authorize]
-    public class VeiculosController : ControllerBase
+    public class VeiculosPesquisaController : ControllerBase
     {
-        private readonly VeiculosService _veiculosService;
         private readonly AppDbContext _context;
 
-        public VeiculosController(VeiculosService veiculosService, AppDbContext context)
+        public VeiculosPesquisaController(AppDbContext context)
         {
-            _veiculosService = veiculosService;
             _context = context;
         }
 
-        // 🔥 ADVANCED SEARCH (substitui o OG)
-        [HttpGet("advanced-search")]
-        [Authorize(Roles = "Admin,Gerente,Tecnico,Visualizador")]
-        public async Task<IActionResult> AdvancedSearch(
+        [HttpGet("pesquisa")]
+        public async Task<IActionResult> Pesquisar(
             [FromQuery] string? q,
             [FromQuery] string? marca,
             [FromQuery] string? modelo,
@@ -100,7 +94,7 @@ namespace GestaoDeFrotas.Controllers
             });
         }
 
-        private IQueryable<Veiculo> ApplySorting(IQueryable<Veiculo> query, string? sort)
+        private IQueryable<Models.Veiculo> ApplySorting(IQueryable<Models.Veiculo> query, string? sort)
         {
             var sortField = "marca";
             var sortDir = "asc";
@@ -123,25 +117,6 @@ namespace GestaoDeFrotas.Controllers
                 "cor" => desc ? query.OrderByDescending(v => v.Cor) : query.OrderBy(v => v.Cor),
                 _ => desc ? query.OrderByDescending(v => v.Marca) : query.OrderBy(v => v.Marca),
             };
-        }
-
-        // 🔹 Mantém o POST original
-        [HttpPost]
-        [Authorize(Roles = "Admin,Gerente")]
-        public async Task<IActionResult> Create([FromBody] Veiculo veiculo)
-        {
-            await _veiculosService.AdicionarAsync(veiculo);
-            return Ok(veiculo);
-        }
-
-        // 🔹 Mantém o DELETE original
-        [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            var eliminado = await _veiculosService.EliminarAsync(id);
-            if (!eliminado) return NotFound();
-            return NoContent();
         }
     }
 }
