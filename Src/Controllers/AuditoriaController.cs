@@ -23,7 +23,7 @@ namespace GestaoDeFrotas.Controllers
         public async Task<IActionResult> ObterLogs([FromServices] AppDbContext context)
         {
             var logs = await context.LogsSistema
-                .OrderByDescending(l => l.Id) // Ordena pelo ID mais alto (mais recente)
+                .OrderByDescending(l => l.Id) 
                 .Take(100)
                 .ToListAsync();
 

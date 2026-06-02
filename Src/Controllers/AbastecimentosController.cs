@@ -4,19 +4,23 @@ using GestaoDeFrotas.Services;
 using GestaoDeFrotas.Models;
 using System;
 using System.Threading.Tasks;
+using FluentValidation;
+using System.Linq;
 
 namespace GestaoDeFrotas.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize] // Protegido por Token JWT
+    [Authorize]
     public class AbastecimentosController : ControllerBase
     {
         private readonly AbastecimentosService _service;
+        private readonly IValidator<Abastecimento> _validator; // Injeção do validador
 
-        public AbastecimentosController(AbastecimentosService service)
+        public AbastecimentosController(AbastecimentosService service, IValidator<Abastecimento> validator)
         {
             _service = service;
+            _validator = validator;
         }
 
         [HttpGet]
@@ -34,6 +38,15 @@ namespace GestaoDeFrotas.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Abastecimento ab)
         {
+            // Executa a validação do FluentValidation antes de avançar
+            var validationResult = await _validator.ValidateAsync(ab);
+
+            if (!validationResult.IsValid)
+            {
+                // Devolve erro 400 com os detalhes das falhas
+                return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage));
+            }
+
             try
             {
                 var novo = await _service.AdicionarAsync(ab);

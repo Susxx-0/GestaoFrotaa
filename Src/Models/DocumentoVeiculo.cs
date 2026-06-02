@@ -11,15 +11,15 @@ namespace GestaoDeFrotas.Models
         public int VeiculoId { get; set; }
 
         [Required]
-        public string TipoDocumento { get; set; } = string.Empty; // Seguro, IPO, Livrete, etc.
+        public string TipoDocumento { get; set; } = string.Empty;
 
         [Required]
         public string NomeFicheiroOriginal { get; set; } = string.Empty;
 
         [Required]
-        public string CaminhoFicheiro { get; set; } = string.Empty; // Onde fica guardado no PC/Servidor
+        public string CaminhoFicheiro { get; set; } = string.Empty; 
 
-        public DateTime? DataValidade { get; set; } // Data em que o documento caduca
+        public DateTime? DataValidade { get; set; } 
 
         public DateTime DataUpload { get; set; } = DateTime.Now;
     }

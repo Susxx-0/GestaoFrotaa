@@ -10,7 +10,7 @@ namespace GestaoDeFrotas.Models
 
         public string Mensagem { get; set; } = string.Empty;
 
-        public string Tipo { get; set; } = "Info"; // Info, Warning, Error
+        public string Tipo { get; set; } = "Info";
 
         public DateTime Data { get; set; } = DateTime.Now;
 

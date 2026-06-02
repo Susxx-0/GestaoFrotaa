@@ -53,6 +53,10 @@
           "framework": "net9.0",
           "targetAlias": "net9.0",
           "dependencies": {
+            "FluentValidation.AspNetCore": {
+              "target": "Package",
+              "version": "[11.3.1, )"
+            },
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
               "version": "[9.0.12, )"
@@ -84,6 +88,14 @@
               "suppressParent": "All",
               "target": "Package",
               "version": "[9.0.16, )"
+            },
+            "MiniExcel": {
+              "target": "Package",
+              "version": "[1.44.1, )"
+            },
+            "QuestPDF": {
+              "target": "Package",
+              "version": "[2026.5.0, )"
             },
             "Scalar.AspNetCore": {
               "target": "Package",

@@ -2,19 +2,24 @@
 using Microsoft.AspNetCore.Authorization;
 using GestaoDeFrotas.Models;
 using GestaoDeFrotas.Services;
+using FluentValidation;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace GestaoDeFrotas.Controllers
 {
     [ApiController]
     [Route("api/maintenance")]
     [Authorize]
-    public class ManutencaoController : ControllerBase // Isto é obrigatório!
+    public class ManutencaoController : ControllerBase
     {
         private readonly ManutencaoService _manutencaoService;
+        private readonly IValidator<RegistoManutencao> _validator; 
 
-        public ManutencaoController(ManutencaoService manutencaoService)
+        public ManutencaoController(ManutencaoService manutencaoService, IValidator<RegistoManutencao> validator)
         {
             _manutencaoService = manutencaoService;
+            _validator = validator;
         }
 
         [HttpGet]
@@ -29,18 +34,26 @@ namespace GestaoDeFrotas.Controllers
         [Authorize(Roles = "Admin,Gerente,Tecnico")]
         public async Task<IActionResult> Create([FromBody] RegistoManutencao registo)
         {
-            if (registo == null) return BadRequest("Dados inválidos.");
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+          
+            var validationResult = await _validator.ValidateAsync(registo);
 
-            try
+            if (!validationResult.IsValid)
             {
-                await _manutencaoService.AdicionarAsync(registo);
-                return Ok(registo);
+                // Retorna erro 400 com a lista detalhada de falhas
+                return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage));
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+
+            await _manutencaoService.AdicionarAsync(registo);
+            return Ok(registo);
+        }
+
+      
+        [HttpGet("estado")]
+        [Authorize(Roles = "Admin,Gerente,Tecnico,Visualizador")]
+        public async Task<IActionResult> Estado()
+        {
+            var estado = await _manutencaoService.ObterEstadoManutencaoAsync();
+            return Ok(estado);
         }
     }
 }

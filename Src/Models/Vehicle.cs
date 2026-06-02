@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace GestaoDeFrotas.Models
 {
@@ -23,6 +24,14 @@ namespace GestaoDeFrotas.Models
         public int Ano { get; set; }
 
         [Required(ErrorMessage = "O estado do veículo é obrigatório.")]
-        public string Estado { get; set; } = "Disponível"; // Disponível, Alugado, Em Manutenção
+        public string Estado { get; set; } = "Disponível";
+
+        // 🔥 KM ATUAL — NECESSÁRIO para manutenção inteligente e abastecimentos
+        public int KmAtual { get; set; }
+
+        // 🔥 Manutenção Inteligente
+        public int IntervaloManutencaoKm { get; set; } = 20000;
+        public DateTime? UltimaManutencaoData { get; set; }
+        public int? UltimaManutencaoKm { get; set; }
     }
 }

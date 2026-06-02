@@ -13,7 +13,6 @@ namespace GestaoDeFrotas.Services
             _context = context;
         }
 
-        // NOVO: FILTROS DE PESQUISA
         public async Task<IEnumerable<Veiculo>> FiltrarAsync(
             string? marca,
             string? modelo,
@@ -49,7 +48,6 @@ namespace GestaoDeFrotas.Services
             return await query.ToListAsync();
         }
 
-        // MÉTODOS ANTIGOS (mantidos)
         public async Task<IEnumerable<Veiculo>> ObterTodosAsync()
         {
             return await _context.Veiculos.ToListAsync();

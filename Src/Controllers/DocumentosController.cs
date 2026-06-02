@@ -1,8 +1,10 @@
 ﻿using GestaoDeFrotas.Data;
 using GestaoDeFrotas.Models;
+using GestaoDeFrotas.Validators;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using FluentValidation;
 using System;
 using System.IO;
 using System.Linq;
@@ -15,25 +17,28 @@ namespace GestaoDeFrotas.Controllers
     public class DocumentosController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IValidator<DocumentoUploadDto> _validator; // Injeção do validador
 
-        public DocumentosController(AppDbContext context)
+        public DocumentosController(AppDbContext context, IValidator<DocumentoUploadDto> validator)
         {
             _context = context;
+            _validator = validator;
         }
 
         [HttpPost("upload")]
         [Consumes("multipart/form-data")]
-        public async Task<IActionResult> UploadDocumento(
-            [FromForm] int veiculoId,
-            [FromForm] string tipoDocumento,
-            [FromForm] DateTime? dataValidade,
-            IFormFile ficheiro)
+        public async Task<IActionResult> UploadDocumento([FromForm] DocumentoUploadDto dto)
         {
-            if (ficheiro == null || ficheiro.Length == 0)
-                return BadRequest("Nenhum ficheiro foi enviado.");
+            // Executa a validação do FluentValidation
+            var validationResult = await _validator.ValidateAsync(dto);
 
-            // ---- IDEIA 1: VALIDAÇÃO DE SEGURANÇA (EXTENSÕES) ----
-            var extensao = Path.GetExtension(ficheiro.FileName).ToLower();
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage));
+            }
+
+            // Segurança: validação da extensão do ficheiro
+            var extensao = Path.GetExtension(dto.Ficheiro!.FileName).ToLower();
             var extensoesPermitidas = new[] { ".pdf", ".jpg", ".jpeg", ".png" };
 
             if (!extensoesPermitidas.Contains(extensao))
@@ -41,46 +46,40 @@ namespace GestaoDeFrotas.Controllers
                 return BadRequest("Apenas são permitidos ficheiros em formato PDF, JPG, JPEG ou PNG por motivos de segurança.");
             }
 
-            // Criar a pasta 'wwwroot/uploads' caso ela não exista
             var pastaUploads = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
             if (!Directory.Exists(pastaUploads))
             {
                 Directory.CreateDirectory(pastaUploads);
             }
 
-            // Gerar um nome único para o ficheiro não ser sobreposto
-            var nomeFicheiroUnico = $"{Guid.NewGuid()}_{Path.GetFileName(ficheiro.FileName)}";
+            var nomeFicheiroUnico = $"{Guid.NewGuid()}_{Path.GetFileName(dto.Ficheiro.FileName)}";
             var caminhoCompleto = Path.Combine(pastaUploads, nomeFicheiroUnico);
 
-            // Guardar o ficheiro fisicamente na pasta
             using (var stream = new FileStream(caminhoCompleto, FileMode.Create))
             {
-                await ficheiro.CopyToAsync(stream);
+                await dto.Ficheiro.CopyToAsync(stream);
             }
 
-            // Guardar o registo com o link na Base de Dados
             var novoDocumento = new DocumentoVeiculo
             {
-                VeiculoId = veiculoId,
-                TipoDocumento = tipoDocumento,
-                NomeFicheiroOriginal = ficheiro.FileName,
-                CaminhoFicheiro = $"/uploads/{nomeFicheiroUnico}", // Link público do anexo
-                DataValidade = dataValidade
+                VeiculoId = dto.VeiculoId,
+                TipoDocumento = dto.TipoDocumento,
+                NomeFicheiroOriginal = dto.Ficheiro.FileName,
+                CaminhoFicheiro = $"/uploads/{nomeFicheiroUnico}",
+                DataValidade = dto.DataValidade
             };
 
             _context.DocumentosVeiculos.Add(novoDocumento);
             await _context.SaveChangesAsync();
 
-            // ---- IDEIA 2: ALERTA DE NOTIFICAÇÃO AUTOMÁTICA ----
-            // Se o documento anexado já estiver fora da validade, cria um alerta no sistema
-            if (dataValidade.HasValue && dataValidade.Value < DateTime.Now)
+            if (dto.DataValidade.HasValue && dto.DataValidade.Value < DateTime.Now)
             {
                 var auditoriaService = HttpContext.RequestServices.GetService(typeof(GestaoDeFrotas.Services.AuditoriaService)) as GestaoDeFrotas.Services.AuditoriaService;
                 if (auditoriaService != null)
                 {
                     await auditoriaService.CriarNotificacaoAsync(
                         titulo: "Documento Caducado Detetado",
-                        mensagem: $"Foi enviado um documento ({tipoDocumento}) já expirado para o veículo com o ID {veiculoId}.",
+                        mensagem: $"Foi enviado um documento ({dto.TipoDocumento}) já expirado para o veículo com o ID {dto.VeiculoId}.",
                         tipo: "Warning"
                     );
                 }
@@ -120,8 +119,9 @@ namespace GestaoDeFrotas.Controllers
             var documento = await _context.DocumentosVeiculos.FindAsync(id);
             if (documento == null) return NotFound("Documento não encontrado.");
 
-            // Apagar o ficheiro físico da pasta se ele existir
+            // CORRIGIDO: Alterado de 'documento.Caminho' para 'documento.CaminhoFicheiro.TrimStart('/')'
             var caminhoFisico = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", documento.CaminhoFicheiro.TrimStart('/'));
+
             if (System.IO.File.Exists(caminhoFisico))
             {
                 System.IO.File.Delete(caminhoFisico);
@@ -144,7 +144,6 @@ namespace GestaoDeFrotas.Controllers
 
             var bytes = await System.IO.File.ReadAllBytesAsync(caminhoFisico);
 
-            // Devolve o ficheiro real (PDF ou Imagem) para o navegador abrir/fazer download
             return File(bytes, "application/octet-stream", doc.NomeFicheiroOriginal);
         }
     }

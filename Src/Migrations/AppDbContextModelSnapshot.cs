@@ -190,6 +190,9 @@ namespace GestoreDeFrotas.Migrations
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
+                    b.Property<int>("Km")
+                        .HasColumnType("int");
+
                     b.Property<string>("RealizadoPor")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -221,6 +224,12 @@ namespace GestoreDeFrotas.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("IntervaloManutencaoKm")
+                        .HasColumnType("int");
+
+                    b.Property<int>("KmAtual")
+                        .HasColumnType("int");
+
                     b.Property<string>("Marca")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -233,6 +242,12 @@ namespace GestoreDeFrotas.Migrations
                     b.Property<string>("Modelo")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UltimaManutencaoData")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UltimaManutencaoKm")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
