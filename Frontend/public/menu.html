@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Principal</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="box">
+        <h2>Menu Principal</h2>
+
+        <button class="botao" onclick="location.href='/index.html'">Iniciar Sessão</button>
+        <button class="botao botao-verde" onclick="location.href='/register.html'">Criar Conta</button>
+    </div>
+
+    <script>
+    document.querySelectorAll(".botao").forEach(btn => {
+        btn.addEventListener("click", function(e) {
+            let rect = this.getBoundingClientRect();
+            this.style.setProperty("--x", (e.clientX - rect.left) + "px");
+            this.style.setProperty("--y", (e.clientY - rect.top) + "px");
+        });
+    });
+    </script>
+</body>
+</html>

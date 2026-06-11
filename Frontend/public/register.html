@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Registo</title>
+</head>
+<body>
+
+<h2>Registar Conta</h2>
+
+<div id="erro" style="color:red;font-weight:bold;margin-bottom:10px;"></div>
+
+<form id="form-registo">
+    <input type="text" name="nome" placeholder="Nome" required><br><br>
+    <input type="email" name="email" placeholder="Email" required><br><br>
+    <input type="password" name="senha" placeholder="Senha" required><br><br>
+    <button type="submit">Registar</button>
+</form>
+
+<script>
+const form = document.getElementById("form-registo");
+const erroDiv = document.getElementById("erro");
+
+form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    erroDiv.textContent = "";
+
+    const dados = new URLSearchParams(new FormData(form));
+
+    const resp = await fetch("/auth/registo", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: dados
+    });
+
+    const data = await resp.json();
+
+    if (!resp.ok) {
+        erroDiv.textContent = data.error;
+        return;
+    }
+
+    window.location.href = "/verificar.html";
+});
+</script>
+
+</body>
+</html>
