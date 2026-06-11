@@ -31,7 +31,7 @@ builder.Services.AddScoped<VeiculosService>();
 builder.Services.AddScoped<ManutencaoService>();
 builder.Services.AddScoped<AbastecimentosService>();
 builder.Services.AddScoped<AuditoriaService>();
-builder.Services.AddScoped<NotificacaoService>();
+builder.Services.AddScoped<NotificacoesService>();
 builder.Services.AddScoped<IValidator<Abastecimento>, AbastecimentoValidator>();
 builder.Services.AddScoped<IValidator<RegistoManutencao>, RegistoManutencaoValidator>();
 builder.Services.AddScoped<IValidator<DocumentoUploadDto>, DocumentoUploadValidator>();
@@ -168,6 +168,13 @@ app.MapPost("/api/auth/teste-token", [Microsoft.AspNetCore.Authorization.AllowAn
     var token = tokenHandler.CreateToken(tokenDescriptor);
     return Results.Ok(new { token = tokenHandler.WriteToken(token) });
 });
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<GestoreDeFrotas.Data.AppDbContext>();
+    GestoreDeFrotas.Data.DbInitializer.Seed(context);
+}
 
 app.MapControllers();
 

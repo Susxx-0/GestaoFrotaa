@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+
 namespace GestoreDeFrotas.Models
 {
     public class Viagem
@@ -26,5 +27,14 @@ namespace GestoreDeFrotas.Models
         public DateTime DataLimitePrevista { get; set; }
 
         public bool PediuProrrogacao { get; set; } = false;
+
+        // Propriedades de Controlo de Técnicos (Associação de ID Manual via API)
+        public string? TecnicoLevantamentoId { get; set; }
+        public string? TecnicoRecebimentoId { get; set; }
+
+        // Propriedades de Controlo de Quilómetros por percurso
+        [Required]
+        public int KmIniciais { get; set; }
+        public int? KmFinais { get; set; }
     }
 }

@@ -39,11 +39,13 @@ namespace GestoreDeFrotas.Services
         {
             if (veiculo == null) throw new ArgumentNullException(nameof(veiculo));
 
+       
+            veiculo.Id = 0;
+
             _context.Veiculos.Add(veiculo);
             await _context.SaveChangesAsync();
         }
 
-      
         public async Task EliminarAsync(int id)
         {
             var veiculo = await _context.Veiculos.FindAsync(id);

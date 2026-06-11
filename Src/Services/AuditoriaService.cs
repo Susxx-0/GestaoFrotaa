@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 namespace GestoreDeFrotas.Services
 {
     public class AuditoriaService
@@ -16,24 +17,36 @@ namespace GestoreDeFrotas.Services
             _context = context;
         }
 
-        // Registo de Logs do Sistema
         public async Task RegistarLogAsync(string utilizador, string metodo, string rota, string descricao, int statusCode)
         {
+           
+            var utilizadorLimpo = string.IsNullOrWhiteSpace(utilizador) ? "Anónimo" : utilizador;
+            var metodoLimpo = string.IsNullOrWhiteSpace(metodo) ? "UNKNOWN" : (metodo.Length > 10 ? metodo.Substring(0, 10) : metodo);
+            var rotaLimpa = string.IsNullOrWhiteSpace(rota) ? "/" : (rota.Length > 250 ? rota.Substring(0, 250) : rota);
+            var descricaoLimpa = string.IsNullOrWhiteSpace(descricao) ? "Sem descrição" : descricao;
+
             var log = new LogSistema
             {
-                Utilizador = utilizador ?? "Anónimo",
-                MetodoHttp = metodo,
-                Rota = rota,
-                Descricao = descricao,
+                Utilizador = utilizadorLimpo,
+                MetodoHttp = metodoLimpo,
+                Rota = rotaLimpa,
+                Descricao = descricaoLimpa,
                 StatusCode = statusCode,
                 Data = DateTime.Now
             };
 
-            _context.LogsSistema.Add(log);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.LogsSistema.Add(log);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+               
+                System.Diagnostics.Debug.WriteLine($"Falha crítica ao persistir log de auditoria: {ex.Message}");
+            }
         }
 
-        // Obter os últimos 200 logs
         public async Task<IEnumerable<LogSistema>> ObterLogsAsync()
         {
             return await _context.LogsSistema
@@ -42,12 +55,11 @@ namespace GestoreDeFrotas.Services
                 .ToListAsync();
         }
 
-        // CORREGIDO: Ajustado para as propriedades reais do modelo Notificacao
         public async Task<IEnumerable<Notificacao>> ObterNotificacoesAtivasAsync()
         {
             return await _context.Notificacoes
                 .Where(n => !n.Lida)
-                .OrderByDescending(n => n.DataCriacao) // Mudado de .Data para .DataCriacao
+                .OrderByDescending(n => n.DataCriacao)
                 .ToListAsync();
         }
 
@@ -62,14 +74,13 @@ namespace GestoreDeFrotas.Services
             }
         }
 
-        // CORREGIDO: Ajustado para mapear com o novo modelo Notificacao
         public async Task CriarNotificacaoAsync(string mensagem, string destinatarioId, string grau)
         {
             var notificacao = new Notificacao
             {
                 Mensagem = mensagem,
-                DestinatarioId = destinatarioId, // Quem vai receber (Admin, Técnico, ou ID do User)
-                Grau = grau, // "Info", "Aviso", "Critico"
+                DestinatarioId = destinatarioId,
+                Grau = grau,
                 DataCriacao = DateTime.Now,
                 Lida = false
             };

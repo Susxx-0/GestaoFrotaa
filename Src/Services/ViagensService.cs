@@ -10,15 +10,15 @@ namespace GestoreDeFrotas.Services
     public class ViagensService
     {
         private readonly AppDbContext _context;
-        private readonly NotificacaoService _notificacaoService;
+        private readonly NotificacoesService _notificacaoService;
 
-        public ViagensService(AppDbContext context, NotificacaoService notificacaoService)
+        public ViagensService(AppDbContext context, NotificacoesService notificacaoService) 
         {
             _context = context;
             _notificacaoService = notificacaoService;
         }
 
-        // 1. INICIAR VIAGEM
+        // INICIAR VIAGEM
         public async Task<Viagem> IniciarViagemAsync(int veiculoId, string condutorPrincipalId, string? condutorSecundarioId = null)
         {
             var veiculoOcupado = await _context.Viagens
@@ -48,7 +48,7 @@ namespace GestoreDeFrotas.Services
             return novaViagem;
         }
 
-        // 2. FINALIZAR VIAGEM
+        // FINALIZAR VIAGEM
         public async Task FinalizarViagemAsync(int viagemId, string? observacoesEntrega)
         {
             var viagem = await _context.Viagens.FindAsync(viagemId);
@@ -66,16 +66,24 @@ namespace GestoreDeFrotas.Services
             {
                 veiculo.Estado = "Disponível";
 
-                if (!string.IsNullOrWhiteSpace(observacoesEntrega) && !string.IsNullOrWhiteSpace(veiculo.TecnicoResponsavelId))
+                // Se o condutor escreveu alguma nota/barulho ao entregar o veículo
+                if (!string.IsNullOrWhiteSpace(observacoesEntrega))
                 {
-                    string alertaMensagem = $"Anomalia reportada no veículo {veiculo.Matricula}: {observacoesEntrega}";
+                    string alertaMensagem = $"O condutor reportou notas na entrega: {observacoesEntrega}";
 
-                    // CORRIGIDO AQUI: Passamos o veiculo.Id primeiro para preencher os 4 parâmetros esperados!
-                    await _notificacaoService.CriarNotificacaoAsync(
-                        veiculo.Id,
-                        alertaMensagem,
-                        veiculo.TecnicoResponsavelId,
-                        "Aviso"
+                
+                    // 1. Notifica o Técnico Responsável por este carro específico (se houver, senão escala para Admin)
+                    await _notificacaoService.EnviarNotificacaoAsync(
+                        mensagem: alertaMensagem,
+                        grau: "TecnicoResponsavel",
+                        veiculoId: veiculo.Id
+                    );
+
+                    // 2. Notifica também os Administradores de forma geral na plataforma
+                    await _notificacaoService.EnviarNotificacaoAsync(
+                        mensagem: $"Alerta de Manutenção no veículo {veiculo.Matricula}: {observacoesEntrega}",
+                        grau: "Admin",
+                        veiculoId: veiculo.Id
                     );
                 }
             }
@@ -83,7 +91,7 @@ namespace GestoreDeFrotas.Services
             await _context.SaveChangesAsync();
         }
 
-        // 3. SOLICITAR PRORROGAÇÃO
+        // SOLICITAR PRORROGAÇÃO
         public async Task SolicitarMaisTempoAsync(int viagemId, int horasExtras = 2)
         {
             var viagem = await _context.Viagens.FindAsync(viagemId);

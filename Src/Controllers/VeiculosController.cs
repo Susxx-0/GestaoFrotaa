@@ -12,6 +12,7 @@ using QuestPDF.Infrastructure;
 using System;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace GestoreDeFrotas.Controllers
@@ -31,7 +32,6 @@ namespace GestoreDeFrotas.Controllers
             _context = context;
             _validator = validator;
         }
-
 
         [HttpGet("exportar-excel")]
         [Authorize(Roles = "Admin,Gerente,Tecnico,Visualizador")]
@@ -59,7 +59,6 @@ namespace GestoreDeFrotas.Controllers
             return File(memoryStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", nomeFicheiro);
         }
 
-        // 📄 ENDPOINT: Exportar Relatório Geral em PDF
         [HttpGet("exportar-pdf")]
         [Authorize(Roles = "Admin,Gerente,Tecnico,Visualizador")]
         public async Task<IActionResult> ExportarParaPdf()
@@ -135,11 +134,23 @@ namespace GestoreDeFrotas.Controllers
             return File(memoryStream, "application/pdf", nomeFicheiro);
         }
 
-        // 📄 ENDPOINT: Exportar PDF de um Veículo Individual
         [HttpGet("{id}/exportar-pdf")]
-        [Authorize(Roles = "Admin,Gerente,Tecnico,Visualizador")]
+        [Authorize(Roles = "Admin,Gerente,Tecnico,Visualizador,Outros")]
         public async Task<IActionResult> ExportarParaPdfIndividual(int id)
         {
+            if (User.IsInRole("Outros"))
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                var possuiViagemNoVeiculo = await _context.Viagens
+                    .AnyAsync(v => v.VeiculoId == id && (v.CondutorPrincipalId == userId || v.CondutorSecundarioId == userId));
+
+                if (!possuiViagemNoVeiculo)
+                {
+                    return Forbid("Acesso negado. Apenas pode exportar dados de um veiculo que lhe esteja associado.");
+                }
+            }
+
             var veiculo = await _context.Veiculos.FindAsync(id);
 
             if (veiculo == null)
@@ -179,14 +190,14 @@ namespace GestoreDeFrotas.Controllers
                                 colunas.RelativeColumn(1);
                             });
 
-                            tabela.Cell().Padding(5).Text(t => { t.Span("ID do Sistema: ").Bold(); t.Span(veiculo.Id.ToString()); });
-                            tabela.Cell().Padding(5).Text(t => { t.Span("Matrícula: ").Bold(); t.Span(veiculo.Matricula); });
+                            tabela.Cell().Padding(5).Text($"ID do Sistema: {veiculo.Id}");
+                            tabela.Cell().Padding(5).Text($"Matrícula: {veiculo.Matricula}");
 
-                            tabela.Cell().Padding(5).Text(t => { t.Span("Marca: ").Bold(); t.Span(veiculo.Marca); });
-                            tabela.Cell().Padding(5).Text(t => { t.Span("Modelo: ").Bold(); t.Span(veiculo.Modelo); });
+                            tabela.Cell().Padding(5).Text($"Marca: {veiculo.Marca}");
+                            tabela.Cell().Padding(5).Text($"Modelo: {veiculo.Modelo}");
 
-                            tabela.Cell().Padding(5).Text(t => { t.Span("Ano de Fabrico: ").Bold(); t.Span(veiculo.Ano.ToString()); });
-                            tabela.Cell().Padding(5).Text(t => { t.Span("Cor: ").Bold(); t.Span(veiculo.Cor ?? "Não Definida"); });
+                            tabela.Cell().Padding(5).Text($"Ano de Fabrico: {veiculo.Ano}");
+                            tabela.Cell().Padding(5).Text($"Cor: {(veiculo.Cor ?? "Não Definida")}");
                         });
 
                         col.Item().PaddingTop(15);
@@ -218,8 +229,198 @@ namespace GestoreDeFrotas.Controllers
 
             return File(memoryStream, "application/pdf", nomeFicheiro);
         }
+
+        [HttpGet("{id}/historico-excel")]
+        [Authorize(Roles = "Admin,Gerente,Tecnico,Outros")]
+        public async Task<IActionResult> ExportarHistoricoExcel(int id)
+        {
+            if (User.IsInRole("Outros"))
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var possuiViagem = await _context.Viagens.AnyAsync(v => v.VeiculoId == id && (v.CondutorPrincipalId == userId || v.CondutorSecundarioId == userId));
+                if (!possuiViagem) return Forbid("Acesso negado. Apenas pode consultar dados de veículos associados à sua conta.");
+            }
+
+            var veiculo = await _context.Veiculos.FindAsync(id);
+            if (veiculo == null) return NotFound("Veículo não encontrado.");
+
+            var viagens = await _context.Viagens
+                .Where(v => v.VeiculoId == id)
+                .OrderByDescending(v => v.DataInicio)
+                .Select(v => new
+                {
+                    Registo = "Viagem / Condução",
+                    Data_Inicial = v.DataInicio.ToString("dd/MM/yyyy HH:mm"),
+                    Data_Final = v.DataFim.HasValue ? v.DataFim.Value.ToString("dd/MM/yyyy HH:mm") : "Em Curso",
+                    Duracao_Horas = v.DataFim.HasValue ? (v.DataFim.Value - v.DataInicio).TotalHours.ToString("F1") : "N/A",
+                    Condutor = v.CondutorPrincipalId,
+                    Tecnico_Entrega = v.TecnicoLevantamentoId ?? "N/A",
+                    Tecnico_Rececao = v.TecnicoRecebimentoId ?? "N/A",
+                    KM_Iniciais = v.KmIniciais.ToString(),
+                    KM_Finais = v.KmFinais.HasValue ? v.KmFinais.Value.ToString() : "Em Uso",
+                    Detalhes = v.ObservacoesEntrega ?? ""
+                })
+                .ToListAsync();
+
+            var abastecimentos = await _context.Abastecimentos
+                .Where(a => a.VeiculoId == id)
+                .OrderByDescending(a => a.Data)
+                .Select(a => new
+                {
+                    Registo = "Abastecimento",
+                    Data_Inicial = a.Data.ToString("dd/MM/yyyy HH:mm"),
+                    Data_Final = a.Data.ToString("dd/MM/yyyy HH:mm"),
+                    Duracao_Horas = "N/A",
+                    Condutor = "N/A",
+                    Tecnico_Entrega = "N/A",
+                    Tecnico_Rececao = "N/A",
+                    KM_Iniciais = a.KmAtual.ToString(),
+                    KM_Finais = a.KmAtual.ToString(),
+                    Detalhes = $"Posto: {a.Posto} | {a.Litros}L {a.Combustivel} (Total: {a.CustoTotal}€)"
+                })
+                .ToListAsync();
+
+            var historicoCompleto = viagens.Cast<object>().Concat(abastecimentos.Cast<object>()).ToList();
+
+            var memoryStream = new MemoryStream();
+            await memoryStream.SaveAsAsync(historicoCompleto);
+            memoryStream.Position = 0;
+
+            var nomeFicheiro = $"Historico_Veiculo_{veiculo.Matricula}_{DateTime.Now:yyyyMMdd}.xlsx";
+            return File(memoryStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", nomeFicheiro);
+        }
+
+        [HttpGet("{id}/historico-pdf")]
+        [Authorize(Roles = "Admin,Gerente,Tecnico,Outros")]
+        public async Task<IActionResult> ExportarHistoricoPdf(int id)
+        {
+            if (User.IsInRole("Outros"))
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var possuiViagem = await _context.Viagens.AnyAsync(v => v.VeiculoId == id && (v.CondutorPrincipalId == userId || v.CondutorSecundarioId == userId));
+                if (!possuiViagem) return Forbid("Acesso negado.");
+            }
+
+            var veiculo = await _context.Veiculos.FindAsync(id);
+            if (veiculo == null) return NotFound("Veículo não encontrado.");
+
+            var viagens = await _context.Viagens.Where(v => v.VeiculoId == id).OrderByDescending(v => v.DataInicio).ToListAsync();
+            var abastecimentos = await _context.Abastecimentos.Where(a => a.VeiculoId == id).OrderByDescending(a => a.Data).ToListAsync();
+
+            var documento = Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Margin(30);
+                    page.Size(PageSizes.A4.Landscape());
+                    page.DefaultTextStyle(x => x.FontSize(9).FontFamily("Arial"));
+
+                    page.Header().Column(col =>
+                    {
+                        col.Item().Text($"Histórico Unificado do Veículo: {veiculo.Marca} {veiculo.Modelo} [{veiculo.Matricula}]").FontSize(16).Bold().FontColor(Colors.Blue.Darken3);
+                        col.Item().Text($"Gerado em: {DateTime.Now:dd/MM/yyyy HH:mm}").FontSize(9).FontColor(Colors.Grey.Medium);
+
+                        // Correção da Linha Horizontal de forma nativa e válida no QuestPDF
+                        col.Item().BorderBottom(1).BorderColor(Colors.Grey.Lighten1).PaddingBottom(8);
+                    });
+
+                    page.Content().PaddingTop(15).Column(col =>
+                    {
+                        col.Item().Text("1. Registos de Condução e Responsáveis Técnicos").Bold().FontSize(12).FontColor(Colors.Blue.Darken2);
+                        col.Item().PaddingTop(5).Table(tabela =>
+                        {
+                            tabela.ColumnsDefinition(colunas =>
+                            {
+                                colunas.RelativeColumn(2);
+                                colunas.RelativeColumn(2.5f);
+                                colunas.RelativeColumn(2.5f);
+                                colunas.ConstantColumn(50);
+                                colunas.RelativeColumn(1.5f);
+                                colunas.RelativeColumn(1.5f);
+                                colunas.ConstantColumn(50);
+                                colunas.ConstantColumn(50);
+                            });
+
+                            tabela.Header(header =>
+                            {
+                                header.Cell().Background(Colors.Blue.Darken2).Padding(4).Text("Condutor").Bold().FontColor(Colors.White);
+                                header.Cell().Background(Colors.Blue.Darken2).Padding(4).Text("Início").Bold().FontColor(Colors.White);
+                                header.Cell().Background(Colors.Blue.Darken2).Padding(4).Text("Fim").Bold().FontColor(Colors.White);
+                                header.Cell().Background(Colors.Blue.Darken2).Padding(4).Text("Tempo").Bold().FontColor(Colors.White);
+                                header.Cell().Background(Colors.Blue.Darken2).Padding(4).Text("Téc. Leva").Bold().FontColor(Colors.White);
+                                header.Cell().Background(Colors.Blue.Darken2).Padding(4).Text("Téc. Rec").Bold().FontColor(Colors.White);
+                                header.Cell().Background(Colors.Blue.Darken2).Padding(4).Text("KM Ini").Bold().FontColor(Colors.White);
+                                header.Cell().Background(Colors.Blue.Darken2).Padding(4).Text("KM Fim").Bold().FontColor(Colors.White);
+                            });
+
+                            foreach (var v in viagens)
+                            {
+                                var duracao = v.DataFim.HasValue ? $"{(v.DataFim.Value - v.DataInicio).TotalHours:F1}h" : "Ativa";
+                                tabela.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(4).Text(v.CondutorPrincipalId);
+                                tabela.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(4).Text(v.DataInicio.ToString("dd/MM/yyyy HH:mm"));
+                                tabela.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(4).Text(v.DataFim?.ToString("dd/MM/yyyy HH:mm") ?? "Em curso");
+                                tabela.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(4).Text(duracao);
+                                tabela.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(4).Text(v.TecnicoLevantamentoId ?? "N/A");
+                                tabela.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(4).Text(v.TecnicoRecebimentoId ?? "N/A");
+                                tabela.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(4).Text(v.KmIniciais.ToString());
+                                tabela.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(4).Text(v.KmFinais?.ToString() ?? "-");
+                            }
+                        });
+
+                        col.Item().PaddingTop(20);
+
+                        col.Item().Text("2. Histórico de Abastecimentos e Quilometragem do Painel").Bold().FontSize(12).FontColor(Colors.Blue.Darken2);
+                        col.Item().PaddingTop(5).Table(tabela =>
+                        {
+                            tabela.ColumnsDefinition(colunas =>
+                            {
+                                colunas.RelativeColumn(2.5f);
+                                colunas.RelativeColumn(2);
+                                colunas.RelativeColumn(1.5f);
+                                colunas.RelativeColumn(1.5f);
+                                colunas.RelativeColumn(1.5f);
+                                colunas.RelativeColumn(1.5f);
+                                colunas.RelativeColumn(2);
+                            });
+
+                            tabela.Header(header =>
+                            {
+                                header.Cell().Background(Colors.Grey.Darken2).Padding(4).Text("Data / Hora").Bold().FontColor(Colors.White);
+                                header.Cell().Background(Colors.Grey.Darken2).Padding(4).Text("Posto").Bold().FontColor(Colors.White);
+                                header.Cell().Background(Colors.Grey.Darken2).Padding(4).Text("Tipo").Bold().FontColor(Colors.White);
+                                header.Cell().Background(Colors.Grey.Darken2).Padding(4).Text("Litros").Bold().FontColor(Colors.White);
+                                header.Cell().Background(Colors.Grey.Darken2).Padding(4).Text("Preço/L").Bold().FontColor(Colors.White);
+                                header.Cell().Background(Colors.Grey.Darken2).Padding(4).Text("Total").Bold().FontColor(Colors.White);
+                                header.Cell().Background(Colors.Grey.Darken2).Padding(4).Text("KM Atual").Bold().FontColor(Colors.White);
+                            });
+
+                            foreach (var a in abastecimentos)
+                            {
+                                tabela.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(4).Text(a.Data.ToString("dd/MM/yyyy HH:mm"));
+                                tabela.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(4).Text(a.Posto);
+                                tabela.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(4).Text(a.Combustivel);
+                                tabela.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(4).Text($"{a.Litros} L");
+                                tabela.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(4).Text($"{a.PrecoPorLitro:F2}€");
+                                tabela.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(4).Text($"{a.CustoTotal:F2}€");
+                                tabela.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(4).Text($"{a.KmAtual} km");
+                            }
+                        });
+                    });
+
+                    page.Footer().AlignCenter().Text(t => t.Span("Ficha de Histórico Centralizada - Uso Interno"));
+                });
+            });
+
+            var memoryStream = new MemoryStream();
+            documento.GeneratePdf(memoryStream);
+            memoryStream.Position = 0;
+
+            var nomeFicheiro = $"Historico_Veiculo_{veiculo.Matricula}_{DateTime.Now:yyyyMMdd}.pdf";
+            return File(memoryStream, "application/pdf", nomeFicheiro);
+        }
+
         [HttpGet("advanced-search")]
-        [Authorize(Roles = "Admin,Gerente,Tecnico,Visualizador")]
+        [Authorize(Roles = "Admin,Gerente,Tecnico,Visualizador,Outros")]
         public async Task<IActionResult> AdvancedSearch(
             [FromQuery] string? q,
             [FromQuery] string? marca,
@@ -238,6 +439,19 @@ namespace GestoreDeFrotas.Controllers
             if (pageSize > 100) pageSize = 100;
 
             var query = _context.Veiculos.AsQueryable();
+
+            if (User.IsInRole("Outros"))
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                var veiculosAssociadosIds = await _context.Viagens
+                    .Where(v => v.CondutorPrincipalId == userId || v.CondutorSecundarioId == userId)
+                    .Select(v => v.VeiculoId)
+                    .Distinct()
+                    .ToListAsync();
+
+                query = query.Where(v => veiculosAssociadosIds.Contains(v.Id));
+            }
 
             if (!string.IsNullOrWhiteSpace(q))
             {
@@ -271,6 +485,8 @@ namespace GestoreDeFrotas.Controllers
                 query = query.Where(v => v.Ano <= anoMax.Value);
 
             var total = await query.CountAsync();
+
+            // Aplicar a ordenação antes da paginação
             query = ApplySorting(query, sort);
 
             var items = await query
@@ -315,11 +531,12 @@ namespace GestoreDeFrotas.Controllers
             };
         }
 
-        // ➕ ENDPOINT: Criar Veículo
         [HttpPost]
         [Authorize(Roles = "Admin,Gerente")]
         public async Task<IActionResult> Create([FromBody] Veiculo veiculo)
         {
+            veiculo.Id = 0;
+
             var validationResult = await _validator.ValidateAsync(veiculo);
 
             if (!validationResult.IsValid)
@@ -331,7 +548,6 @@ namespace GestoreDeFrotas.Controllers
             return Ok(veiculo);
         }
 
-        // ❌ ENDPOINT: Eliminar Veículo
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
@@ -346,5 +562,5 @@ namespace GestoreDeFrotas.Controllers
                 return NotFound();
             }
         }
-    }
+    } 
 }
