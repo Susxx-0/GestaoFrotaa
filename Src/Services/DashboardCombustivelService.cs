@@ -1,7 +1,7 @@
-﻿using GestaoDeFrotas.Data;
+﻿using GestoreDeFrotas.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace GestaoDeFrotas.Services
+namespace GestoreDeFrotas.Services
 {
     public class DashboardCombustivelService
     {

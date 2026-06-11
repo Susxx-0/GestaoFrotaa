@@ -1,20 +1,20 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using GestaoDeFrotas.Models;
+using GestoreDeFrotas.Models;
 using System;
 using System.Linq;
 
-namespace GestaoDeFrotas.Data
+namespace GestoreDeFrotas.Data
 {
     public class AppDbContext : DbContext
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
-
+        public string Cor { get; set; } = string.Empty;
         public DbSet<Veiculo> Veiculos { get; set; }
         public DbSet<RegistoManutencao> RegistosManutencao { get; set; }
         public DbSet<DocumentoVeiculo> DocumentosVeiculos { get; set; }
         public DbSet<Notificacao> Notificacoes { get; set; }
         public DbSet<LogSistema> LogsSistema { get; set; }
-
+        public DbSet<Viagem> Viagens { get; set; }
         public DbSet<Abastecimento> Abastecimentos { get; set; }
 
         public static void SeedData(AppDbContext context)
@@ -35,7 +35,7 @@ namespace GestaoDeFrotas.Data
                         Marca = escolhaCarro[0],
                         Modelo = escolhaCarro.Length > 1 ? string.Join(" ", escolhaCarro.Skip(1)) : "Modelo X",
                         Matricula = $"{(char)rand.Next(65, 91)}{(char)rand.Next(65, 91)}-{rand.Next(10, 99)}-{(char)rand.Next(65, 91)}{(char)rand.Next(65, 91)}", // Ex: AA-12-BB
-                        Cor = cores[rand.Next(cores.Length)],
+                  
                         Ano = rand.Next(2019, 2026),
                         Estado = listaEstados[rand.Next(listaEstados.Length)]
                     });

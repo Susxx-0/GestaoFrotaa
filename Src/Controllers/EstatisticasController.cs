@@ -11,9 +11,9 @@ namespace GestoreDeFrotas.Controllers
     public class EstatisticasController : ControllerBase
     {
  
-        private readonly GestaoDeFrotas.Data.AppDbContext _context;
+        private readonly GestoreDeFrotas.Data.AppDbContext _context;
 
-        public EstatisticasController(GestaoDeFrotas.Data.AppDbContext context)
+        public EstatisticasController(GestoreDeFrotas.Data.AppDbContext context)
         {
             _context = context;
         }

@@ -1,12 +1,11 @@
-﻿using GestaoDeFrotas.Data;
-using GestaoDeFrotas.Models;
+﻿using GestoreDeFrotas.Data;
+using GestoreDeFrotas.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
-namespace GestaoDeFrotas.Services
+namespace GestoreDeFrotas.Services
 {
     public class AbastecimentosService
     {

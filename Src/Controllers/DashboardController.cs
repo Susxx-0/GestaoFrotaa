@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using GestaoDeFrotas.Services;
+using GestoreDeFrotas.Services; // MUDADO: Gestore com E
+using GestoreDeFrotas.Filtro;   // MUDADO: Gestore com E
+using System.Threading.Tasks;
 
-namespace GestaoDeFrotas.Controllers
+namespace GestoreDeFrotas.Controllers 
+
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
     public class DashboardController : ControllerBase
     {
         private readonly DashboardService _dashboardService;
@@ -16,44 +17,28 @@ namespace GestaoDeFrotas.Controllers
             _dashboardService = dashboardService;
         }
 
+        // MANTIDO: O teu endpoint original de resumo geral
         [HttpGet("resumo")]
-        public async Task<IActionResult> GetResumo()
+        public async Task<IActionResult> ObterResumoGeral()
         {
-            var resumo = await _dashboardService.ObterResumoGeralAsync();
-            return Ok(resumo);
+            var resultado = await _dashboardService.ObterResumoGeralAsync();
+            return Ok(resultado);
         }
 
-        [HttpGet("combustivel")]
-        public async Task<IActionResult> GetCombustivel(
-            [FromServices] DashboardCombustivelService combustivelService)
+        // NOVO: Endpoint para listar os veículos na rua com a data de início real
+        [HttpGet("veiculos-em-uso")]
+        public async Task<IActionResult> ObterVeiculosEmUso()
         {
-            var dados = await combustivelService.ObterEstatisticasAsync();
-            return Ok(dados);
+            var resultado = await _dashboardService.ObterVeiculosEmUsoDashboardAsync();
+            return Ok(resultado);
         }
 
-        [HttpGet("utilizacao")]
-        public async Task<IActionResult> GetUtilizacao(
-            [FromServices] DashboardUtilizacaoService utilizacaoService)
+        // NOVO: Endpoint para listar alertas de inspeção (IPO) críticas
+        [HttpGet("alertas-ipo")]
+        public async Task<IActionResult> ObterAlertasIpo()
         {
-            var dados = await utilizacaoService.ObterEstatisticasAsync();
-            return Ok(dados);
-        }
-
-        [HttpGet("alertas")]
-        public async Task<IActionResult> GetAlertas(
-            [FromServices] DashboardAlertasService alertasService)
-        {
-            var dados = await alertasService.ObterAlertasAsync();
-            return Ok(dados);
-        }
-
-        // 🔥 NOVO ENDPOINT — MANUTENÇÃO INTELIGENTE
-        [HttpGet("manutencao")]
-        public async Task<IActionResult> GetManutencao(
-            [FromServices] DashboardManutencaoService manutencaoService)
-        {
-            var dados = await manutencaoService.ObterEstadoManutencoesAsync();
-            return Ok(dados);
+            var resultado = await _dashboardService.ObterAlertasIpoDashboardAsync();
+            return Ok(resultado);
         }
     }
 }

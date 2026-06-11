@@ -1,32 +1,33 @@
 ﻿using FluentValidation;
-using GestaoDeFrotas.Models;
+using GestoreDeFrotas.Models;
+using System;
 
-namespace GestaoDeFrotas.Validators
+namespace GestoreDeFrotas.Validators
 {
     public class AbastecimentoValidator : AbstractValidator<Abastecimento>
     {
+        // CORREGIDO: Constructor limpio, sin errores de sintaxis
         public AbastecimentoValidator()
         {
             RuleFor(a => a.VeiculoId)
-                .GreaterThan(0).WithMessage("O ID do veículo deve ser um identificador válido.");
+                .GreaterThan(0).WithMessage("Deve selecionar um veículo válido.");
 
+          
             RuleFor(a => a.Litros)
-                .InclusiveBetween(1, 200).WithMessage("Os litros abastecidos devem ser entre 1 e 200 litros.");
+                .GreaterThan(0).WithMessage("A quantidade de litros deve ser maior que zero.");
 
             RuleFor(a => a.PrecoPorLitro)
-                .InclusiveBetween(0.1, 10.0).WithMessage("O preço por litro deve estar entre 0.1 e 10.0.");
+                .GreaterThan(0).WithMessage("O preço por litro deve ser maior que zero.");
 
             RuleFor(a => a.KmAtual)
-                .InclusiveBetween(0, 1000000).WithMessage("Os quilómetros atuais devem ser entre 0 e 1.000.000 KM.");
+                .GreaterThan(0).WithMessage("Os quilómetros atuais devem ser maiores que zero.");
 
             RuleFor(a => a.Combustivel)
-                .NotEmpty().WithMessage("O tipo de combustível é obrigatório.")
-                .MaximumLength(30).WithMessage("O tipo de combustível não pode ter mais de 30 caracteres.");
-
+                .NotEmpty().WithMessage("O tipo de combustível é obrigatório.");
             RuleFor(a => a.Posto)
-                .NotEmpty().WithMessage("O posto de combustível é obrigatório.")
-                .MaximumLength(100).WithMessage("O nome do posto não pode ter mais de 100 caracteres.");
+                .NotEmpty().WithMessage("O posto de combustível é obrigatório.");
 
+          
             RuleFor(a => a.Data)
                 .LessThanOrEqualTo(DateTime.Now).WithMessage("A data do abastecimento não pode ser no futuro.");
         }

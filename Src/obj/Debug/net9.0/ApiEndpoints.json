@@ -1,6 +1,6 @@
 [
   {
-    "ContainingType": "GestaoDeFrotas.Controllers.AbastecimentosController",
+    "ContainingType": "GestoreDeFrotas.Controllers.AbastecimentosController",
     "Method": "GetAll",
     "RelativePath": "api/Abastecimentos",
     "HttpMethod": "GET",
@@ -10,7 +10,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "GestaoDeFrotas.Controllers.AbastecimentosController",
+    "ContainingType": "GestoreDeFrotas.Controllers.AbastecimentosController",
     "Method": "Create",
     "RelativePath": "api/Abastecimentos",
     "HttpMethod": "POST",
@@ -19,14 +19,14 @@
     "Parameters": [
       {
         "Name": "ab",
-        "Type": "GestaoDeFrotas.Models.Abastecimento",
+        "Type": "GestoreDeFrotas.Models.Abastecimento",
         "IsRequired": true
       }
     ],
     "ReturnTypes": []
   },
   {
-    "ContainingType": "GestaoDeFrotas.Controllers.AbastecimentosController",
+    "ContainingType": "GestoreDeFrotas.Controllers.AbastecimentosController",
     "Method": "Delete",
     "RelativePath": "api/Abastecimentos/{id}",
     "HttpMethod": "DELETE",
@@ -42,7 +42,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "GestaoDeFrotas.Controllers.AbastecimentosController",
+    "ContainingType": "GestoreDeFrotas.Controllers.AbastecimentosController",
     "Method": "GetByVeiculo",
     "RelativePath": "api/Abastecimentos/veiculo/{id}",
     "HttpMethod": "GET",
@@ -58,7 +58,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "GestaoDeFrotas.Controllers.AuditoriaController",
+    "ContainingType": "GestoreDeFrotas.Controllers.AuditoriaController",
     "Method": "ObterLogs",
     "RelativePath": "api/auditoria/logs",
     "HttpMethod": "GET",
@@ -68,7 +68,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "GestaoDeFrotas.Controllers.AuditoriaController",
+    "ContainingType": "GestoreDeFrotas.Controllers.AuditoriaController",
     "Method": "GetNotificacoes",
     "RelativePath": "api/auditoria/notificacoes",
     "HttpMethod": "GET",
@@ -78,7 +78,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "GestaoDeFrotas.Controllers.AuditoriaController",
+    "ContainingType": "GestoreDeFrotas.Controllers.AuditoriaController",
     "Method": "MarcarComoLida",
     "RelativePath": "api/auditoria/notificacoes/{id}/ler",
     "HttpMethod": "PUT",
@@ -116,9 +116,9 @@
     ]
   },
   {
-    "ContainingType": "GestaoDeFrotas.Controllers.DashboardController",
-    "Method": "GetAlertas",
-    "RelativePath": "api/Dashboard/alertas",
+    "ContainingType": "GestoreDeFrotas.Controllers.DashboardController",
+    "Method": "ObterAlertasIpo",
+    "RelativePath": "api/Dashboard/alertas-ipo",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -126,28 +126,8 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "GestaoDeFrotas.Controllers.DashboardController",
-    "Method": "GetCombustivel",
-    "RelativePath": "api/Dashboard/combustivel",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "GestaoDeFrotas.Controllers.DashboardController",
-    "Method": "GetManutencao",
-    "RelativePath": "api/Dashboard/manutencao",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "GestaoDeFrotas.Controllers.DashboardController",
-    "Method": "GetResumo",
+    "ContainingType": "GestoreDeFrotas.Controllers.DashboardController",
+    "Method": "ObterResumoGeral",
     "RelativePath": "api/Dashboard/resumo",
     "HttpMethod": "GET",
     "IsController": true,
@@ -156,9 +136,9 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "GestaoDeFrotas.Controllers.DashboardController",
-    "Method": "GetUtilizacao",
-    "RelativePath": "api/Dashboard/utilizacao",
+    "ContainingType": "GestoreDeFrotas.Controllers.DashboardController",
+    "Method": "ObterVeiculosEmUso",
+    "RelativePath": "api/Dashboard/veiculos-em-uso",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -166,7 +146,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "GestaoDeFrotas.Controllers.DocumentosController",
+    "ContainingType": "GestoreDeFrotas.Controllers.DocumentosController",
     "Method": "ApagarDocumento",
     "RelativePath": "api/documentos/{id}",
     "HttpMethod": "DELETE",
@@ -182,7 +162,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "GestaoDeFrotas.Controllers.DocumentosController",
+    "ContainingType": "GestoreDeFrotas.Controllers.DocumentosController",
     "Method": "DescarregarDocumento",
     "RelativePath": "api/documentos/{id}/download",
     "HttpMethod": "GET",
@@ -198,7 +178,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "GestaoDeFrotas.Controllers.DocumentosController",
+    "ContainingType": "GestoreDeFrotas.Controllers.DocumentosController",
     "Method": "ObterDocumentosExpirados",
     "RelativePath": "api/documentos/expirados",
     "HttpMethod": "GET",
@@ -208,7 +188,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "GestaoDeFrotas.Controllers.DocumentosPesquisaController",
+    "ContainingType": "GestoreDeFrotas.Controllers.DocumentosPesquisaController",
     "Method": "Pesquisar",
     "RelativePath": "api/documentos/pesquisa",
     "HttpMethod": "GET",
@@ -264,7 +244,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "GestaoDeFrotas.Controllers.DocumentosController",
+    "ContainingType": "GestoreDeFrotas.Controllers.DocumentosController",
     "Method": "UploadDocumento",
     "RelativePath": "api/documentos/upload",
     "HttpMethod": "POST",
@@ -295,7 +275,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "GestaoDeFrotas.Controllers.DocumentosController",
+    "ContainingType": "GestoreDeFrotas.Controllers.DocumentosController",
     "Method": "ObterDocumentosPorVeiculo",
     "RelativePath": "api/documentos/veiculo/{veiculoId}",
     "HttpMethod": "GET",
@@ -337,7 +317,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "GestaoDeFrotas.Controllers.LogsController",
+    "ContainingType": "GestoreDeFrotas.Controllers.LogsController",
     "Method": "GetLogs",
     "RelativePath": "api/logs",
     "HttpMethod": "GET",
@@ -347,7 +327,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "GestaoDeFrotas.Controllers.LogsPesquisaController",
+    "ContainingType": "GestoreDeFrotas.Controllers.LogsPesquisaController",
     "Method": "Pesquisar",
     "RelativePath": "api/logs/pesquisa",
     "HttpMethod": "GET",
@@ -432,7 +412,7 @@
     "Parameters": [
       {
         "Name": "registo",
-        "Type": "GestaoDeFrotas.Models.RegistoManutencao",
+        "Type": "GestoreDeFrotas.Models.RegistoManutencao",
         "IsRequired": true
       }
     ],
@@ -449,7 +429,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "GestaoDeFrotas.Controllers.VeiculosController",
+    "ContainingType": "GestoreDeFrotas.Controllers.VeiculosController",
     "Method": "Create",
     "RelativePath": "api/vehicles",
     "HttpMethod": "POST",
@@ -458,14 +438,14 @@
     "Parameters": [
       {
         "Name": "veiculo",
-        "Type": "GestaoDeFrotas.Models.Veiculo",
+        "Type": "GestoreDeFrotas.Models.Veiculo",
         "IsRequired": true
       }
     ],
     "ReturnTypes": []
   },
   {
-    "ContainingType": "GestaoDeFrotas.Controllers.VeiculosController",
+    "ContainingType": "GestoreDeFrotas.Controllers.VeiculosController",
     "Method": "Delete",
     "RelativePath": "api/vehicles/{id}",
     "HttpMethod": "DELETE",
@@ -481,7 +461,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "GestaoDeFrotas.Controllers.VeiculosController",
+    "ContainingType": "GestoreDeFrotas.Controllers.VeiculosController",
     "Method": "ExportarParaPdfIndividual",
     "RelativePath": "api/vehicles/{id}/exportar-pdf",
     "HttpMethod": "GET",
@@ -497,7 +477,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "GestaoDeFrotas.Controllers.VeiculosController",
+    "ContainingType": "GestoreDeFrotas.Controllers.VeiculosController",
     "Method": "AdvancedSearch",
     "RelativePath": "api/vehicles/advanced-search",
     "HttpMethod": "GET",
@@ -563,7 +543,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "GestaoDeFrotas.Controllers.VeiculosController",
+    "ContainingType": "GestoreDeFrotas.Controllers.VeiculosController",
     "Method": "ExportarParaExcel",
     "RelativePath": "api/vehicles/exportar-excel",
     "HttpMethod": "GET",
@@ -573,7 +553,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "GestaoDeFrotas.Controllers.VeiculosController",
+    "ContainingType": "GestoreDeFrotas.Controllers.VeiculosController",
     "Method": "ExportarParaPdf",
     "RelativePath": "api/vehicles/exportar-pdf",
     "HttpMethod": "GET",
@@ -583,7 +563,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "GestaoDeFrotas.Controllers.VeiculosPesquisaController",
+    "ContainingType": "GestoreDeFrotas.Controllers.VeiculosPesquisaController",
     "Method": "Pesquisar",
     "RelativePath": "api/veiculos/pesquisa",
     "HttpMethod": "GET",
@@ -646,6 +626,74 @@
         "IsRequired": false
       }
     ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "GestoreDeFrotas.Controllers.ViagensController",
+    "Method": "SolicitarProrrogacao",
+    "RelativePath": "api/Viagens/{id}/prorrogacao",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "horas",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "GestoreDeFrotas.Controllers.ViagensController",
+    "Method": "Finalizar",
+    "RelativePath": "api/Viagens/finalizar/{viagemId}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "viagemId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "observacoes",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "GestoreDeFrotas.Controllers.ViagensController",
+    "Method": "Iniciar",
+    "RelativePath": "api/Viagens/iniciar/{veiculoId}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "veiculoId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "GestoreDeFrotas.Controllers.ViagensController",
+    "Method": "VerificarAtrasos",
+    "RelativePath": "api/Viagens/verificar-atrasos",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
     "ReturnTypes": []
   }
 ]

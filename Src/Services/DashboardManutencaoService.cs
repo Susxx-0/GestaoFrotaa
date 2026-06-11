@@ -1,7 +1,7 @@
-﻿using GestaoDeFrotas.Data;
+﻿using GestoreDeFrotas.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace GestaoDeFrotas.Services
+namespace GestoreDeFrotas.Services
 {
     public class DashboardManutencaoService
     {
@@ -41,7 +41,7 @@ namespace GestaoDeFrotas.Services
                     ? v.KmAtual - v.UltimaManutencaoKm.Value
                     : v.KmAtual;
 
-                double percent = (double)kmDesdeUltima / v.IntervaloManutencaoKm * 100;
+                double percent = (((double)kmDesdeUltima / v.IntervaloManutencaoKm) * 100) ?? 0.0;
 
                 string estado =
                     percent >= 120 ? "Atrasada" :

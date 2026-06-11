@@ -1,6 +1,6 @@
-﻿using GestaoDeFrotas.Data;
-using GestaoDeFrotas.Models;
-using GestaoDeFrotas.Validators;
+﻿using GestoreDeFrotas.Data;
+using GestoreDeFrotas.Models;
+using GestoreDeFrotas.Validators;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace GestaoDeFrotas.Controllers
+namespace GestoreDeFrotas.Controllers
 {
     [ApiController]
     [Route("api/documentos")]
@@ -74,14 +74,17 @@ namespace GestaoDeFrotas.Controllers
 
             if (dto.DataValidade.HasValue && dto.DataValidade.Value < DateTime.Now)
             {
-                var auditoriaService = HttpContext.RequestServices.GetService(typeof(GestaoDeFrotas.Services.AuditoriaService)) as GestaoDeFrotas.Services.AuditoriaService;
+                var auditoriaService = HttpContext.RequestServices.GetService(typeof(GestoreDeFrotas.Services.AuditoriaService)) as GestoreDeFrotas.Services.AuditoriaService;
                 if (auditoriaService != null)
                 {
                     await auditoriaService.CriarNotificacaoAsync(
-                        titulo: "Documento Caducado Detetado",
-                        mensagem: $"Foi enviado um documento ({dto.TipoDocumento}) já expirado para o veículo com o ID {dto.VeiculoId}.",
-                        tipo: "Warning"
-                    );
+   
+                        "Documento Caducado Detetado",
+   
+                        $"Foi enviado um documento ({dto.TipoDocumento}) já expirado para o veículo com o ID {dto.VeiculoId}.",
+    
+                        "Warning"
+);
                 }
             }
 

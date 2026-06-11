@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using GestaoDeFrotas.Services;
-using GestaoDeFrotas.Models;
+using GestoreDeFrotas.Models;
+using GestoreDeFrotas.Services;
 using System;
 using System.Threading.Tasks;
 using FluentValidation;
 using System.Linq;
 
-namespace GestaoDeFrotas.Controllers
+namespace GestoreDeFrotas.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

@@ -1,7 +1,12 @@
-﻿using GestaoDeFrotas.Data;
-using Microsoft.EntityFrameworkCore;
+﻿using GestoreDeFrotas.Data;
 
-namespace GestaoDeFrotas.Services
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace GestoreDeFrotas.Services
 {
     public class DashboardService
     {
@@ -48,6 +53,83 @@ namespace GestaoDeFrotas.Services
             };
 
             return resumo;
+        }
+
+        public async Task<object> ObterVeiculosEmUsoDashboardAsync()
+        {
+            var agora = DateTime.Now;
+
+            var dadosViagens = await _context.Viagens
+                .Where(v => v.EstaAtiva)
+                .Join(_context.Veiculos,
+                    viagem => viagem.VeiculoId,
+                    veiculo => veiculo.Id,
+                    (viagem, veiculo) => new { viagem, veiculo })
+                .OrderBy(x => x.viagem.DataInicio)
+                .Select(x => new
+                {
+                    ViagemId = x.viagem.Id,
+                    VeiculoId = x.viagem.VeiculoId,
+                    Matricula = x.veiculo.Matricula,
+                    ModeloInfo = x.veiculo.Marca + " " + x.veiculo.Modelo,
+                    CondutorPrincipal = x.viagem.CondutorPrincipalId,
+                    CondutorSecundario = x.viagem.CondutorSecundarioId,
+                    DataInicioReal = x.viagem.DataInicio,
+                    DataPrazoPrevisto = x.viagem.DataLimitePrevista,
+                    PediuProrrogacao = x.viagem.PediuProrrogacao
+                })
+                .AsNoTracking()
+                .ToListAsync();
+
+            var resultadoFinal = dadosViagens.Select(v => new
+            {
+                v.ViagemId,
+                v.VeiculoId,
+                v.Matricula,
+                v.ModeloInfo,
+                v.CondutorPrincipal,
+                v.CondutorSecundario,
+                v.DataInicioReal,
+                v.DataPrazoPrevisto,
+                TempoUsoHoras = (agora - v.DataInicioReal).TotalHours,
+                ExcedeuTempoLimite = agora > v.DataPrazoPrevisto,
+                v.PediuProrrogacao
+            }).ToList();
+
+            return resultadoFinal;
+        }
+
+        public async Task<object> ObterAlertasIpoDashboardAsync()
+        {
+            var hoje = DateTime.Now.Date;
+            var dataLimiteAlerta = hoje.AddDays(30);
+
+            var veiculosComIpo = await _context.Veiculos
+                .Where(v => v.EstaAtivo && v.DataProximaIpo != null && v.DataProximaIpo <= dataLimiteAlerta)
+                .OrderBy(v => v.DataProximaIpo)
+                .Select(v => new
+                {
+                    VeiculoId = v.Id,
+                    v.Matricula,
+                    DescricaoVeiculo = v.Marca + " " + v.Modelo,
+                    v.Estado,
+                    DataLimiteIpo = v.DataProximaIpo
+                })
+                .AsNoTracking()
+                .ToListAsync();
+
+            var resultadoFinal = veiculosComIpo.Select(v => new
+            {
+                v.VeiculoId,
+                v.Matricula,
+                v.DescricaoVeiculo,
+                v.Estado,
+                v.DataLimiteIpo,
+                DiasRestantes = v.DataLimiteIpo.HasValue ? (v.DataLimiteIpo.Value.Date - hoje).Days : 0,
+                AlertaStatus = v.DataLimiteIpo.HasValue && v.DataLimiteIpo.Value.Date < hoje ? "IPO EXPIRADA" : "CRÍTICO (Menos de 30 dias)"
+            }).ToList();
+
+            return resultadoFinal;
         }
     }
 }

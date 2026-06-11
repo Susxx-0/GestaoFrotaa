@@ -1,11 +1,11 @@
-﻿using GestaoDeFrotas.Data;
-using GestaoDeFrotas.Services;
+﻿using GestoreDeFrotas.Data;
+using GestoreDeFrotas.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
-namespace GestaoDeFrotas.Controllers
+namespace GestoreDeFrotas.Controllers
 {
     [ApiController]
     [Route("api/auditoria")]

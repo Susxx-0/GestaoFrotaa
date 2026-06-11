@@ -151,7 +151,7 @@
         }
       }
     },
-    "/api/Dashboard/combustivel": {
+    "/api/Dashboard/veiculos-em-uso": {
       "get": {
         "tags": [
           "Dashboard"
@@ -163,31 +163,7 @@
         }
       }
     },
-    "/api/Dashboard/utilizacao": {
-      "get": {
-        "tags": [
-          "Dashboard"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Dashboard/alertas": {
-      "get": {
-        "tags": [
-          "Dashboard"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Dashboard/manutencao": {
+    "/api/Dashboard/alertas-ipo": {
       "get": {
         "tags": [
           "Dashboard"
@@ -935,6 +911,115 @@
           }
         }
       }
+    },
+    "/api/Viagens/iniciar/{veiculoId}": {
+      "post": {
+        "tags": [
+          "Viagens"
+        ],
+        "parameters": [
+          {
+            "name": "veiculoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Viagens/finalizar/{viagemId}": {
+      "post": {
+        "tags": [
+          "Viagens"
+        ],
+        "parameters": [
+          {
+            "name": "viagemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "string"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Viagens/{id}/prorrogacao": {
+      "post": {
+        "tags": [
+          "Viagens"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "horas",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 2
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Viagens/verificar-atrasos": {
+      "post": {
+        "tags": [
+          "Viagens"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1056,20 +1141,27 @@
       },
       "Veiculo": {
         "required": [
-          "estado",
           "marca",
           "matricula",
           "modelo"
         ],
         "type": "object",
         "properties": {
+          "cor": {
+            "type": "string",
+            "nullable": true
+          },
+          "ultimaManutencaoData": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
           "id": {
             "type": "integer",
             "format": "int32"
           },
           "marca": {
-            "maxLength": 50,
-            "minLength": 0,
+            "minLength": 1,
             "type": "string"
           },
           "modelo": {
@@ -1078,39 +1170,48 @@
           },
           "matricula": {
             "minLength": 1,
-            "pattern": "^[A-Z0-9]{2}-[A-Z0-9]{2}-[A-Z0-9]{2}$",
             "type": "string"
           },
-          "cor": {
-            "type": "string",
-            "nullable": true
-          },
           "ano": {
-            "maximum": 2027,
-            "minimum": 1970,
             "type": "integer",
             "format": "int32"
           },
           "estado": {
-            "minLength": 1,
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "kmAtual": {
             "type": "integer",
             "format": "int32"
           },
-          "intervaloManutencaoKm": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "ultimaManutencaoData": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
           "ultimaManutencaoKm": {
             "type": "integer",
             "format": "int32",
+            "nullable": true
+          },
+          "intervaloManutencaoKm": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "estaAtivo": {
+            "type": "boolean"
+          },
+          "tecnicoResponsavelId": {
+            "type": "string",
+            "nullable": true
+          },
+          "condutorHabitualId": {
+            "type": "string",
+            "nullable": true
+          },
+          "categoriaUsuario": {
+            "type": "string",
+            "nullable": true
+          },
+          "dataProximaIpo": {
+            "type": "string",
+            "format": "date-time",
             "nullable": true
           }
         },

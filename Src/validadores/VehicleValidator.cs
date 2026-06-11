@@ -1,10 +1,12 @@
 ﻿using FluentValidation;
-using GestaoDeFrotas.Models;
+using GestoreDeFrotas.Models;
+using System;
 
-namespace GestoreDeFrotas.validadores
+namespace GestoreDeFrotas.Validators
 {
     public class VeiculoValidator : AbstractValidator<Veiculo>
     {
+        // CORREGIDO: Ahora es un constructor limpio, sin la palabra "class"
         public VeiculoValidator()
         {
             RuleFor(v => v.Marca)
@@ -15,16 +17,21 @@ namespace GestoreDeFrotas.validadores
                 .NotEmpty().WithMessage("O modelo do veículo é obrigatório.")
                 .MaximumLength(50).WithMessage("O modelo não pode ter mais de 50 caracteres.");
 
+            // REMOVIDA A RESTRIÇÃO ESTRITA DE FORMATO (REGEX)
             RuleFor(v => v.Matricula)
                 .NotEmpty().WithMessage("A matrícula é obrigatória.")
-                .Matches(@"^[A-Z0-9-]{6,8}$").WithMessage("Formato de matrícula inválido (Ex: AA-00-AA ou 00-AA-00).");
+                .MinimumLength(4).WithMessage("A matrícula deve ter pelo menos 4 caracteres.")
+                .MaximumLength(15).WithMessage("A matrícula não pode ter mais de 15 caracteres.");
 
             RuleFor(v => v.Ano)
-                .InclusiveBetween(1900, DateTime.Now.Year)
-                .WithMessage($"O ano do veículo deve ser entre 1900 e {DateTime.Now.Year}.");
+                .InclusiveBetween(1900, DateTime.Now.Year).WithMessage($"O ano do veículo deve ser entre 1900 e {DateTime.Now.Year}.");
 
             RuleFor(v => v.Estado)
                 .NotEmpty().WithMessage("O estado do veículo é obrigatório.");
+
+            RuleFor(v => v.CategoriaUsuario)
+                .NotEmpty().WithMessage("A categoria de utilizador é obrigatória.")
+                .Must(c => c == "Empresa" || c == "Outros").WithMessage("A categoria deve ser 'Empresa' ou 'Outros'.");
         }
     }
 }

@@ -1,0 +1,155 @@
+2026-06-09 18:07:34.816 +01:00 [INF] Executed DbCommand (26ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2026-06-09 18:07:34.909 +01:00 [INF] Acquiring an exclusive lock for migration application. See https://aka.ms/efcore-docs-migrations-lock for more information if this takes too long.
+2026-06-09 18:07:34.967 +01:00 [INF] Executed DbCommand (54ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DECLARE @result int;
+EXEC @result = sp_getapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session', @LockMode = 'Exclusive';
+SELECT @result
+2026-06-09 18:07:35.037 +01:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+IF OBJECT_ID(N'[__EFMigrationsHistory]') IS NULL
+BEGIN
+    CREATE TABLE [__EFMigrationsHistory] (
+        [MigrationId] nvarchar(150) NOT NULL,
+        [ProductVersion] nvarchar(32) NOT NULL,
+        CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
+    );
+END;
+2026-06-09 18:07:35.054 +01:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2026-06-09 18:07:35.059 +01:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+2026-06-09 18:07:35.083 +01:00 [INF] Executed DbCommand (17ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [MigrationId], [ProductVersion]
+FROM [__EFMigrationsHistory]
+ORDER BY [MigrationId];
+2026-06-09 18:07:35.100 +01:00 [INF] Applying migration '20260609170658_AtualizacaoDashboardEDocumentos'.
+2026-06-09 18:07:35.838 +01:00 [INF] Executed DbCommand (702ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+EXEC sp_rename N'[Notificacoes].[Titulo]', N'Grau', 'COLUMN';
+2026-06-09 18:07:35.845 +01:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+EXEC sp_rename N'[Notificacoes].[Tipo]', N'DestinatarioId', 'COLUMN';
+2026-06-09 18:07:35.853 +01:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+EXEC sp_rename N'[Notificacoes].[Data]', N'DataCriacao', 'COLUMN';
+2026-06-09 18:07:35.904 +01:00 [INF] Executed DbCommand (47ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DECLARE @var sysname;
+SELECT @var = [d].[name]
+FROM [sys].[default_constraints] [d]
+INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
+WHERE ([d].[parent_object_id] = OBJECT_ID(N'[Veiculos]') AND [c].[name] = N'Marca');
+IF @var IS NOT NULL EXEC(N'ALTER TABLE [Veiculos] DROP CONSTRAINT [' + @var + '];');
+ALTER TABLE [Veiculos] ALTER COLUMN [Marca] nvarchar(max) NOT NULL;
+2026-06-09 18:07:35.949 +01:00 [INF] Executed DbCommand (41ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DECLARE @var1 sysname;
+SELECT @var1 = [d].[name]
+FROM [sys].[default_constraints] [d]
+INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
+WHERE ([d].[parent_object_id] = OBJECT_ID(N'[Veiculos]') AND [c].[name] = N'IntervaloManutencaoKm');
+IF @var1 IS NOT NULL EXEC(N'ALTER TABLE [Veiculos] DROP CONSTRAINT [' + @var1 + '];');
+ALTER TABLE [Veiculos] ALTER COLUMN [IntervaloManutencaoKm] int NULL;
+2026-06-09 18:07:35.960 +01:00 [INF] Executed DbCommand (4ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+ALTER TABLE [Veiculos] ADD [CategoriaUsuario] nvarchar(max) NOT NULL DEFAULT N'';
+2026-06-09 18:07:35.967 +01:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+ALTER TABLE [Veiculos] ADD [CondutorHabitualId] nvarchar(max) NULL;
+2026-06-09 18:07:35.973 +01:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+ALTER TABLE [Veiculos] ADD [DataProximaIpo] datetime2 NULL;
+2026-06-09 18:07:35.981 +01:00 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+ALTER TABLE [Veiculos] ADD [EstaAtivo] bit NOT NULL DEFAULT CAST(0 AS bit);
+2026-06-09 18:07:35.987 +01:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+ALTER TABLE [Veiculos] ADD [TecnicoResponsavelId] nvarchar(max) NULL;
+2026-06-09 18:07:35.995 +01:00 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+ALTER TABLE [Notificacoes] ADD [VeiculoId] int NULL;
+2026-06-09 18:07:36.005 +01:00 [INF] Executed DbCommand (6ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE TABLE [Viagens] (
+    [Id] int NOT NULL IDENTITY,
+    [VeiculoId] int NOT NULL,
+    [CondutorPrincipalId] nvarchar(max) NOT NULL,
+    [CondutorSecundarioId] nvarchar(max) NULL,
+    [DataInicio] datetime2 NOT NULL,
+    [DataFim] datetime2 NULL,
+    [ObservacoesEntrega] nvarchar(max) NULL,
+    [EstaAtiva] bit NOT NULL,
+    [DataLimitePrevista] datetime2 NOT NULL,
+    [PediuProrrogacao] bit NOT NULL,
+    CONSTRAINT [PK_Viagens] PRIMARY KEY ([Id])
+);
+2026-06-09 18:07:36.012 +01:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20260609170658_AtualizacaoDashboardEDocumentos', N'9.0.16');
+2026-06-09 18:07:36.023 +01:00 [INF] Executed DbCommand (5ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DECLARE @result int;
+EXEC @result = sp_releaseapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session';
+SELECT @result
+2026-06-09 18:08:49.822 +01:00 [INF] Executed DbCommand (22ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2026-06-09 18:08:49.907 +01:00 [INF] Acquiring an exclusive lock for migration application. See https://aka.ms/efcore-docs-migrations-lock for more information if this takes too long.
+2026-06-09 18:08:49.935 +01:00 [INF] Executed DbCommand (23ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DECLARE @result int;
+EXEC @result = sp_getapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session', @LockMode = 'Exclusive';
+SELECT @result
+2026-06-09 18:08:50.038 +01:00 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+IF OBJECT_ID(N'[__EFMigrationsHistory]') IS NULL
+BEGIN
+    CREATE TABLE [__EFMigrationsHistory] (
+        [MigrationId] nvarchar(150) NOT NULL,
+        [ProductVersion] nvarchar(32) NOT NULL,
+        CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
+    );
+END;
+2026-06-09 18:08:50.054 +01:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2026-06-09 18:08:50.058 +01:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+2026-06-09 18:08:50.076 +01:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [MigrationId], [ProductVersion]
+FROM [__EFMigrationsHistory]
+ORDER BY [MigrationId];
+2026-06-09 18:08:50.088 +01:00 [INF] No migrations were applied. The database is already up to date.
+2026-06-09 18:08:50.093 +01:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DECLARE @result int;
+EXEC @result = sp_releaseapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session';
+SELECT @result
+2026-06-09 18:08:50.412 +01:00 [INF] Executed DbCommand (9ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN EXISTS (
+        SELECT 1
+        FROM [Veiculos] AS [v]) THEN CAST(1 AS bit)
+    ELSE CAST(0 AS bit)
+END
+2026-06-09 18:08:50.425 +01:00 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN EXISTS (
+        SELECT 1
+        FROM [RegistosManutencao] AS [r]) THEN CAST(1 AS bit)
+    ELSE CAST(0 AS bit)
+END
+2026-06-09 18:08:50.745 +01:00 [INF] User profile is available. Using 'C:\Users\harri\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2026-06-09 18:08:51.498 +01:00 [INF] Now listening on: https://localhost:7231
+2026-06-09 18:08:51.499 +01:00 [INF] Now listening on: http://localhost:5256
+2026-06-09 18:08:51.597 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-06-09 18:08:51.601 +01:00 [INF] Hosting environment: Development
+2026-06-09 18:08:51.603 +01:00 [INF] Content root path: C:\Users\harri\OneDrive\Escritorio\Visual Studio\GestoreDeFrotas\Src
+2026-06-09 18:09:00.847 +01:00 [INF] Request starting HTTP/2 GET https://localhost:7231/swagger/index.html - null null
+2026-06-09 18:09:01.314 +01:00 [INF] Request finished HTTP/2 GET https://localhost:7231/swagger/index.html - 200 null text/html;charset=utf-8 486.4595ms
+2026-06-09 18:09:01.359 +01:00 [INF] Request starting HTTP/2 GET https://localhost:7231/swagger/swagger-ui.css - null null
+2026-06-09 18:09:01.359 +01:00 [INF] Request starting HTTP/2 GET https://localhost:7231/swagger/index.css - null null
+2026-06-09 18:09:01.359 +01:00 [INF] Request starting HTTP/2 GET https://localhost:7231/swagger/swagger-ui-bundle.js - null null
+2026-06-09 18:09:01.359 +01:00 [INF] Request starting HTTP/2 GET https://localhost:7231/swagger/swagger-ui-standalone-preset.js - null null
+2026-06-09 18:09:01.389 +01:00 [INF] Sending file. Request path: '/index.css'. Physical path: 'N/A'
+2026-06-09 18:09:01.392 +01:00 [INF] Request finished HTTP/2 GET https://localhost:7231/swagger/index.css - 200 202 text/css 32.9874ms
+2026-06-09 18:09:01.399 +01:00 [INF] Request starting HTTP/2 GET https://localhost:7231/swagger/index.js - null null
+2026-06-09 18:09:01.399 +01:00 [INF] Request starting HTTP/2 GET https://localhost:7231/_framework/aspnetcore-browser-refresh.js - null null
+2026-06-09 18:09:01.405 +01:00 [INF] Request finished HTTP/2 GET https://localhost:7231/swagger/index.js - 200 null application/javascript;charset=utf-8 5.6849ms
+2026-06-09 18:09:01.407 +01:00 [INF] Request starting HTTP/2 GET https://localhost:7231/_vs/browserLink - null null
+2026-06-09 18:09:01.420 +01:00 [INF] Request finished HTTP/2 GET https://localhost:7231/_framework/aspnetcore-browser-refresh.js - 200 14935 application/javascript; charset=utf-8 20.5234ms
+2026-06-09 18:09:01.431 +01:00 [INF] Sending file. Request path: '/swagger-ui-standalone-preset.js'. Physical path: 'N/A'
+2026-06-09 18:09:01.433 +01:00 [INF] Sending file. Request path: '/swagger-ui.css'. Physical path: 'N/A'
+2026-06-09 18:09:01.445 +01:00 [INF] Request finished HTTP/2 GET https://localhost:7231/swagger/swagger-ui-standalone-preset.js - 200 230007 text/javascript 85.5293ms
+2026-06-09 18:09:01.459 +01:00 [INF] Request finished HTTP/2 GET https://localhost:7231/swagger/swagger-ui.css - 200 152035 text/css 100.1182ms
+2026-06-09 18:09:01.471 +01:00 [INF] Sending file. Request path: '/swagger-ui-bundle.js'. Physical path: 'N/A'
+2026-06-09 18:09:01.490 +01:00 [INF] Request finished HTTP/2 GET https://localhost:7231/swagger/swagger-ui-bundle.js - 200 1426050 text/javascript 131.2081ms
+2026-06-09 18:09:01.667 +01:00 [INF] Request finished HTTP/2 GET https://localhost:7231/_vs/browserLink - 200 null text/javascript; charset=UTF-8 260.0982ms
+2026-06-09 18:09:03.982 +01:00 [INF] Request starting HTTP/2 GET https://localhost:7231/swagger/v1/swagger.json - null null
+2026-06-09 18:09:04.018 +01:00 [INF] Request finished HTTP/2 GET https://localhost:7231/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 37.0084ms
+2026-06-09 18:09:04.019 +01:00 [INF] Request starting HTTP/2 GET https://localhost:7231/swagger/favicon-32x32.png - null null
+2026-06-09 18:09:04.028 +01:00 [INF] Sending file. Request path: '/favicon-32x32.png'. Physical path: 'N/A'
+2026-06-09 18:09:04.030 +01:00 [INF] Request finished HTTP/2 GET https://localhost:7231/swagger/favicon-32x32.png - 200 628 image/png 11.0321ms
+2026-06-09 18:15:59.703 +01:00 [INF] Application is shutting down...

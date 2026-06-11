@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using System;
 
-namespace GestaoDeFrotas.Validators
+namespace GestoreDeFrotas.Validators
 {
     // Classe auxiliar para mapear os dados do formulário
     public class DocumentoUploadDto

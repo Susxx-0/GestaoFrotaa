@@ -1,37 +1,46 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace GestaoDeFrotas.Models
+namespace GestoreDeFrotas.Models
+
 {
+
     public class Veiculo
     {
+
+ 
+        public string Cor { get; set; } = "Não Especificada";
+        public DateTime? UltimaManutencaoData { get; set; }
+
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "A marca é obrigatória.")]
-        [StringLength(50, ErrorMessage = "A marca não pode ter mais de 50 caracteres.")]
+        [Required]
         public string Marca { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "O modelo é obrigatório.")]
+        [Required]
         public string Modelo { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "A matrícula é obrigatória.")]
-        [RegularExpression(@"^[A-Z0-9]{2}-[A-Z0-9]{2}-[A-Z0-9]{2}$", ErrorMessage = "A matrícula deve seguir o formato XX-XX-XX.")]
+        [Required]
         public string Matricula { get; set; } = string.Empty;
 
-        public string Cor { get; set; } = "Não Especificada";
-
-        [Range(1970, 2027, ErrorMessage = "O ano do veículo deve ser entre 1970 e 2027.")]
         public int Ano { get; set; }
 
-        [Required(ErrorMessage = "O estado do veículo é obrigatório.")]
         public string Estado { get; set; } = "Disponível";
 
-        // 🔥 KM ATUAL — NECESSÁRIO para manutenção inteligente e abastecimentos
-        public int KmAtual { get; set; }
+        public int KmAtual { get; set; } = 0;
 
-        // 🔥 Manutenção Inteligente
-        public int IntervaloManutencaoKm { get; set; } = 20000;
-        public DateTime? UltimaManutencaoData { get; set; }
         public int? UltimaManutencaoKm { get; set; }
+
+        public int? IntervaloManutencaoKm { get; set; } = 15000;
+
+        public bool EstaAtivo { get; set; } = true;
+
+        public string? TecnicoResponsavelId { get; set; }
+
+        public string? CondutorHabitualId { get; set; }
+
+        public string CategoriaUsuario { get; set; } = "Empresa";
+
+        public DateTime? DataProximaIpo { get; set; }
     }
 }

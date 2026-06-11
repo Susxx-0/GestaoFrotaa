@@ -1,8 +1,12 @@
-﻿using GestaoDeFrotas.Data;
-using GestaoDeFrotas.Models;
+﻿using GestoreDeFrotas.Data;
+using GestoreDeFrotas.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace GestaoDeFrotas.Services
+namespace GestoreDeFrotas.Services // Ajustado para Gestore
 {
     public class ManutencaoService
     {
@@ -42,7 +46,11 @@ namespace GestaoDeFrotas.Services
                     ? v.KmAtual - v.UltimaManutencaoKm.Value
                     : v.KmAtual;
 
-                double percent = (double)kmDesdeUltima / v.IntervaloManutencaoKm * 100;
+                // CORRIGIDO: Obtém o limite definido ou assume o padrão de 15000 km
+                int intervaloKm = v.IntervaloManutencaoKm ?? 15000;
+
+                // CORRIGIDO: Faz o cálculo real da percentagem em double
+                double percent = ((double)kmDesdeUltima / intervaloKm) * 100;
 
                 string estado =
                     percent >= 120 ? "Atrasada" :

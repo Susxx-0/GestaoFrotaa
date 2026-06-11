@@ -1,9 +1,10 @@
-﻿using GestaoDeFrotas.Data;
+﻿using GestoreDeFrotas.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using GestoreDeFrotas.Models;
 
-namespace GestaoDeFrotas.Controllers
+namespace GestoreDeFrotas.Controllers
 {
     [ApiController]
     [Route("api/documentos")]
@@ -36,7 +37,7 @@ namespace GestaoDeFrotas.Controllers
             var hoje = DateTime.Now;
             var query = _context.DocumentosVeiculos.AsQueryable();
 
-            // 🔍 Pesquisa global
+            //  Pesquisa global
             if (!string.IsNullOrWhiteSpace(q))
             {
                 query = query.Where(d =>
@@ -45,7 +46,7 @@ namespace GestaoDeFrotas.Controllers
                     d.CaminhoFicheiro.Contains(q));
             }
 
-            // 🎯 Filtros específicos
+            //  Filtros específicos
             if (!string.IsNullOrWhiteSpace(tipoDocumento))
                 query = query.Where(d => d.TipoDocumento.Contains(tipoDocumento));
 
@@ -66,13 +67,13 @@ namespace GestaoDeFrotas.Controllers
             if (dataMax.HasValue)
                 query = query.Where(d => d.DataUpload <= dataMax.Value);
 
-            // 📊 Total
+            //  Total
             var total = await query.CountAsync();
 
-            // ↕ Ordenação
+            //  Ordenação
             query = ApplyDocumentosSorting(query, sort);
 
-            // 📄 Paginação
+            //  Paginação
             var items = await query
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
@@ -90,7 +91,8 @@ namespace GestaoDeFrotas.Controllers
             });
         }
 
-        private IQueryable<Models.DocumentoVeiculo> ApplyDocumentosSorting(IQueryable<Models.DocumentoVeiculo> query, string? sort)
+        
+        private IQueryable<DocumentoVeiculo> ApplyDocumentosSorting(IQueryable<DocumentoVeiculo> query, string? sort)
         {
             var sortField = "datavalidade";
             var sortDir = "asc";

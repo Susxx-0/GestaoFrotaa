@@ -1,9 +1,8 @@
 using FluentValidation;
-using GestaoDeFrotas.Data;
-using GestaoDeFrotas.Middleware;
-using GestaoDeFrotas.Models;
-using GestaoDeFrotas.Services;
-using GestoreDeFrotas.validadores;
+using GestoreDeFrotas.Data;
+using GestoreDeFrotas.Models;
+using GestoreDeFrotas.Services;
+using GestoreDeFrotas.Validators; // Certifica-te de que a tua pasta física se chama Validators ou validadores (ajusta se necessário)
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -11,10 +10,10 @@ using Scalar.AspNetCore;
 using Serilog;
 using System.Security.Claims;
 using System.Text;
-using GestaoDeFrotas.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// 配置 Serilog
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .WriteTo.File("logs/api.log", rollingInterval: RollingInterval.Day)
@@ -22,27 +21,35 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Host.UseSerilog();
 
+// Base de Dados - Atualizado para refletir o novo contexto
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=GestaoFrotasDB;Trusted_Connection=True;MultipleActiveResultSets=true"));
-builder.Services.AddScoped<IValidator<Veiculo>, VeiculoValidator>(); ;
+
+// Injeção de Validadores e Serviços Base
+builder.Services.AddScoped<IValidator<Veiculo>, VeiculoValidator>();
 builder.Services.AddScoped<VeiculosService>();
 builder.Services.AddScoped<ManutencaoService>();
 builder.Services.AddScoped<AbastecimentosService>();
 builder.Services.AddScoped<AuditoriaService>();
+builder.Services.AddScoped<NotificacaoService>();
 builder.Services.AddScoped<IValidator<Abastecimento>, AbastecimentoValidator>();
 builder.Services.AddScoped<IValidator<RegistoManutencao>, RegistoManutencaoValidator>();
 builder.Services.AddScoped<IValidator<DocumentoUploadDto>, DocumentoUploadValidator>();
+
 QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
-// 🔹 Serviços de Dashboard
-builder.Services.AddScoped<DashboardService>();              // Resumo geral
-builder.Services.AddScoped<DashboardCombustivelService>();   // Combustível
-builder.Services.AddScoped<DashboardUtilizacaoService>();    // Utilização da frota
-builder.Services.AddScoped<DashboardAlertasService>();       // Alertas
-builder.Services.AddScoped<DashboardManutencaoService>();    // Manutenção inteligente
+builder.Services.AddScoped<ViagensService>();
+
+// Serviços de Dashboard (Todos integrados no novo ecossistema)
+builder.Services.AddScoped<DashboardService>();
+builder.Services.AddScoped<DashboardCombustivelService>();
+builder.Services.AddScoped<DashboardUtilizacaoService>();
+builder.Services.AddScoped<DashboardAlertasService>();
+builder.Services.AddScoped<DashboardManutencaoService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
+// Configuração do Swagger
 builder.Services.AddSwaggerGen(c =>
 {
     c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
@@ -110,6 +117,7 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
+// Executar Migrations e Seed de Dados automaticamente
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -117,6 +125,7 @@ using (var scope = app.Services.CreateScope())
     AppDbContext.SeedData(context);
 }
 
+// Ambiente de Desenvolvimento
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -132,12 +141,14 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// Chamada do nosso Middleware de Auditoria Corrigido
 app.UseMiddleware<LoggingMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseStaticFiles();
 
+// Endpoint de Teste para Geração de Token JWT
 app.MapPost("/api/auth/teste-token", [Microsoft.AspNetCore.Authorization.AllowAnonymous] (string cargo) =>
 {
     var tokenHandler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();

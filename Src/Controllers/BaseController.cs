@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace GestaoDeFrotas.Controllers
+namespace GestoreDeFrotas.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

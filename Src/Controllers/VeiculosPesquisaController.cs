@@ -1,9 +1,9 @@
-﻿using GestaoDeFrotas.Data;
+﻿using GestoreDeFrotas.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace GestaoDeFrotas.Controllers
+namespace GestoreDeFrotas.Controllers
 {
     [ApiController]
     [Route("api/veiculos")]

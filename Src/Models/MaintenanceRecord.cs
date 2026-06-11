@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace GestaoDeFrotas.Models
+namespace GestoreDeFrotas.Models
 {
     public class RegistoManutencao
     {
@@ -22,7 +22,7 @@ namespace GestaoDeFrotas.Models
 
         public string RealizadoPor { get; set; } = "Técnico";
 
-        // 🔥 Necessário para manutenção inteligente
+        // Necessário para manutenção inteligente
         [Required(ErrorMessage = "O KM da manutenção é obrigatório.")]
         public int Km { get; set; }
     }

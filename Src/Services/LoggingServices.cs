@@ -1,16 +1,16 @@
-﻿using GestaoDeFrotas.Services;
-using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using GestoreDeFrotas.Services;
 
-namespace GestoreDeFrotas.Middleware
+namespace GestoreDeFrotas.Services
 {
-    public class LoggingMiddleware
+    public class LoggingServices
     {
         private readonly RequestDelegate _next;
 
-        public LoggingMiddleware(RequestDelegate next)
+        public LoggingServices(RequestDelegate next)
         {
             _next = next;
         }
@@ -33,10 +33,11 @@ namespace GestoreDeFrotas.Middleware
 
                 if (statusCode >= 400)
                 {
+                    // CORRIGIDO: Removidos os prefixos titulo: e mensagem:
                     await auditoriaService.CriarNotificacaoAsync(
-                        titulo: $"Erro detetado ({statusCode})",
-                        mensagem: $"O utilizador {username} falhou ao tentar fazer {metodo} em {rota}.",
-                        tipo: "Error"
+                        $"Erro detetado ({statusCode})",
+                        $"O utilizador {username} falhou ao tentar fazer {metodo} em {rota}.",
+                        "Error"
                     );
                 }
 

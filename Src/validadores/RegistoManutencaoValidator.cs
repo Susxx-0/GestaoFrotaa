@@ -1,8 +1,8 @@
 ﻿using FluentValidation;
-using GestaoDeFrotas.Models;
+using GestoreDeFrotas.Models;
 using System;
 
-namespace GestaoDeFrotas.Validators
+namespace GestoreDeFrotas.Validators
 {
     public class RegistoManutencaoValidator : AbstractValidator<RegistoManutencao>
     {

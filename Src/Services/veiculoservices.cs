@@ -1,8 +1,12 @@
-﻿using GestaoDeFrotas.Data;
-using GestaoDeFrotas.Models;
+﻿using GestoreDeFrotas.Data;
+using GestoreDeFrotas.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace GestaoDeFrotas.Services
+namespace GestoreDeFrotas.Services
 {
     public class VeiculosService
     {
@@ -13,71 +17,51 @@ namespace GestaoDeFrotas.Services
             _context = context;
         }
 
-        public async Task<IEnumerable<Veiculo>> FiltrarAsync(
-            string? marca,
-            string? modelo,
-            string? matricula,
-            string? estado,
-            string? cor,
-            int? anoMin,
-            int? anoMax)
+        // LISTA NORMAL: Apenas mostra veículos ativos (para condutores e técnicos no dia a dia)
+        public async Task<List<Veiculo>> ObterTodosAtivosAsync()
         {
-            var query = _context.Veiculos.AsQueryable();
-
-            if (!string.IsNullOrWhiteSpace(marca))
-                query = query.Where(v => v.Marca.Contains(marca));
-
-            if (!string.IsNullOrWhiteSpace(modelo))
-                query = query.Where(v => v.Modelo.Contains(modelo));
-
-            if (!string.IsNullOrWhiteSpace(matricula))
-                query = query.Where(v => v.Matricula.Contains(matricula));
-
-            if (!string.IsNullOrWhiteSpace(estado))
-                query = query.Where(v => v.Estado == estado);
-
-            if (!string.IsNullOrWhiteSpace(cor))
-                query = query.Where(v => v.Cor.Contains(cor));
-
-            if (anoMin.HasValue)
-                query = query.Where(v => v.Ano >= anoMin.Value);
-
-            if (anoMax.HasValue)
-                query = query.Where(v => v.Ano <= anoMax.Value);
-
-            return await query.ToListAsync();
+            return await _context.Veiculos
+                .Where(v => v.EstaAtivo)
+                .AsNoTracking()
+                .ToListAsync();
         }
 
-        public async Task<IEnumerable<Veiculo>> ObterTodosAsync()
+        // ARQUIVO (Apenas Admins): Mostra os veículos desativados/antigos
+        public async Task<List<Veiculo>> ObterArquivoInativosAsync()
         {
-            return await _context.Veiculos.ToListAsync();
-        }
-
-        public async Task<Veiculo?> ObterPorIdAsync(int id)
-        {
-            return await _context.Veiculos.FindAsync(id);
+            return await _context.Veiculos
+                .Where(v => !v.EstaAtivo)
+                .AsNoTracking()
+                .ToListAsync();
         }
 
         public async Task AdicionarAsync(Veiculo veiculo)
         {
+            if (veiculo == null) throw new ArgumentNullException(nameof(veiculo));
+
             _context.Veiculos.Add(veiculo);
             await _context.SaveChangesAsync();
         }
 
-        public async Task AtualizarAsync(Veiculo veiculo)
+      
+        public async Task EliminarAsync(int id)
         {
-            _context.Entry(veiculo).State = EntityState.Modified;
+            var veiculo = await _context.Veiculos.FindAsync(id);
+            if (veiculo == null) throw new Exception("Veículo não encontrado.");
+
+            // Em vez de apagar fisicamente, altera o estado para inativo (Soft Delete seguro)
+            veiculo.EstaAtivo = false;
             await _context.SaveChangesAsync();
         }
 
-        public async Task<bool> EliminarAsync(int id)
+        // ALTERAR ESTADO DE ATIVO (Arquivar / Restaurar)
+        public async Task AlterarEstadoAtivoAsync(int veiculoId, bool status)
         {
-            var veiculo = await _context.Veiculos.FindAsync(id);
-            if (veiculo == null) return false;
+            var veiculo = await _context.Veiculos.FindAsync(veiculoId);
+            if (veiculo == null) throw new Exception("Veículo não encontrado.");
 
-            _context.Veiculos.Remove(veiculo);
+            veiculo.EstaAtivo = status;
             await _context.SaveChangesAsync();
-            return true;
         }
     }
 }

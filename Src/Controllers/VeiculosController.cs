@@ -1,20 +1,20 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentValidation;
+using GestoreDeFrotas.Data;
+using GestoreDeFrotas.Models;
+using GestoreDeFrotas.Services;
 using Microsoft.AspNetCore.Authorization;
-using GestaoDeFrotas.Models;
-using GestaoDeFrotas.Services;
-using GestaoDeFrotas.Data;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FluentValidation;
 using MiniExcelLibs;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
+using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System;
 
-namespace GestaoDeFrotas.Controllers
+namespace GestoreDeFrotas.Controllers
 {
     [ApiController]
     [Route("api/vehicles")]
@@ -32,7 +32,7 @@ namespace GestaoDeFrotas.Controllers
             _validator = validator;
         }
 
-        // 📊 ENDPOINT: Exportar Relatório Geral em Excel
+
         [HttpGet("exportar-excel")]
         [Authorize(Roles = "Admin,Gerente,Tecnico,Visualizador")]
         public async Task<IActionResult> ExportarParaExcel()
@@ -171,7 +171,6 @@ namespace GestaoDeFrotas.Controllers
 
                         col.Item().Background(Colors.Grey.Lighten3).Padding(8).Text("Informações do Veículo").Bold().FontSize(12).FontColor(Colors.Blue.Darken3);
 
-                        // Layout corrigido de Grid para Table nativa (Garante suporte total em todas as versões)
                         col.Item().Table(tabela =>
                         {
                             tabela.ColumnsDefinition(colunas =>
@@ -219,8 +218,6 @@ namespace GestaoDeFrotas.Controllers
 
             return File(memoryStream, "application/pdf", nomeFicheiro);
         }
-
-        // 🔥 ENDPOINT: Pesquisa Avançada com Paginação e Ordenação
         [HttpGet("advanced-search")]
         [Authorize(Roles = "Admin,Gerente,Tecnico,Visualizador")]
         public async Task<IActionResult> AdvancedSearch(
@@ -339,9 +336,15 @@ namespace GestaoDeFrotas.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
-            var eliminado = await _veiculosService.EliminarAsync(id);
-            if (!eliminado) return NotFound();
-            return NoContent();
+            try
+            {
+                await _veiculosService.EliminarAsync(id);
+                return NoContent();
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
         }
     }
 }

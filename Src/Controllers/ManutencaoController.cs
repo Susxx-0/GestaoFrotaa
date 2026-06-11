@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using GestaoDeFrotas.Models;
-using GestaoDeFrotas.Services;
+using GestoreDeFrotas.Models;
+using GestoreDeFrotas.Services;
 using FluentValidation;
 using System.Linq;
 using System.Threading.Tasks;

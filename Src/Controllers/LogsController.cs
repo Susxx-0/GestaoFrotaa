@@ -1,8 +1,8 @@
-﻿using GestaoDeFrotas.Services;
+﻿using GestoreDeFrotas.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
-namespace GestaoDeFrotas.Controllers
+namespace GestoreDeFrotas.Controllers
 {
     [ApiController]
     [Route("api/logs")]

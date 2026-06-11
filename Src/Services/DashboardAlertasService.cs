@@ -1,7 +1,11 @@
-﻿using GestaoDeFrotas.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using GestoreDeFrotas.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace GestaoDeFrotas.Services
+namespace GestoreDeFrotas.Services
 {
     public class DashboardAlertasService
     {
@@ -16,7 +20,7 @@ namespace GestaoDeFrotas.Services
         {
             var hoje = DateTime.Now;
 
-            // 🔹 Carregar dados
+            // Carregar dados
             var abastecimentos = await _context.Abastecimentos
                 .Include(a => a.Veiculo)
                 .OrderBy(a => a.VeiculoId)
@@ -27,7 +31,7 @@ namespace GestaoDeFrotas.Services
 
             var alertas = new List<object>();
 
-            // 🔥 1. Consumo anormal
+            // .Consumo anormal
             foreach (var ab in abastecimentos.Where(a => a.ConsumoMedio > 12))
             {
                 alertas.Add(new
@@ -38,7 +42,7 @@ namespace GestaoDeFrotas.Services
                 });
             }
 
-            // 🔥 2. KM incoerentes
+            //  KM incoerentes
             var abastecimentosPorVeiculo = abastecimentos
                 .GroupBy(a => a.VeiculoId);
 
@@ -60,7 +64,7 @@ namespace GestaoDeFrotas.Services
                 }
             }
 
-            // 🔥 3. Veículos parados há mais de 30 dias
+            //  Veículos parados há mais de 30 dias
             foreach (var v in veiculos)
             {
                 var ultimoAb = abastecimentos
@@ -84,7 +88,7 @@ namespace GestaoDeFrotas.Services
                 }
             }
 
-            // 🔥 4. Manutenção atrasada / próxima
+            // Manutenção atrasada / próxima
             foreach (var v in veiculos)
             {
                 if (v.IntervaloManutencaoKm == 0) continue;
@@ -93,7 +97,8 @@ namespace GestaoDeFrotas.Services
                     ? v.KmAtual - v.UltimaManutencaoKm.Value
                     : v.KmAtual;
 
-                double percent = (double)kmDesdeUltima / v.IntervaloManutencaoKm * 100;
+
+                double percent = (((double)kmDesdeUltima / v.IntervaloManutencaoKm) * 100) ?? 0.0;
 
                 if (percent >= 120)
                 {

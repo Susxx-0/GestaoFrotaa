@@ -1,9 +1,10 @@
-﻿using GestaoDeFrotas.Services;
-using Microsoft.AspNetCore.Http;
+﻿using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using GestoreDeFrotas.Services;
 
-namespace GestaoDeFrotas.Middleware
+namespace GestoreDeFrotas.Services
 {
     public class LoggingMiddleware
     {
@@ -20,9 +21,11 @@ namespace GestaoDeFrotas.Middleware
 
             if (context.Request.Method != "GET")
             {
-                var username = context.User.Identity?.IsAuthenticated == true
+                var username = (context.User.Identity?.IsAuthenticated == true
+   
                     ? context.User.FindFirst(ClaimTypes.Name)?.Value
-                    : "Anónimo";
+    
+                    : "Anónimo") ?? "Anónimo";
 
                 var rota = context.Request.Path;
                 var metodo = context.Request.Method;
@@ -32,14 +35,19 @@ namespace GestaoDeFrotas.Middleware
 
                 if (statusCode >= 400)
                 {
-                    await auditoriaService.CriarNotificacaoAsync(
-                        titulo: $"Erro detetado ({statusCode})",
-                        mensagem: $"O utilizador {username} falhou ao tentar fazer {metodo} em {rota}.",
-                        tipo: "Error"
-                    );
-                }
+                 
+                    if (statusCode >= 400)
+                    {
+                        // Deixa apenas os textos com as vírgulas, sem os prefixos!
+                        await auditoriaService.CriarNotificacaoAsync(
+                            $"Erro detetado ({statusCode})",
+                            $"O utilizador {username} falhou ao tentar fazer {metodo} em {rota}.",
+                            "Error"
+                        );
+                    }
 
-                await auditoriaService.RegistarLogAsync(username, metodo, rota, descricao, statusCode);
+                    await auditoriaService.RegistarLogAsync(username, metodo, rota, descricao, statusCode);
+                }
             }
         }
     }

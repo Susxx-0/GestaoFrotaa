@@ -1,11 +1,11 @@
-﻿using GestaoDeFrotas.Data;
-using GestaoDeFrotas.Models;
+﻿using GestoreDeFrotas.Data;
+using GestoreDeFrotas.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
-namespace GestaoDeFrotas.Services
+namespace GestoreDeFrotas.Services
 {
     public class AuditoriaService
     {
@@ -16,7 +16,7 @@ namespace GestaoDeFrotas.Services
             _context = context;
         }
 
-        
+        // Registo de Logs do Sistema
         public async Task RegistarLogAsync(string utilizador, string metodo, string rota, string descricao, int statusCode)
         {
             var log = new LogSistema
@@ -33,7 +33,7 @@ namespace GestaoDeFrotas.Services
             await _context.SaveChangesAsync();
         }
 
-      
+        // Obter os últimos 200 logs
         public async Task<IEnumerable<LogSistema>> ObterLogsAsync()
         {
             return await _context.LogsSistema
@@ -42,12 +42,12 @@ namespace GestaoDeFrotas.Services
                 .ToListAsync();
         }
 
-       
+        // CORREGIDO: Ajustado para as propriedades reais do modelo Notificacao
         public async Task<IEnumerable<Notificacao>> ObterNotificacoesAtivasAsync()
         {
             return await _context.Notificacoes
                 .Where(n => !n.Lida)
-                .OrderByDescending(n => n.Data)
+                .OrderByDescending(n => n.DataCriacao) // Mudado de .Data para .DataCriacao
                 .ToListAsync();
         }
 
@@ -62,15 +62,15 @@ namespace GestaoDeFrotas.Services
             }
         }
 
-       
-        public async Task CriarNotificacaoAsync(string titulo, string mensagem, string tipo)
+        // CORREGIDO: Ajustado para mapear com o novo modelo Notificacao
+        public async Task CriarNotificacaoAsync(string mensagem, string destinatarioId, string grau)
         {
             var notificacao = new Notificacao
             {
-                Titulo = titulo,
                 Mensagem = mensagem,
-                Tipo = tipo,
-                Data = DateTime.Now,
+                DestinatarioId = destinatarioId, // Quem vai receber (Admin, Técnico, ou ID do User)
+                Grau = grau, // "Info", "Aviso", "Critico"
+                DataCriacao = DateTime.Now,
                 Lida = false
             };
 
