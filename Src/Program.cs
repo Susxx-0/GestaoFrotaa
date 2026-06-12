@@ -2,7 +2,7 @@ using FluentValidation;
 using GestoreDeFrotas.Data;
 using GestoreDeFrotas.Models;
 using GestoreDeFrotas.Services;
-using GestoreDeFrotas.Validators; // Certifica-te de que a tua pasta física se chama Validators ou validadores (ajusta se necessário)
+using GestoreDeFrotas.Validators; // Certifica-te de que a tua pasta física se chama Validators ou Validators (ajusta se necessário)
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;

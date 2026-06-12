@@ -33,7 +33,7 @@ namespace GestoreDeFrotas.Services
                 throw new Exception("Não é possível iniciar viagem: este veículo encontra-se arquivado/inativo.");
             }
 
-            var veiculoOcupado = await _context.Viagens
+                var veiculoOcupado = await _context.Viagens
                 .AnyAsync(v => v.VeiculoId == veiculoId && v.EstaAtiva);
 
             if (veiculoOcupado)
