@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using GestoreDeFrotas.Models;
 using GestoreDeFrotas.Services;
 using FluentValidation;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,7 +15,7 @@ namespace GestaoDeFrotas.Controllers
     public class ManutencaoController : ControllerBase
     {
         private readonly ManutencaoService _manutencaoService;
-        private readonly IValidator<RegistoManutencao> _validator; 
+        private readonly IValidator<RegistoManutencao> _validator;
 
         public ManutencaoController(ManutencaoService manutencaoService, IValidator<RegistoManutencao> validator)
         {
@@ -34,7 +35,6 @@ namespace GestaoDeFrotas.Controllers
         [Authorize(Roles = "Admin,Gerente,Tecnico")]
         public async Task<IActionResult> Create([FromBody] RegistoManutencao registo)
         {
-          
             var validationResult = await _validator.ValidateAsync(registo);
 
             if (!validationResult.IsValid)
@@ -47,13 +47,23 @@ namespace GestaoDeFrotas.Controllers
             return Ok(registo);
         }
 
-      
         [HttpGet("estado")]
         [Authorize(Roles = "Admin,Gerente,Tecnico,Visualizador")]
         public async Task<IActionResult> Estado()
         {
-            var estado = await _manutencaoService.ObterEstadoManutencaoAsync();
-            return Ok(estado);
+            try
+            {
+                var estado = await _manutencaoService.ObterEstadoManutencaoAsync();
+                return Ok(estado);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    mensagem = "Erro interno ao calcular o estado de manutenção.",
+                    detalhe = ex.Message
+                });
+            }
         }
     }
 }

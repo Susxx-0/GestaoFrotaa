@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace GestoreDeFrotas.Services // Ajustado para Gestore
+namespace GestoreDeFrotas.Services
 {
     public class ManutencaoService
     {
@@ -46,10 +46,15 @@ namespace GestoreDeFrotas.Services // Ajustado para Gestore
                     ? v.KmAtual - v.UltimaManutencaoKm.Value
                     : v.KmAtual;
 
-                // CORRIGIDO: Obtém o limite definido ou assume o padrão de 15000 km
-                int intervaloKm = v.IntervaloManutencaoKm ?? 15000;
+               
+                int intervaloKm = v.IntervaloManutencaoKm ?? 150000;
 
-                // CORRIGIDO: Faz o cálculo real da percentagem em double
+                if (intervaloKm <= 0)
+                {
+                    intervaloKm = 150000;
+                }
+
+             
                 double percent = ((double)kmDesdeUltima / intervaloKm) * 100;
 
                 string estado =

@@ -6,7 +6,7 @@ namespace GestoreDeFrotas.Validators
 {
     public class AbastecimentoValidator : AbstractValidator<Abastecimento>
     {
-        // CORREGIDO: Constructor limpio, sin errores de sintaxis
+
         public AbastecimentoValidator()
         {
             RuleFor(a => a.VeiculoId)

@@ -69,6 +69,14 @@ namespace GestoreDeFrotas.Data
             modelBuilder.Entity<RegistoManutencao>()
                 .Property(m => m.Custo)
                 .HasColumnType("decimal(18,2)");
+
+            modelBuilder.Entity<Notificacao>()
+                .Property(n => n.DestinatarioId)
+                .IsRequired(false);
         }
+
+
+
+
     }
 }

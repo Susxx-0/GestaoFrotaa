@@ -23,14 +23,17 @@ namespace GestoreDeFrotas.Controllers
 
         // 1. INICIAR VIAGEM
         [HttpPost("iniciar/{veiculoId}")]
-        [TypeFilter(typeof(AuditarAcaoFilter))]
-        public async Task<IActionResult> Iniciar(int veiculoId)
+        public async Task<IActionResult> IniciarViagem(int veiculoId, [FromQuery] string? condutorSecundarioId = null)
         {
-            var condutorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "Sistema";
             try
             {
-                var viagem = await _viagensService.IniciarViagemAsync(veiculoId, condutorId);
-                return Ok(viagem);
+                // Tenta apanhar o NameIdentifier (geralmente o ID ou Username nas claims do JWT)
+                var condutorPrincipalId = User.Identity?.Name
+                                          ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                                          ?? "Condutor Anónimo";
+
+                var novaViagem = await _viagensService.IniciarViagemAsync(veiculoId, condutorPrincipalId, condutorSecundarioId);
+                return Ok(novaViagem);
             }
             catch (Exception ex)
             {
@@ -38,29 +41,22 @@ namespace GestoreDeFrotas.Controllers
             }
         }
 
-        // 2. FINALIZAR VIAGEM (Corrigido de acordo com a assinatura real do vosso serviço)
+        // 2. FINALIZAR VIAGEM
         [HttpPost("finalizar/{viagemId}")]
-        [Authorize(Roles = "Admin,Gerente,Tecnico,Outros")]
-        [TypeFilter(typeof(AuditarAcaoFilter))]
-        public async Task<IActionResult> FinalizarViagem(int viagemId, [FromBody] EntregaViagemDto dto)
+        public async Task<IActionResult> FinalizarViagem(int viagemId, [FromBody] FinalizarViagemDto dados)
         {
             try
             {
-                if (dto == null)
-                {
-                    return BadRequest(new { mensagem = "Os dados de encerramento são obrigatórios." });
-                }
-
-                // Chama o serviço passando apenas os 2 parâmetros que ele aceita: viagemId e observacoesEntrega
-                await _viagensService.FinalizarViagemAsync(viagemId, dto.ObservacoesEntrega);
-
-                return Ok(new { mensagem = "Viagem finalizada com sucesso e veículo libertado." });
+                // Passa o ID da viagem, os KM finais e as observações para o serviço
+                await _viagensService.FinalizarViagemAsync(viagemId, dados.KmFinais, dados.ObservacoesEntrega);
+                return Ok(new { mensagem = "Viagem finalizada e veículo libertado com sucesso!" });
             }
             catch (Exception ex)
             {
                 return BadRequest(new { mensagem = ex.Message });
             }
         }
+
         // 3. PEDIR MAIS TEMPO
         [HttpPost("{id}/prorrogacao")]
         [TypeFilter(typeof(AuditarAcaoFilter))]
@@ -69,7 +65,7 @@ namespace GestoreDeFrotas.Controllers
             try
             {
                 await _viagensService.SolicitarMaisTempoAsync(id, horas);
-                return Ok(new { mensagem = $"Prorrogação de {horas} horas registada." });
+                return Ok(new { message = $"Prorrogação de {horas} horas registada." });
             }
             catch (Exception ex)
             {
@@ -94,7 +90,7 @@ namespace GestoreDeFrotas.Controllers
         }
     }
 
-    public class EntregaViagemDto
+    public class FinalizarViagemDto
     {
         public int KmFinais { get; set; }
         public string? ObservacoesEntrega { get; set; }

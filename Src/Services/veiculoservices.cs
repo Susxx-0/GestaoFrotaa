@@ -65,5 +65,30 @@ namespace GestoreDeFrotas.Services
             veiculo.EstaAtivo = status;
             await _context.SaveChangesAsync();
         }
+
+        
+        public async Task<List<Veiculo>> ListarAtivosAsync()
+        {
+            return await _context.Veiculos.Where(v => v.EstaAtivo).ToListAsync();
+        }
+
+        // Cria um método novo exclusivo para o Arquivo dos Admins:
+        public async Task<List<Veiculo>> ListarArquivadosAsync()
+        {
+            return await _context.Veiculos.Where(v => !v.EstaAtivo).ToListAsync();
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 }

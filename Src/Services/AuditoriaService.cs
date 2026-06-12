@@ -78,11 +78,12 @@ namespace GestoreDeFrotas.Services
         {
             var notificacao = new Notificacao
             {
-                Mensagem = mensagem,
-                DestinatarioId = destinatarioId,
-                Grau = grau,
+               
                 DataCriacao = DateTime.Now,
-                Lida = false
+                Lida = false,
+
+              
+                DestinatarioId = string.IsNullOrWhiteSpace(destinatarioId) ? "Sistema" : destinatarioId
             };
 
             _context.Notificacoes.Add(notificacao);

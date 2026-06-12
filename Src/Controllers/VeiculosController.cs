@@ -247,7 +247,12 @@ namespace GestoreDeFrotas.Controllers
             var viagens = await _context.Viagens
                 .Where(v => v.VeiculoId == id)
                 .OrderByDescending(v => v.DataInicio)
-                .Select(v => new
+                .ToListAsync();
+
+            // Transformação explícita na memória para calcular e formatar a distância percorrida
+            var viagensMapeadas = viagens.Select(v => {
+                int distancia = (v.KmFinais.HasValue && v.KmFinais.Value >= v.KmIniciais) ? (v.KmFinais.Value - v.KmIniciais) : 0;
+                return new
                 {
                     Registo = "Viagem / Condução",
                     Data_Inicial = v.DataInicio.ToString("dd/MM/yyyy HH:mm"),
@@ -258,9 +263,10 @@ namespace GestoreDeFrotas.Controllers
                     Tecnico_Rececao = v.TecnicoRecebimentoId ?? "N/A",
                     KM_Iniciais = v.KmIniciais.ToString(),
                     KM_Finais = v.KmFinais.HasValue ? v.KmFinais.Value.ToString() : "Em Uso",
+                    Distancia_Percorrida = v.KmFinais.HasValue ? $"{distancia} km" : "-",
                     Detalhes = v.ObservacoesEntrega ?? ""
-                })
-                .ToListAsync();
+                };
+            }).ToList();
 
             var abastecimentos = await _context.Abastecimentos
                 .Where(a => a.VeiculoId == id)
@@ -276,11 +282,12 @@ namespace GestoreDeFrotas.Controllers
                     Tecnico_Rececao = "N/A",
                     KM_Iniciais = a.KmAtual.ToString(),
                     KM_Finais = a.KmAtual.ToString(),
+                    Distancia_Percorrida = "0 km",
                     Detalhes = $"Posto: {a.Posto} | {a.Litros}L {a.Combustivel} (Total: {a.CustoTotal}€)"
                 })
                 .ToListAsync();
 
-            var historicoCompleto = viagens.Cast<object>().Concat(abastecimentos.Cast<object>()).ToList();
+            var historicoCompleto = viagensMapeadas.Cast<object>().Concat(abastecimentos.Cast<object>()).ToList();
 
             var memoryStream = new MemoryStream();
             await memoryStream.SaveAsAsync(historicoCompleto);
@@ -319,8 +326,6 @@ namespace GestoreDeFrotas.Controllers
                     {
                         col.Item().Text($"Histórico Unificado do Veículo: {veiculo.Marca} {veiculo.Modelo} [{veiculo.Matricula}]").FontSize(16).Bold().FontColor(Colors.Blue.Darken3);
                         col.Item().Text($"Gerado em: {DateTime.Now:dd/MM/yyyy HH:mm}").FontSize(9).FontColor(Colors.Grey.Medium);
-
-                        // Correção da Linha Horizontal de forma nativa e válida no QuestPDF
                         col.Item().BorderBottom(1).BorderColor(Colors.Grey.Lighten1).PaddingBottom(8);
                     });
 
@@ -331,14 +336,15 @@ namespace GestoreDeFrotas.Controllers
                         {
                             tabela.ColumnsDefinition(colunas =>
                             {
-                                colunas.RelativeColumn(2);
-                                colunas.RelativeColumn(2.5f);
-                                colunas.RelativeColumn(2.5f);
-                                colunas.ConstantColumn(50);
-                                colunas.RelativeColumn(1.5f);
-                                colunas.RelativeColumn(1.5f);
-                                colunas.ConstantColumn(50);
-                                colunas.ConstantColumn(50);
+                                colunas.RelativeColumn(1.8f); // Condutor
+                                colunas.RelativeColumn(2.2f); // Início
+                                colunas.RelativeColumn(2.2f); // Fim
+                                colunas.ConstantColumn(45);   // Tempo
+                                colunas.RelativeColumn(1.2f); // Téc. Leva
+                                colunas.RelativeColumn(1.2f); // Téc. Rec
+                                colunas.ConstantColumn(45);   // KM Ini
+                                colunas.ConstantColumn(45);   // KM Fim
+                                colunas.ConstantColumn(55);   // Distância (Nova Coluna Adicionada!)
                             });
 
                             tabela.Header(header =>
@@ -351,11 +357,17 @@ namespace GestoreDeFrotas.Controllers
                                 header.Cell().Background(Colors.Blue.Darken2).Padding(4).Text("Téc. Rec").Bold().FontColor(Colors.White);
                                 header.Cell().Background(Colors.Blue.Darken2).Padding(4).Text("KM Ini").Bold().FontColor(Colors.White);
                                 header.Cell().Background(Colors.Blue.Darken2).Padding(4).Text("KM Fim").Bold().FontColor(Colors.White);
+                                header.Cell().Background(Colors.Blue.Darken2).Padding(4).Text("Distância").Bold().FontColor(Colors.White);
                             });
 
                             foreach (var v in viagens)
                             {
                                 var duracao = v.DataFim.HasValue ? $"{(v.DataFim.Value - v.DataInicio).TotalHours:F1}h" : "Ativa";
+
+                                // Cálculo Simples e Direto da distância percorrida
+                                int kmAndados = (v.KmFinais.HasValue && v.KmFinais.Value >= v.KmIniciais) ? (v.KmFinais.Value - v.KmIniciais) : 0;
+                                string distanciaStr = v.KmFinais.HasValue ? $"{kmAndados} km" : "-";
+
                                 tabela.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(4).Text(v.CondutorPrincipalId);
                                 tabela.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(4).Text(v.DataInicio.ToString("dd/MM/yyyy HH:mm"));
                                 tabela.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(4).Text(v.DataFim?.ToString("dd/MM/yyyy HH:mm") ?? "Em curso");
@@ -364,6 +376,7 @@ namespace GestoreDeFrotas.Controllers
                                 tabela.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(4).Text(v.TecnicoRecebimentoId ?? "N/A");
                                 tabela.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(4).Text(v.KmIniciais.ToString());
                                 tabela.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(4).Text(v.KmFinais?.ToString() ?? "-");
+                                tabela.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(4).Text(distanciaStr);
                             }
                         });
 
@@ -486,7 +499,6 @@ namespace GestoreDeFrotas.Controllers
 
             var total = await query.CountAsync();
 
-            // Aplicar a ordenação antes da paginação
             query = ApplySorting(query, sort);
 
             var items = await query
@@ -562,5 +574,66 @@ namespace GestoreDeFrotas.Controllers
                 return NotFound();
             }
         }
-    } 
+
+        [HttpPut("{id}/alterar-status-ativo")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> AlterarStatusAtivo(int id, [FromQuery] bool ativo)
+        {
+            var veiculo = await _context.Veiculos.FindAsync(id);
+            if (veiculo == null) return NotFound(new { mensagem = "Veículo não encontrado." });
+
+            veiculo.EstaAtivo = ativo;
+            await _context.SaveChangesAsync();
+
+            string status = ativo ? "reativado" : "arquivado";
+            return Ok(new { mensagem = $"Veículo {status} com sucesso no sistema." });
+        }
+
+        [HttpGet("arquivados")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ObterArquivados()
+        {
+            var arquivados = await _context.Veiculos.Where(v => !v.EstaAtivo).ToListAsync();
+            return Ok(arquivados);
+        }
+
+        [HttpGet("tempo-real")]
+        [Authorize]
+        public async Task<IActionResult> ObterEstadoTempoReal()
+        {
+            var viagensAtivas = await _context.Viagens
+                .Where(v => v.EstaAtiva)
+                .ToListAsync();
+
+            var veiculos = await _context.Veiculos
+                .Where(v => v.EstaAtivo)
+                .ToListAsync();
+
+            var painelTempoReal = veiculos.Select(veiculo =>
+            {
+                var viagemDoCarro = viagensAtivas.FirstOrDefault(v => v.VeiculoId == veiculo.Id);
+                bool estaSendoUtilizado = viagemDoCarro != null;
+
+                return new
+                {
+                    VeiculoId = veiculo.Id,
+                    veiculo.Marca,
+                    veiculo.Modelo,
+                    veiculo.Matricula,
+                    veiculo.Estado,
+                    EmViagem = estaSendoUtilizado,
+                    DetalhesViagem = estaSendoUtilizado ? new
+                    {
+                        ViagemId = viagemDoCarro.Id,
+                        CondutorId = viagemDoCarro.CondutorPrincipalId,
+                        CondutorSecundarioId = viagemDoCarro.CondutorSecundarioId,
+                        DesdeAs = viagemDoCarro.DataInicio,
+                        LimitePrevisto = viagemDoCarro.DataLimitePrevista
+                    } : null
+                };
+            }).ToList();
+
+            return Ok(painelTempoReal);
+        }
+    }
 }

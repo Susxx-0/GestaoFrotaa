@@ -32,9 +32,23 @@ namespace GestoreDeFrotas.Models
         public string? TecnicoLevantamentoId { get; set; }
         public string? TecnicoRecebimentoId { get; set; }
 
-        // Propriedades de Controlo de Quilómetros por percurso
+
         [Required]
         public int KmIniciais { get; set; }
         public int? KmFinais { get; set; }
+      
+        public int DistanciaPercorrida
+        {
+            get
+            {
+                if (KmFinais.HasValue && KmFinais.Value >= KmIniciais)
+                {
+                    return KmFinais.Value - KmIniciais;
+                }
+                return 0;
+            }
+
+        }
+
     }
 }

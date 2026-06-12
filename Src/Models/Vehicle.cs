@@ -8,7 +8,7 @@ namespace GestoreDeFrotas.Models
     public class Veiculo
     {
 
- 
+        public bool EstaAtivo { get; set; } = true; // Por defeito, entram ativos
         public string Cor { get; set; } = "Não Especificada";
         public DateTime? UltimaManutencaoData { get; set; }
 
@@ -33,7 +33,7 @@ namespace GestoreDeFrotas.Models
 
         public int? IntervaloManutencaoKm { get; set; } = 15000;
 
-        public bool EstaAtivo { get; set; } = true;
+      
 
         public string? TecnicoResponsavelId { get; set; }
 
