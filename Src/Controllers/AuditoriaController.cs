@@ -1,8 +1,6 @@
-﻿using GestoreDeFrotas.Data;
-using GestoreDeFrotas.Services;
+﻿using GestoreDeFrotas.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
 namespace GestoreDeFrotas.Controllers
@@ -19,22 +17,11 @@ namespace GestoreDeFrotas.Controllers
             _service = service;
         }
 
-        [HttpGet("logs")]
-        public async Task<IActionResult> ObterLogs([FromServices] AppDbContext context)
-        {
-            var logs = await context.LogsSistema
-                .OrderByDescending(l => l.Id) 
-                .Take(100)
-                .ToListAsync();
-
-            return Ok(logs);
-        }
-        
-
         [HttpGet("notificacoes")]
         public async Task<IActionResult> GetNotificacoes()
         {
-            return Ok(await _service.ObterNotificacoesAtivasAsync());
+            var notificacoes = await _service.ObterNotificacoesAtivasAsync();
+            return Ok(notificacoes);
         }
 
         [HttpPut("notificacoes/{id}/ler")]

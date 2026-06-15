@@ -2,7 +2,7 @@ using FluentValidation;
 using GestoreDeFrotas.Data;
 using GestoreDeFrotas.Models;
 using GestoreDeFrotas.Services;
-using GestoreDeFrotas.Validators; // Certifica-te de que a tua pasta física se chama Validators ou Validators (ajusta se necessário)
+using GestoreDeFrotas.Validators;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -13,19 +13,16 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 配置 Serilog
+// Serilog só na consola (sem ficheiro)
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
-    .WriteTo.File("logs/api.log", rollingInterval: RollingInterval.Day)
     .CreateLogger();
 
 builder.Host.UseSerilog();
 
-// Base de Dados - Atualizado para refletir o novo contexto
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=GestaoFrotasDB;Trusted_Connection=True;MultipleActiveResultSets=true"));
 
-// Injeção de Validadores e Serviços Base
 builder.Services.AddScoped<IValidator<Veiculo>, VeiculoValidator>();
 builder.Services.AddScoped<VeiculosService>();
 builder.Services.AddScoped<ManutencaoService>();
@@ -39,7 +36,6 @@ builder.Services.AddScoped<IValidator<DocumentoUploadDto>, DocumentoUploadValida
 QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
 builder.Services.AddScoped<ViagensService>();
 
-// Serviços de Dashboard (Todos integrados no novo ecossistema)
 builder.Services.AddScoped<DashboardService>();
 builder.Services.AddScoped<DashboardCombustivelService>();
 builder.Services.AddScoped<DashboardUtilizacaoService>();
@@ -49,7 +45,6 @@ builder.Services.AddScoped<DashboardManutencaoService>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-// Configuração do Swagger
 builder.Services.AddSwaggerGen(c =>
 {
     c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
@@ -117,7 +112,6 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
-// Executar Migrations e Seed de Dados automaticamente
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -125,7 +119,6 @@ using (var scope = app.Services.CreateScope())
     AppDbContext.SeedData(context);
 }
 
-// Ambiente de Desenvolvimento
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -141,14 +134,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// Chamada do nosso Middleware de Auditoria Corrigido
+// Middleware de logging/auditoria (BD)
 app.UseMiddleware<LoggingMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseStaticFiles();
 
-// Endpoint de Teste para Geração de Token JWT
 app.MapPost("/api/auth/teste-token", [Microsoft.AspNetCore.Authorization.AllowAnonymous] (string cargo) =>
 {
     var tokenHandler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
@@ -172,7 +164,7 @@ app.MapPost("/api/auth/teste-token", [Microsoft.AspNetCore.Authorization.AllowAn
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<GestoreDeFrotas.Data.AppDbContext>();
+    var context = services.GetRequiredService<AppDbContext>();
     GestoreDeFrotas.Data.DbInitializer.Seed(context);
 }
 
