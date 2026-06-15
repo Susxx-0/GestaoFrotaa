@@ -10,30 +10,9 @@ namespace GestoreDeFrotas.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
-                name: "KmFinais",
-                table: "Viagens",
-                type: "int",
-                nullable: true);
+          
 
-            migrationBuilder.AddColumn<int>(
-                name: "KmIniciais",
-                table: "Viagens",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
-
-            migrationBuilder.AddColumn<string>(
-                name: "TecnicoLevantamentoId",
-                table: "Viagens",
-                type: "nvarchar(max)",
-                nullable: true);
-
-            migrationBuilder.AddColumn<string>(
-                name: "TecnicoRecebimentoId",
-                table: "Viagens",
-                type: "nvarchar(max)",
-                nullable: true);
+           
         }
 
         /// <inheritdoc />

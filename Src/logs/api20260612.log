@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 2026-06-12 09:45:42.208 +01:00 [INF] Executed DbCommand (27ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
 SELECT 1
 2026-06-12 09:45:42.289 +01:00 [INF] Acquiring an exclusive lock for migration application. See https://aka.ms/efcore-docs-migrations-lock for more information if this takes too long.
@@ -6,6 +7,16 @@ DECLARE @result int;
 EXEC @result = sp_getapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session', @LockMode = 'Exclusive';
 SELECT @result
 2026-06-12 09:45:42.426 +01:00 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+=======
+2026-06-12 14:13:10.398 +01:00 [INF] Executed DbCommand (29ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2026-06-12 14:13:10.507 +01:00 [INF] Acquiring an exclusive lock for migration application. See https://aka.ms/efcore-docs-migrations-lock for more information if this takes too long.
+2026-06-12 14:13:10.596 +01:00 [INF] Executed DbCommand (80ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DECLARE @result int;
+EXEC @result = sp_getapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session', @LockMode = 'Exclusive';
+SELECT @result
+2026-06-12 14:13:10.769 +01:00 [INF] Executed DbCommand (4ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+>>>>>>> 6bb5cd578a5a39f2036ef9d03d05b62c1b93443e
 IF OBJECT_ID(N'[__EFMigrationsHistory]') IS NULL
 BEGIN
     CREATE TABLE [__EFMigrationsHistory] (
@@ -14,6 +25,7 @@ BEGIN
         CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
     );
 END;
+<<<<<<< HEAD
 2026-06-12 09:45:42.439 +01:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
 SELECT 1
 2026-06-12 09:45:42.443 +01:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
@@ -1005,6 +1017,84 @@ FROM [__EFMigrationsHistory]
 ORDER BY [MigrationId];
 2026-06-12 10:32:25.766 +01:00 [INF] Applying migration '20260612093204_PermitirDestinatarioOpcional'.
 2026-06-12 10:32:25.874 +01:00 [INF] Executed DbCommand (92ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+=======
+2026-06-12 14:13:10.794 +01:00 [INF] Executed DbCommand (4ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2026-06-12 14:13:10.799 +01:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+2026-06-12 14:13:10.815 +01:00 [INF] Executed DbCommand (10ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [MigrationId], [ProductVersion]
+FROM [__EFMigrationsHistory]
+ORDER BY [MigrationId];
+2026-06-12 14:13:10.847 +01:00 [INF] Applying migration '20260612084511_AtualizacaoModelosFrota'.
+2026-06-12 14:13:10.908 +01:00 [ERR] Failed executing DbCommand (19ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+ALTER TABLE [Viagens] ADD [KmFinais] int NULL;
+2026-06-12 14:16:08.237 +01:00 [INF] Executed DbCommand (26ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2026-06-12 14:16:08.318 +01:00 [INF] Acquiring an exclusive lock for migration application. See https://aka.ms/efcore-docs-migrations-lock for more information if this takes too long.
+2026-06-12 14:16:08.345 +01:00 [INF] Executed DbCommand (20ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DECLARE @result int;
+EXEC @result = sp_getapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session', @LockMode = 'Exclusive';
+SELECT @result
+2026-06-12 14:16:08.422 +01:00 [INF] Executed DbCommand (5ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+IF OBJECT_ID(N'[__EFMigrationsHistory]') IS NULL
+BEGIN
+    CREATE TABLE [__EFMigrationsHistory] (
+        [MigrationId] nvarchar(150) NOT NULL,
+        [ProductVersion] nvarchar(32) NOT NULL,
+        CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
+    );
+END;
+2026-06-12 14:16:08.436 +01:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2026-06-12 14:16:08.444 +01:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+2026-06-12 14:16:08.455 +01:00 [INF] Executed DbCommand (4ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [MigrationId], [ProductVersion]
+FROM [__EFMigrationsHistory]
+ORDER BY [MigrationId];
+2026-06-12 14:16:08.475 +01:00 [INF] Applying migration '20260612084511_AtualizacaoModelosFrota'.
+2026-06-12 14:16:08.503 +01:00 [ERR] Failed executing DbCommand (5ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+ALTER TABLE [Viagens] ADD [KmFinais] int NULL;
+2026-06-12 14:18:35.137 +01:00 [INF] Executed DbCommand (19ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2026-06-12 14:18:35.201 +01:00 [INF] Acquiring an exclusive lock for migration application. See https://aka.ms/efcore-docs-migrations-lock for more information if this takes too long.
+2026-06-12 14:18:35.228 +01:00 [INF] Executed DbCommand (21ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DECLARE @result int;
+EXEC @result = sp_getapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session', @LockMode = 'Exclusive';
+SELECT @result
+2026-06-12 14:18:35.330 +01:00 [INF] Executed DbCommand (6ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+IF OBJECT_ID(N'[__EFMigrationsHistory]') IS NULL
+BEGIN
+    CREATE TABLE [__EFMigrationsHistory] (
+        [MigrationId] nvarchar(150) NOT NULL,
+        [ProductVersion] nvarchar(32) NOT NULL,
+        CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
+    );
+END;
+2026-06-12 14:18:35.353 +01:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2026-06-12 14:18:35.366 +01:00 [INF] Executed DbCommand (6ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+2026-06-12 14:18:35.386 +01:00 [INF] Executed DbCommand (11ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [MigrationId], [ProductVersion]
+FROM [__EFMigrationsHistory]
+ORDER BY [MigrationId];
+2026-06-12 14:18:35.437 +01:00 [INF] Applying migration '20260612084511_AtualizacaoModelosFrota'.
+2026-06-12 14:18:35.593 +01:00 [INF] Executed DbCommand (27ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20260612084511_AtualizacaoModelosFrota', N'9.0.16');
+2026-06-12 14:18:35.600 +01:00 [INF] Applying migration '20260612085346_AdicionarArquivoVeiculos'.
+2026-06-12 14:18:35.616 +01:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20260612085346_AdicionarArquivoVeiculos', N'9.0.16');
+2026-06-12 14:18:35.623 +01:00 [INF] Applying migration '20260612092105_PermitirDestinatarioNulo'.
+2026-06-12 14:18:35.641 +01:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20260612092105_PermitirDestinatarioNulo', N'9.0.16');
+2026-06-12 14:18:35.649 +01:00 [INF] Applying migration '20260612093204_PermitirDestinatarioOpcional'.
+2026-06-12 14:18:35.788 +01:00 [INF] Executed DbCommand (105ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+>>>>>>> 6bb5cd578a5a39f2036ef9d03d05b62c1b93443e
 DECLARE @var sysname;
 SELECT @var = [d].[name]
 FROM [sys].[default_constraints] [d]
@@ -1012,6 +1102,7 @@ INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [
 WHERE ([d].[parent_object_id] = OBJECT_ID(N'[Notificacoes]') AND [c].[name] = N'DestinatarioId');
 IF @var IS NOT NULL EXEC(N'ALTER TABLE [Notificacoes] DROP CONSTRAINT [' + @var + '];');
 ALTER TABLE [Notificacoes] ALTER COLUMN [DestinatarioId] nvarchar(max) NULL;
+<<<<<<< HEAD
 2026-06-12 10:32:25.880 +01:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
 INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
 VALUES (N'20260612093204_PermitirDestinatarioOpcional', N'9.0.16');
@@ -2742,6 +2833,39 @@ DECLARE @result int;
 EXEC @result = sp_getapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session', @LockMode = 'Exclusive';
 SELECT @result
 2026-06-12 15:44:58.428 +01:00 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+=======
+2026-06-12 14:18:35.796 +01:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20260612093204_PermitirDestinatarioOpcional', N'9.0.16');
+2026-06-12 14:18:35.803 +01:00 [INF] Applying migration '20260612094435_PontoMarcar'.
+2026-06-12 14:18:35.818 +01:00 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20260612094435_PontoMarcar', N'9.0.16');
+2026-06-12 14:18:35.824 +01:00 [INF] Applying migration '20260612110839_UpdateVehicleModels'.
+2026-06-12 14:18:35.839 +01:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20260612110839_UpdateVehicleModels', N'9.0.16');
+2026-06-12 14:18:35.845 +01:00 [INF] Applying migration '20260612111829_AtualizarModelosManutencao'.
+2026-06-12 14:18:35.865 +01:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20260612111829_AtualizarModelosManutencao', N'9.0.16');
+2026-06-12 14:18:35.874 +01:00 [INF] Applying migration '20260612131545_LimpezaCodigo'.
+2026-06-12 14:18:35.889 +01:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20260612131545_LimpezaCodigo', N'9.0.16');
+2026-06-12 14:18:35.934 +01:00 [INF] Executed DbCommand (26ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DECLARE @result int;
+EXEC @result = sp_releaseapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session';
+SELECT @result
+2026-06-12 14:18:52.724 +01:00 [INF] Executed DbCommand (45ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2026-06-12 14:18:52.877 +01:00 [INF] Acquiring an exclusive lock for migration application. See https://aka.ms/efcore-docs-migrations-lock for more information if this takes too long.
+2026-06-12 14:18:52.939 +01:00 [INF] Executed DbCommand (54ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DECLARE @result int;
+EXEC @result = sp_getapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session', @LockMode = 'Exclusive';
+SELECT @result
+2026-06-12 14:18:53.204 +01:00 [INF] Executed DbCommand (97ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+>>>>>>> 6bb5cd578a5a39f2036ef9d03d05b62c1b93443e
 IF OBJECT_ID(N'[__EFMigrationsHistory]') IS NULL
 BEGIN
     CREATE TABLE [__EFMigrationsHistory] (
@@ -2750,6 +2874,7 @@ BEGIN
         CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
     );
 END;
+<<<<<<< HEAD
 2026-06-12 15:44:58.443 +01:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
 SELECT 1
 2026-06-12 15:44:58.446 +01:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
@@ -2764,22 +2889,48 @@ DECLARE @result int;
 EXEC @result = sp_releaseapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session';
 SELECT @result
 2026-06-12 15:44:58.871 +01:00 [INF] Executed DbCommand (8ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+=======
+2026-06-12 14:18:53.219 +01:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2026-06-12 14:18:53.223 +01:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+2026-06-12 14:18:53.234 +01:00 [INF] Executed DbCommand (5ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [MigrationId], [ProductVersion]
+FROM [__EFMigrationsHistory]
+ORDER BY [MigrationId];
+2026-06-12 14:18:53.249 +01:00 [INF] No migrations were applied. The database is already up to date.
+2026-06-12 14:18:53.256 +01:00 [INF] Executed DbCommand (5ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DECLARE @result int;
+EXEC @result = sp_releaseapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session';
+SELECT @result
+2026-06-12 14:18:53.727 +01:00 [INF] Executed DbCommand (16ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+>>>>>>> 6bb5cd578a5a39f2036ef9d03d05b62c1b93443e
 SELECT CASE
     WHEN EXISTS (
         SELECT 1
         FROM [Veiculos] AS [v]) THEN CAST(1 AS bit)
     ELSE CAST(0 AS bit)
 END
+<<<<<<< HEAD
 2026-06-12 15:44:58.883 +01:00 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+=======
+2026-06-12 14:18:53.745 +01:00 [INF] Executed DbCommand (4ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+>>>>>>> 6bb5cd578a5a39f2036ef9d03d05b62c1b93443e
 SELECT CASE
     WHEN EXISTS (
         SELECT 1
         FROM [RegistosManutencao] AS [r]) THEN CAST(1 AS bit)
     ELSE CAST(0 AS bit)
 END
+<<<<<<< HEAD
 2026-06-12 15:44:58.996 +01:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
 SELECT 1
 2026-06-12 15:44:59.061 +01:00 [INF] Executed DbCommand (62ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+=======
+2026-06-12 14:18:53.853 +01:00 [INF] Executed DbCommand (7ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2026-06-12 14:18:54.002 +01:00 [INF] Executed DbCommand (120ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+>>>>>>> 6bb5cd578a5a39f2036ef9d03d05b62c1b93443e
 
 IF EXISTS
     (SELECT *
@@ -2795,20 +2946,29 @@ IF EXISTS
     )
 )
 SELECT 1 ELSE SELECT 0
+<<<<<<< HEAD
 2026-06-12 15:44:59.066 +01:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+=======
+2026-06-12 14:18:54.014 +01:00 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+>>>>>>> 6bb5cd578a5a39f2036ef9d03d05b62c1b93443e
 SELECT CASE
     WHEN EXISTS (
         SELECT 1
         FROM [Veiculos] AS [v]) THEN CAST(1 AS bit)
     ELSE CAST(0 AS bit)
 END
+<<<<<<< HEAD
 2026-06-12 15:44:59.076 +01:00 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+=======
+2026-06-12 14:18:54.127 +01:00 [INF] Executed DbCommand (101ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+>>>>>>> 6bb5cd578a5a39f2036ef9d03d05b62c1b93443e
 SELECT CASE
     WHEN EXISTS (
         SELECT 1
         FROM [Viagens] AS [v]) THEN CAST(1 AS bit)
     ELSE CAST(0 AS bit)
 END
+<<<<<<< HEAD
 2026-06-12 15:44:59.355 +01:00 [INF] User profile is available. Using 'C:\Users\harri\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
 2026-06-12 15:45:00.051 +01:00 [INF] Now listening on: https://localhost:7231
 2026-06-12 15:45:00.052 +01:00 [INF] Now listening on: http://localhost:5256
@@ -2968,3 +3128,21 @@ FROM [Veiculos] AS [v]
 2026-06-12 15:56:59.583 +01:00 [INF] Executed endpoint 'GestaoDeFrotas.Controllers.ManutencaoController.Estado (GestoreDeFrotas)'
 2026-06-12 15:56:59.584 +01:00 [INF] Request finished HTTP/2 GET https://localhost:7231/api/maintenance/estado - 200 null application/json; charset=utf-8 88.4725ms
 2026-06-12 16:00:17.333 +01:00 [INF] Application is shutting down...
+=======
+2026-06-12 14:18:54.436 +01:00 [INF] User profile is available. Using 'C:\Users\migro\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2026-06-12 14:18:55.150 +01:00 [INF] Now listening on: https://localhost:7231
+2026-06-12 14:18:55.152 +01:00 [INF] Now listening on: http://localhost:5256
+2026-06-12 14:18:55.301 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-06-12 14:18:55.304 +01:00 [INF] Hosting environment: Development
+2026-06-12 14:18:55.306 +01:00 [INF] Content root path: C:\Users\migro\OneDrive\Documents\GitHub\GestaoFrotaa\Src
+2026-06-12 14:19:20.533 +01:00 [INF] Request starting HTTP/2 GET https://localhost:7231/swagger/index.html - null null
+2026-06-12 14:19:21.193 +01:00 [INF] Request finished HTTP/2 GET https://localhost:7231/swagger/index.html - 200 null text/html;charset=utf-8 664.6245ms
+2026-06-12 14:19:21.546 +01:00 [INF] Request starting HTTP/2 GET https://localhost:7231/swagger/index.js - null null
+2026-06-12 14:19:21.714 +01:00 [INF] Request starting HTTP/2 GET https://localhost:7231/_framework/aspnetcore-browser-refresh.js - null null
+2026-06-12 14:19:21.721 +01:00 [INF] Request starting HTTP/2 GET https://localhost:7231/_vs/browserLink - null null
+2026-06-12 14:19:21.761 +01:00 [INF] Request finished HTTP/2 GET https://localhost:7231/swagger/index.js - 200 null application/javascript;charset=utf-8 215.2236ms
+2026-06-12 14:19:21.892 +01:00 [INF] Request finished HTTP/2 GET https://localhost:7231/_framework/aspnetcore-browser-refresh.js - 200 16515 application/javascript; charset=utf-8 178.4628ms
+2026-06-12 14:19:21.995 +01:00 [INF] Request finished HTTP/2 GET https://localhost:7231/_vs/browserLink - 200 null text/javascript; charset=UTF-8 273.943ms
+2026-06-12 14:19:22.555 +01:00 [INF] Request starting HTTP/2 GET https://localhost:7231/swagger/v1/swagger.json - null null
+2026-06-12 14:19:22.819 +01:00 [INF] Request finished HTTP/2 GET https://localhost:7231/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 264.4181ms
+>>>>>>> 6bb5cd578a5a39f2036ef9d03d05b62c1b93443e
