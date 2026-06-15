@@ -26,7 +26,7 @@ namespace GestoreDeFrotas.Controllers
         }
 
         [HttpPost("upload")]
-        [Consumes("multipart/form-data")]
+        [Consumes("multipart/form-data")   ]
         public async Task<IActionResult> UploadDocumento([FromForm] DocumentoUploadDto dto)
         {
             // Executa a validação do FluentValidation

@@ -88,11 +88,80 @@ namespace GestoreDeFrotas.Controllers
                 return BadRequest(new { mensagem = ex.Message });
             }
         }
-    }
 
-    public class FinalizarViagemDto
-    {
-        public int KmFinais { get; set; }
-        public string? ObservacoesEntrega { get; set; }
+
+
+
+        // 5. OBTER HISTÓRICO DE VIAGENS DE UM VEÍCULO
+        [HttpGet("historico/{veiculoId}")]
+        [Authorize(Roles = "Admin,Gerente,Tecnico,Visualizador")]
+        public async Task<IActionResult> ObterHistorico(int veiculoId)
+        {
+            try
+            {
+                var historico = await _viagensService.ObterHistoricoViagensAsync(veiculoId);
+                return Ok(historico);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { mensagem = "Erro ao carregar o histórico de viagens.", detalhe = ex.Message });
+            }
+        }
+
+        // 6. PRÉ-VISUALIZAR RELATÓRIO NO SWAGGER / BROWSER
+        [HttpGet("relatorio/visualizar/{veiculoId}")]
+        [Authorize(Roles = "Admin,Gerente,Tecnico,Visualizador")]
+        public async Task<IActionResult> VisualizarRelatorio(int veiculoId, [FromQuery] string formato = "pdf")
+        {
+            try
+            {
+                byte[] ficheiroBytes;
+                string contentType;
+                string extensao;
+
+                if (formato.ToLower() == "excel")
+                {
+                    // TODO: Substitui pela chamada ao teu serviço real que gera o Excel do veículo
+                    // Exemplo: ficheiroBytes = await _veiculoService.GerarExcelHistoricoAsync(veiculoId);
+                    ficheiroBytes = new byte[0];
+                    contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                    extensao = "xlsx";
+                }
+                else // PDF
+                {
+                    // TODO: Substitui pela chamada ao teu serviço real que já gera o teu PDF atual
+                    // Exemplo: ficheiroBytes = await _veiculoService.GerarPdfHistoricoAsync(veiculoId);
+                    ficheiroBytes = new byte[0];
+                    contentType = "application/pdf";
+                    extensao = "pdf";
+                }
+
+                // Se o serviço ainda não devolver bytes, evita enviar um ficheiro corrompido
+                if (ficheiroBytes == null || ficheiroBytes.Length == 0)
+                {
+                    return BadRequest(new { mensagem = "O serviço de relatórios ainda não gerou dados para este veículo." });
+                }
+
+                // O cabeçalho "inline" diz ao Swagger/Browser para MOSTRAR o ficheiro em vez de o baixar
+                var contentDisposition = new Microsoft.Net.Http.Headers.ContentDispositionHeaderValue("inline")
+                {
+                    FileName = $"Relatorio_Veiculo_{veiculoId}.{extensao}"
+                };
+                Response.Headers.Add(Microsoft.Net.Http.Headers.HeaderNames.ContentDisposition, contentDisposition.ToString());
+
+                return File(ficheiroBytes, contentType);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { mensagem = "Erro ao gerar a pré-visualização.", detalhe = ex.Message });
+            }
+        }
+
+
+        public class FinalizarViagemDto
+        {
+            public int KmFinais { get; set; }
+            public string? ObservacoesEntrega { get; set; }
+        }
     }
 }

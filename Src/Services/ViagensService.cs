@@ -130,6 +130,8 @@ namespace GestoreDeFrotas.Services
             await _context.SaveChangesAsync();
         }
 
+
+
         // VERIFICAÇÃO AUTOMÁTICA DE ATRASOS
         public async Task VerificarEAlertarAtrasosAsync()
         {
@@ -164,6 +166,50 @@ namespace GestoreDeFrotas.Services
             }
 
             await _context.SaveChangesAsync();
+        }
+
+
+        // HISTÓRICO DE VIAGENS DE UM VEÍCULO
+        public async Task<IEnumerable<object>> ObterHistoricoViagensAsync(int veiculoId)
+        {
+            var viagens = await _context.Viagens
+                .Where(v => v.VeiculoId == veiculoId)
+                .OrderByDescending(v => v.DataInicio)
+                .ToListAsync();
+
+            var historico = new List<object>();
+
+            foreach (var viagem in viagens)
+            {
+                // Se a viagem ainda estiver ativa, os KM Finais na base de dados podem ser null
+                int kmFinais = viagem.KmFinais ?? viagem.KmIniciais;
+                int kmsPercorridos = kmFinais - viagem.KmIniciais;
+
+                // Calcula a duração em horas. Se a viagem estiver ativa, calcula até à hora atual (DateTime.Now)
+                DateTime fimParaCalculo = viagem.DataFim ?? DateTime.Now;
+                double tempoHoras = (fimParaCalculo - viagem.DataInicio).TotalHours;
+
+                // Blindagem matemática contra divisão por zero (evita o crash fatal do JSON)
+                double velocidadeMedia = tempoHoras > 0.01 ? (kmsPercorridos / tempoHoras) : 0.0;
+
+                historico.Add(new
+                {
+                    viagem.Id,
+                    viagem.CondutorPrincipalId,
+                    viagem.CondutorSecundarioId,
+                    viagem.DataInicio,
+                    viagem.DataFim,
+                    Status = viagem.EstaAtiva ? "Em Curso" : "Finalizada",
+                    KmIniciais = viagem.KmIniciais,
+                    KmFinais = viagem.KmFinais,
+                    KmsPercorridos = kmsPercorridos,
+                    DuracaoHoras = Math.Round(tempoHoras, 1),
+                    VelocidadeMediaKmH = Math.Round(velocidadeMedia, 1),
+                    viagem.ObservacoesEntrega
+                });
+            }
+
+            return historico;
         }
     }
 }
