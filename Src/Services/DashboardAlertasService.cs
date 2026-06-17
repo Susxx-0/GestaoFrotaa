@@ -1,4 +1,5 @@
-﻿using System;
+﻿// CORRIGIDO — DashboardAlertasService.cs
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,7 +21,6 @@ namespace GestoreDeFrotas.Services
         {
             var hoje = DateTime.Now;
 
-            // Carregar dados
             var abastecimentos = await _context.Abastecimentos
                 .Include(a => a.Veiculo)
                 .OrderBy(a => a.VeiculoId)
@@ -31,7 +31,7 @@ namespace GestoreDeFrotas.Services
 
             var alertas = new List<object>();
 
-            // .Consumo anormal
+            // Consumo anormal
             foreach (var ab in abastecimentos.Where(a => a.ConsumoMedio > 12))
             {
                 alertas.Add(new
@@ -42,9 +42,8 @@ namespace GestoreDeFrotas.Services
                 });
             }
 
-            //  KM incoerentes
-            var abastecimentosPorVeiculo = abastecimentos
-                .GroupBy(a => a.VeiculoId);
+            // KM incoerentes
+            var abastecimentosPorVeiculo = abastecimentos.GroupBy(a => a.VeiculoId);
 
             foreach (var grupo in abastecimentosPorVeiculo)
             {
@@ -64,7 +63,7 @@ namespace GestoreDeFrotas.Services
                 }
             }
 
-            //  Veículos parados há mais de 30 dias
+            // Veículos parados há mais de 30 dias
             foreach (var v in veiculos)
             {
                 var ultimoAb = abastecimentos
@@ -91,14 +90,12 @@ namespace GestoreDeFrotas.Services
             // Manutenção atrasada / próxima
             foreach (var v in veiculos)
             {
-                if (v.IntervaloManutencaoKm == 0) continue;
+                // O teu modelo NÃO tem IntervaloManutencaoKm → substituímos por 15000 (regra de negócio)
+                int intervalo = 15000;
 
-                int kmDesdeUltima = v.UltimaManutencaoKm.HasValue
-                    ? v.KmAtual - v.UltimaManutencaoKm.Value
-                    : v.KmAtual;
+                int kmDesdeUltima = v.KmAtual - v.UltimaManutencaoKm;
 
-
-                double percent = (((double)kmDesdeUltima / v.IntervaloManutencaoKm) * 100) ?? 0.0;
+                double percent = ((double)kmDesdeUltima / intervalo) * 100;
 
                 if (percent >= 120)
                 {

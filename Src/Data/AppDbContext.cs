@@ -9,18 +9,15 @@ namespace GestoreDeFrotas.Data
 
         public DbSet<Veiculo> Veiculos { get; set; }
         public DbSet<Viagem> Viagens { get; set; }
-        public DbSet<Abastecimento> Abastecimentos { get; set; }
-        public DbSet<RegistoManutencao> Manutencoes { get; set; }
         public DbSet<Notificacao> Notificacoes { get; set; }
+        public DbSet<Abastecimento> Abastecimentos { get; set; }
         public DbSet<LogSistema> LogsSistema { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
+        // Mapeos requeridos por tus controladores de documentos y mantenimiento
+        public DbSet<DocumentoVeiculo> DocumentosVeiculos { get; set; }
+        public DbSet<RegistoManutencao> RegistosManutencao { get; set; }
 
-            modelBuilder.Entity<RegistoManutencao>()
-                .Property(m => m.Custo)
-                .HasColumnType("decimal(18,2)");
-        }
+        // Propiedad de compatibilidad por si algún servicio busca la tabla en inglés/plural
+        public DbSet<RegistoManutencao> Manutencoes => RegistosManutencao;
     }
 }

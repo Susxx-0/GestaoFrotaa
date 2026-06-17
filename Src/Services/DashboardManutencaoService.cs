@@ -1,4 +1,5 @@
-﻿using GestoreDeFrotas.Data;
+﻿// CORRIGIDO — DashboardManutencaoService.cs
+using GestoreDeFrotas.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace GestoreDeFrotas.Services
@@ -21,27 +22,11 @@ namespace GestoreDeFrotas.Services
 
             foreach (var v in veiculos)
             {
-                if (v.IntervaloManutencaoKm == 0)
-                {
-                    lista.Add(new
-                    {
-                        VeiculoId = v.Id,
-                        v.Marca,
-                        v.Modelo,
-                        v.Matricula,
-                        Estado = "Sem Intervalo Definido",
-                        Percentagem = 0,
-                        KmDesdeUltima = 0,
-                        ProximaManutencaoKm = 0
-                    });
-                    continue;
-                }
+                int intervalo = 15000; // regra de negócio
 
-                int kmDesdeUltima = v.UltimaManutencaoKm.HasValue
-                    ? v.KmAtual - v.UltimaManutencaoKm.Value
-                    : v.KmAtual;
+                int kmDesdeUltima = v.KmAtual - v.UltimaManutencaoKm;
 
-                double percent = (((double)kmDesdeUltima / v.IntervaloManutencaoKm) * 100) ?? 0.0;
+                double percent = ((double)kmDesdeUltima / intervalo) * 100;
 
                 string estado =
                     percent >= 120 ? "Atrasada" :
@@ -57,7 +42,7 @@ namespace GestoreDeFrotas.Services
                     Estado = estado,
                     Percentagem = Math.Round(percent, 1),
                     KmDesdeUltima = kmDesdeUltima,
-                    ProximaManutencaoKm = v.IntervaloManutencaoKm - kmDesdeUltima
+                    ProximaManutencaoKm = intervalo - kmDesdeUltima
                 });
             }
 

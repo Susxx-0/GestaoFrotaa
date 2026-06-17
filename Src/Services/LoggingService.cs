@@ -2,7 +2,6 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using GestoreDeFrotas.Services;
 
 namespace GestoreDeFrotas.Services
 {
@@ -33,11 +32,10 @@ namespace GestoreDeFrotas.Services
 
                 if (statusCode >= 400)
                 {
-                    
                     await auditoriaService.CriarNotificacaoAsync(
-                        $"Erro detetado ({statusCode})",
-                        $"O utilizador {username} falhou ao tentar fazer {metodo} em {rota}.",
-                        "Error"
+                        $"O utilizador {username} falhou ao tentar fazer {metodo} em {rota}. Código {statusCode}.",
+                        "Error",
+                        null
                     );
                 }
 

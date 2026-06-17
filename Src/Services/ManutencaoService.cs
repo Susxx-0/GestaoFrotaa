@@ -1,5 +1,7 @@
 ﻿using GestoreDeFrotas.Data;
 using GestoreDeFrotas.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace GestoreDeFrotas.Services
@@ -9,17 +11,28 @@ namespace GestoreDeFrotas.Services
         private readonly AppDbContext _context;
         public ManutencaoService(AppDbContext context) => _context = context;
 
-        public async Task AdicionarAsync(RegistoManutencao m)
+        public async Task<List<RegistoManutencao>> ObterTodosAsync() =>
+            await _context.RegistosManutencao.ToListAsync();
+
+        public async Task<object?> ObterEstadoManutencaoAsync(int veiculoId)
         {
-            _context.Manutencoes.Add(m);
-            var veiculo = await _context.Veiculos.FindAsync(m.VeiculoId);
-            if (veiculo != null)
+            var v = await _context.Veiculos.FindAsync(veiculoId);
+            if (v == null) return null;
+
+            return new
             {
-                veiculo.UltimaManutencaoKm = m.Km;
-                veiculo.UltimaManutencaoData = m.Data;
-                veiculo.Estado = "Disponível";
-            }
+                v.Id,
+                v.Matricula,
+                v.Estado,
+                PrecisaManutencao = v.KmAtual >= v.ProximaManutencaoKm
+            };
+        }
+
+        public async Task<bool> AdicionarAsync(RegistoManutencao reg)
+        {
+            _context.RegistosManutencao.Add(reg);
             await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

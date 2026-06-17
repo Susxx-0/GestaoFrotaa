@@ -14,7 +14,6 @@ namespace GestoreDeFrotas.Controllers
     {
         private readonly VeiculosService _veiculoService;
 
-        
         public VeiculosController(VeiculosService veiculoService) => _veiculoService = veiculoService;
 
         [HttpGet("ativos")]

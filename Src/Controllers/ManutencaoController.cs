@@ -24,7 +24,6 @@ namespace GestaoDeFrotas.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin,Gerente,Tecnico,Visualizador")]
         public async Task<IActionResult> GetAll()
         {
             var registos = await _manutencaoService.ObterTodosAsync();
@@ -32,38 +31,22 @@ namespace GestaoDeFrotas.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin,Gerente,Tecnico")]
         public async Task<IActionResult> Create([FromBody] RegistoManutencao registo)
         {
             var validationResult = await _validator.ValidateAsync(registo);
-
             if (!validationResult.IsValid)
-            {
-                // Retorna erro 400 com a lista detalhada de falhas
                 return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage));
-            }
 
             await _manutencaoService.AdicionarAsync(registo);
             return Ok(registo);
         }
 
-        [HttpGet("estado")]
-        [Authorize(Roles = "Admin,Gerente,Tecnico,Visualizador")]
-        public async Task<IActionResult> Estado()
+        // ✔ CORRIGIDO
+        [HttpGet("estado/{veiculoId}")]
+        public async Task<IActionResult> Estado(int veiculoId)
         {
-            try
-            {
-                var estado = await _manutencaoService.ObterEstadoManutencaoAsync();
-                return Ok(estado);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new
-                {
-                    mensagem = "Erro interno ao calcular o estado de manutenção.",
-                    detalhe = ex.Message
-                });
-            }
+            var estado = await _manutencaoService.ObterEstadoManutencaoAsync(veiculoId);
+            return Ok(estado);
         }
     }
 }

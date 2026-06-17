@@ -17,7 +17,7 @@ namespace GestoreDeFrotas.Controllers
     public class DocumentosController : ControllerBase
     {
         private readonly AppDbContext _context;
-        private readonly IValidator<DocumentoUploadDto> _validator; // Injeção do validador
+        private readonly IValidator<DocumentoUploadDto> _validator;
 
         public DocumentosController(AppDbContext context, IValidator<DocumentoUploadDto> validator)
         {
@@ -26,39 +26,28 @@ namespace GestoreDeFrotas.Controllers
         }
 
         [HttpPost("upload")]
-        [Consumes("multipart/form-data")   ]
+        [Consumes("multipart/form-data")]
         public async Task<IActionResult> UploadDocumento([FromForm] DocumentoUploadDto dto)
         {
-            // Executa a validação do FluentValidation
             var validationResult = await _validator.ValidateAsync(dto);
-
             if (!validationResult.IsValid)
-            {
                 return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage));
-            }
 
-            // Segurança: validação da extensão do ficheiro
             var extensao = Path.GetExtension(dto.Ficheiro!.FileName).ToLower();
             var extensoesPermitidas = new[] { ".pdf", ".jpg", ".jpeg", ".png" };
 
             if (!extensoesPermitidas.Contains(extensao))
-            {
-                return BadRequest("Apenas são permitidos ficheiros em formato PDF, JPG, JPEG ou PNG por motivos de segurança.");
-            }
+                return BadRequest("Apenas PDF, JPG, JPEG ou PNG são permitidos.");
 
             var pastaUploads = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
             if (!Directory.Exists(pastaUploads))
-            {
                 Directory.CreateDirectory(pastaUploads);
-            }
 
             var nomeFicheiroUnico = $"{Guid.NewGuid()}_{Path.GetFileName(dto.Ficheiro.FileName)}";
             var caminhoCompleto = Path.Combine(pastaUploads, nomeFicheiroUnico);
 
             using (var stream = new FileStream(caminhoCompleto, FileMode.Create))
-            {
                 await dto.Ficheiro.CopyToAsync(stream);
-            }
 
             var novoDocumento = new DocumentoVeiculo
             {
@@ -75,16 +64,14 @@ namespace GestoreDeFrotas.Controllers
             if (dto.DataValidade.HasValue && dto.DataValidade.Value < DateTime.Now)
             {
                 var auditoriaService = HttpContext.RequestServices.GetService(typeof(GestoreDeFrotas.Services.AuditoriaService)) as GestoreDeFrotas.Services.AuditoriaService;
+
                 if (auditoriaService != null)
                 {
                     await auditoriaService.CriarNotificacaoAsync(
-   
-                        "Documento Caducado Detetado",
-   
-                        $"Foi enviado um documento ({dto.TipoDocumento}) já expirado para o veículo com o ID {dto.VeiculoId}.",
-    
-                        "Warning"
-);
+                        $"Foi enviado um documento ({dto.TipoDocumento}) já expirado.",
+                        "Warning",
+                        dto.VeiculoId
+                    );
                 }
             }
 
@@ -125,9 +112,7 @@ namespace GestoreDeFrotas.Controllers
             var caminhoFisico = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", documento.CaminhoFicheiro.TrimStart('/'));
 
             if (System.IO.File.Exists(caminhoFisico))
-            {
                 System.IO.File.Delete(caminhoFisico);
-            }
 
             _context.DocumentosVeiculos.Remove(documento);
             await _context.SaveChangesAsync();
@@ -142,7 +127,7 @@ namespace GestoreDeFrotas.Controllers
             if (doc == null) return NotFound("Documento não encontrado.");
 
             var caminhoFisico = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", doc.CaminhoFicheiro.TrimStart('/'));
-            if (!System.IO.File.Exists(caminhoFisico)) return NotFound("Ficheiro físico não encontrado no servidor.");
+            if (!System.IO.File.Exists(caminhoFisico)) return NotFound("Ficheiro físico não encontrado.");
 
             var bytes = await System.IO.File.ReadAllBytesAsync(caminhoFisico);
 

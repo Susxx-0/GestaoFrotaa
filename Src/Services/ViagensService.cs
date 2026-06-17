@@ -11,104 +11,117 @@ namespace GestoreDeFrotas.Services
     public class ViagensService
     {
         private readonly AppDbContext _context;
-        private readonly NotificacoesService _notificacaoService;
+        public ViagensService(AppDbContext context) => _context = context;
 
-        public ViagensService(AppDbContext context, NotificacoesService notificacaoService)
-        {
-            _context = context;
-            _notificacaoService = notificacaoService;
-        }
-
-        public async Task<Viagem> IniciarViagemAsync(int veiculoId, string condutorPrincipalId, string? condutorSecundarioId = null)
+        // ✔ ORIGINAL
+        public async Task<Viagem> IniciarViagemAsync(int veiculoId, string condutorId)
         {
             var veiculo = await _context.Veiculos.FindAsync(veiculoId);
-            if (veiculo == null || !veiculo.EstaAtivo) throw new Exception("O veículo selecionado não existe ou está inativo.");
+            if (veiculo == null || !veiculo.EstaAtivo)
+                throw new Exception("Veículo não encontrado ou inativo.");
 
-            
-            if (veiculo.Estado == "Em Manutenção") throw new Exception("Bloqueio de Segurança: Este veículo encontra-se em manutenção e não pode iniciar viagem.");
-            if (veiculo.Estado == "Em uso") throw new Exception("Este veículo já está associado a uma viagem ativa.");
+            if (veiculo.Estado == "Em Manutenção")
+                throw new Exception("Veículo em manutenção não pode iniciar viagem.");
 
-            int kmIniciaisDoCarro = await _context.Viagens
-                .Where(v => v.VeiculoId == veiculoId && v.KmFinais != null)
-                .OrderByDescending(v => v.DataFim)
-                .Select(v => v.KmFinais!.Value)
-                .FirstOrDefaultAsync();
+            if (veiculo.Estado == "Em uso")
+                throw new Exception("Este veículo já possui uma viagem ativa.");
 
-            if (kmIniciaisDoCarro == 0) kmIniciaisDoCarro = veiculo.KmAtual;
-
-            var novaViagem = new Viagem
+            var nova = new Viagem
             {
                 VeiculoId = veiculoId,
-                CondutorPrincipalId = condutorPrincipalId,
-                CondutorSecundarioId = condutorSecundarioId,
+                CondutorPrincipalId = condutorId,
                 DataInicio = DateTime.Now,
                 DataLimitePrevista = DateTime.Now.AddHours(4),
                 EstaAtiva = true,
-                KmIniciais = kmIniciaisDoCarro
+                KmIniciais = veiculo.KmAtual
             };
 
             veiculo.Estado = "Em uso";
-            _context.Viagens.Add(novaViagem);
+            _context.Viagens.Add(nova);
             await _context.SaveChangesAsync();
-            return novaViagem;
+            return nova;
         }
 
-        public async Task FinalizarViagemAsync(int viagemId, int kmFinais, string? observacoesEntrega)
+        // 🔥 OVERLOAD NECESSÁRIO PARA O CONTROLLER
+        public async Task<Viagem> IniciarViagemAsync(int veiculoId, string condutorPrincipalId, string? condutorSecundarioId)
+        {
+            var viagem = await IniciarViagemAsync(veiculoId, condutorPrincipalId);
+            viagem.CondutorSecundarioId = condutorSecundarioId;
+            await _context.SaveChangesAsync();
+            return viagem;
+        }
+
+        // 🔥 MÉTODO EM FALTA — FINALIZAR VIAGEM
+        public async Task FinalizarViagemAsync(int viagemId, int kmFinais, string? observacoes)
         {
             var viagem = await _context.Viagens.Include(v => v.Veiculo).FirstOrDefaultAsync(v => v.Id == viagemId);
-            if (viagem == null || !viagem.EstaAtiva) throw new Exception("Viagem não encontrada ou já concluída.");
-            if (kmFinais < viagem.KmIniciais) throw new Exception($"Quilometragem inválida. Menor que os KM Iniciais ({viagem.KmIniciais}).");
+            if (viagem == null || !viagem.EstaAtiva)
+                throw new Exception("Viagem não encontrada ou já finalizada.");
 
-            viagem.DataFim = DateTime.Now;
-            viagem.ObservacoesEntrega = observacoesEntrega;
+            if (kmFinais < viagem.KmIniciais)
+                throw new Exception("KM finais inválidos.");
+
             viagem.KmFinais = kmFinais;
+            viagem.DataFim = DateTime.Now;
+            viagem.ObservacoesEntrega = observacoes;
             viagem.EstaAtiva = false;
 
-            if (viagem.Veiculo != null)
+            viagem.Veiculo.Estado = "Disponível";
+            viagem.Veiculo.KmAtual = kmFinais;
+
+            await _context.SaveChangesAsync();
+        }
+
+        // 🔥 MÉTODO EM FALTA — HISTÓRICO
+        public async Task<IEnumerable<object>> ObterHistoricoViagensAsync(int veiculoId)
+        {
+            var viagens = await _context.Viagens
+                .Where(v => v.VeiculoId == veiculoId)
+                .OrderByDescending(v => v.DataInicio)
+                .ToListAsync();
+
+            return viagens.Select(v => new
             {
-                viagem.Veiculo.Estado = "Disponível";
-                viagem.Veiculo.KmAtual = kmFinais;
+                v.Id,
+                v.DataInicio,
+                v.DataFim,
+                Status = v.EstaAtiva ? "Em Curso" : "Finalizada",
+                KmPercorridos = (v.KmFinais ?? v.KmIniciais) - v.KmIniciais,
+                Observacoes = v.ObservacoesEntrega
+            });
+        }
 
-              
-                if (!string.IsNullOrWhiteSpace(observacoesEntrega))
-                {
-                    await _notificacaoService.EnviarNotificacaoAsync(
-                        $"Aviso de Entrega ({viagem.Veiculo.Matricula}): {observacoesEntrega}",
-                        "TecnicoResponsavel",
-                        viagem.Veiculo.Id
-                    );
-                }
+        // ✔ JÁ EXISTIA
+        public async Task VerificarEAlertarAtrasosAsync()
+        {
+            var hoje = DateTime.Now;
+            var atrasadas = await _context.Viagens.Where(v => v.EstaAtiva && hoje > v.DataLimitePrevista).ToListAsync();
 
-                if (viagem.Veiculo.KmAtual >= viagem.Veiculo.ProximaManutencaoKm)
+            foreach (var v in atrasadas)
+            {
+                if (!await _context.Notificacoes.AnyAsync(n => n.VeiculoId == v.VeiculoId && !n.Lida))
                 {
-                    await _notificacaoService.EnviarNotificacaoAsync(
-                        $"Alerta Crítico: Veículo {viagem.Veiculo.Matricula} ultrapassou o limite de quilómetros para revisão ({viagem.Veiculo.ProximaManutencaoKm} KM).",
-                        "Admin",
-                        viagem.Veiculo.Id
-                    );
+                    _context.Notificacoes.Add(new Notificacao
+                    {
+                        Mensagem = $"Alerta: A viagem do veículo ID {v.VeiculoId} ultrapassou o tempo limite.",
+                        Grau = "Aviso",
+                        DataCriacao = DateTime.Now,
+                        VeiculoId = v.VeiculoId
+                    });
                 }
             }
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<object>> ObterHistoricoViagensAsync(int veiculoId)
+        // ✔ JÁ EXISTIA
+        public async Task<bool> SolicitarMaisTempoAsync(int viagemId, int horas)
         {
-            var viagens = await _context.Viagens.Where(v => v.VeiculoId == veiculoId).OrderByDescending(v => v.DataInicio).ToListAsync();
-            return viagens.Select(v => {
-                int kmFinais = v.KmFinais ?? v.KmIniciais;
-                double horas = ((v.DataFim ?? DateTime.Now) - v.DataInicio).TotalHours;
-                return new
-                {
-                    v.Id,
-                    v.DataInicio,
-                    v.DataFim,
-                    Status = v.EstaAtiva ? "Em Curso" : "Finalizada",
-                    KmsPercorridos = kmFinais - v.KmIniciais,
-                    DuracaoHoras = Math.Round(horas, 1),
-                    VelocidadeMediaKmH = horas > 0.1 ? Math.Round((kmFinais - v.KmIniciais) / horas, 1) : 0,
-                    v.ObservacoesEntrega
-                };
-            });
+            var viagem = await _context.Viagens.FindAsync(viagemId);
+            if (viagem == null || !viagem.EstaAtiva) return false;
+
+            viagem.DataLimitePrevista = viagem.DataLimitePrevista.AddHours(horas);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }
