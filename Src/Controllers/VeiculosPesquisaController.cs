@@ -37,7 +37,7 @@ namespace GestoreDeFrotas.Controllers
 
             var query = _context.Veiculos.AsQueryable();
 
-            // 🔍 Pesquisa global
+            // Pesquisa global
             if (!string.IsNullOrWhiteSpace(q))
             {
                 query = query.Where(v =>
@@ -48,7 +48,7 @@ namespace GestoreDeFrotas.Controllers
                     v.Estado.Contains(q));
             }
 
-            // 🎯 Filtros específicos
+            // Filtros específicos
             if (!string.IsNullOrWhiteSpace(marca))
                 query = query.Where(v => v.Marca.Contains(marca));
 
@@ -70,13 +70,13 @@ namespace GestoreDeFrotas.Controllers
             if (anoMax.HasValue)
                 query = query.Where(v => v.Ano <= anoMax.Value);
 
-            // 📊 Total antes da paginação
+            // Total antes da paginação
             var total = await query.CountAsync();
 
-            // ↕ Ordenação
+            //  Ordenação
             query = ApplySorting(query, sort);
 
-            // 📄 Paginação
+            //  Paginação
             var items = await query
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)

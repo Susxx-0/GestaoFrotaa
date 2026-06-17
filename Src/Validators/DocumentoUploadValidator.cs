@@ -4,7 +4,6 @@ using System;
 
 namespace GestoreDeFrotas.Validators
 {
-    // Classe auxiliar para mapear os dados do formulário
     public class DocumentoUploadDto
     {
         public int VeiculoId { get; set; }
@@ -13,21 +12,13 @@ namespace GestoreDeFrotas.Validators
         public IFormFile? Ficheiro { get; set; }
     }
 
-    // Regras de validação do FluentValidation
     public class DocumentoUploadValidator : AbstractValidator<DocumentoUploadDto>
     {
         public DocumentoUploadValidator()
         {
-            RuleFor(d => d.VeiculoId)
-                .GreaterThan(0).WithMessage("O ID do veículo deve ser um identificador válido.");
-
-            RuleFor(d => d.TipoDocumento)
-                .NotEmpty().WithMessage("O tipo de documento é obrigatório.")
-                .MaximumLength(100).WithMessage("O tipo de documento não pode ultrapassar os 100 caracteres.");
-
-            RuleFor(d => d.Ficheiro)
-                .NotNull().WithMessage("Nenhum ficheiro foi enviado.")
-                .Must(f => f == null || f.Length > 0).WithMessage("O ficheiro enviado está vazio.");
+            RuleFor(d => d.VeiculoId).GreaterThan(0);
+            RuleFor(d => d.TipoDocumento).NotEmpty().MaximumLength(100);
+            RuleFor(d => d.Ficheiro).NotNull().Must(f => f == null || f.Length > 0).WithMessage("Ficheiro inválido.");
         }
     }
 }

@@ -1,18 +1,15 @@
-﻿using System;
+﻿using GestoreDeFrotas.Services; 
+using Microsoft.AspNetCore.Http;
+using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 
-namespace GestoreDeFrotas.Services
+namespace GestoreDeFrotas.Middleware
 {
     public class LoggingMiddleware
     {
         private readonly RequestDelegate _next;
-
-        public LoggingMiddleware(RequestDelegate next)
-        {
-            _next = next;
-        }
+        public LoggingMiddleware(RequestDelegate next) => _next = next;
 
         public async Task InvokeAsync(HttpContext context, AuditoriaService auditoriaService)
         {
@@ -26,17 +23,12 @@ namespace GestoreDeFrotas.Services
             var metodo = context.Request.Method;
             var statusCode = context.Response.StatusCode;
 
-            var descricao = $"Request {metodo} em {rota} devolveu {statusCode}.";
-
+            var descricao = $"Ação HTTP {metodo} executada na rota '{rota}' com resposta {statusCode}.";
             await auditoriaService.RegistarLogAsync(username, metodo, rota, descricao, statusCode);
 
             if (statusCode >= 400)
             {
-                await auditoriaService.CriarNotificacaoAsync(
-                    $"Erro {statusCode} na API",
-                    $"O utilizador {username} fez {metodo} em {rota} e obteve {statusCode}.",
-                    "Error"
-                );
+                await auditoriaService.CriarNotificacaoAsync($"Erro Operacional {statusCode}", $"O utilizador '{username}' falhou a operação {metodo} em {rota}.", "Error");
             }
         }
     }

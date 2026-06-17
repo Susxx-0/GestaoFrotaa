@@ -122,7 +122,6 @@ namespace GestoreDeFrotas.Controllers
             var documento = await _context.DocumentosVeiculos.FindAsync(id);
             if (documento == null) return NotFound("Documento não encontrado.");
 
-            // CORRIGIDO: Alterado de 'documento.Caminho' para 'documento.CaminhoFicheiro.TrimStart('/')'
             var caminhoFisico = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", documento.CaminhoFicheiro.TrimStart('/'));
 
             if (System.IO.File.Exists(caminhoFisico))

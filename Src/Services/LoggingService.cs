@@ -33,7 +33,7 @@ namespace GestoreDeFrotas.Services
 
                 if (statusCode >= 400)
                 {
-                    // CORRIGIDO: Removidos os prefixos titulo: e mensagem:
+                    
                     await auditoriaService.CriarNotificacaoAsync(
                         $"Erro detetado ({statusCode})",
                         $"O utilizador {username} falhou ao tentar fazer {metodo} em {rota}.",

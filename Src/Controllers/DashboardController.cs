@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using GestoreDeFrotas.Services; // MUDADO: Gestore com E
-using GestoreDeFrotas.Filtro;   // MUDADO: Gestore com E
+using GestoreDeFrotas.Services; 
+using GestoreDeFrotas.Filtro;   
 using System.Threading.Tasks;
 
 namespace GestoreDeFrotas.Controllers 

@@ -15,7 +15,7 @@ namespace GestoreDeFrotas.Controllers
     public class AbastecimentosController : ControllerBase
     {
         private readonly AbastecimentosService _service;
-        private readonly IValidator<Abastecimento> _validator; // Injeção do validador
+        private readonly IValidator<Abastecimento> _validator; 
 
         public AbastecimentosController(AbastecimentosService service, IValidator<Abastecimento> validator)
         {

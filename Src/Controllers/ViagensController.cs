@@ -121,16 +121,14 @@ namespace GestoreDeFrotas.Controllers
 
                 if (formato.ToLower() == "excel")
                 {
-                    // TODO: Substitui pela chamada ao teu serviço real que gera o Excel do veículo
-                    // Exemplo: ficheiroBytes = await _veiculoService.GerarExcelHistoricoAsync(veiculoId);
+                  
                     ficheiroBytes = new byte[0];
                     contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
                     extensao = "xlsx";
                 }
                 else // PDF
                 {
-                    // TODO: Substitui pela chamada ao teu serviço real que já gera o teu PDF atual
-                    // Exemplo: ficheiroBytes = await _veiculoService.GerarPdfHistoricoAsync(veiculoId);
+             
                     ficheiroBytes = new byte[0];
                     contentType = "application/pdf";
                     extensao = "pdf";
@@ -142,7 +140,6 @@ namespace GestoreDeFrotas.Controllers
                     return BadRequest(new { mensagem = "O serviço de relatórios ainda não gerou dados para este veículo." });
                 }
 
-                // O cabeçalho "inline" diz ao Swagger/Browser para MOSTRAR o ficheiro em vez de o baixar
                 var contentDisposition = new Microsoft.Net.Http.Headers.ContentDispositionHeaderValue("inline")
                 {
                     FileName = $"Relatorio_Veiculo_{veiculoId}.{extensao}"

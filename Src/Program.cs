@@ -1,8 +1,10 @@
 using FluentValidation;
+using FluentValidation.AspNetCore;
 using GestoreDeFrotas.Data;
 using GestoreDeFrotas.Models;
 using GestoreDeFrotas.Services;
 using GestoreDeFrotas.Validators;
+using GestoreDeFrotas.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -13,27 +15,25 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Serilog só na consola (sem ficheiro)
-Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console()
-    .CreateLogger();
-
+// 1. REGISTO DE LOGS
+Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
 builder.Host.UseSerilog();
 
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=GestaoFrotasDB;Trusted_Connection=True;MultipleActiveResultSets=true"));
+// 2. INFRAESTRUTURA EF CORE COM SQL SERVER
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? "Server=(localdb)\\mssqllocaldb;Database=GestaoFrotasDB;Trusted_Connection=True;MultipleActiveResultSets=true";
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
 
-builder.Services.AddScoped<IValidator<Veiculo>, VeiculoValidator>();
+// 3. REFATORAÇÃO INTELIGENTE: REGISTO AUTOMÁTICO DE TODOS OS VALIDADORES NUMA SÓ LINHA
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<VeiculoValidator>();
+
+// 4. DEPENDÊNCIAS DE CORE E DASHBOARD UNIFICADAS
+builder.Services.AddScoped<AuditoriaService>();
+builder.Services.AddScoped<NotificacoesService>();
 builder.Services.AddScoped<VeiculosService>();
 builder.Services.AddScoped<ManutencaoService>();
 builder.Services.AddScoped<AbastecimentosService>();
-builder.Services.AddScoped<AuditoriaService>();
-builder.Services.AddScoped<NotificacoesService>();
-builder.Services.AddScoped<IValidator<Abastecimento>, AbastecimentoValidator>();
-builder.Services.AddScoped<IValidator<RegistoManutencao>, RegistoManutencaoValidator>();
-builder.Services.AddScoped<IValidator<DocumentoUploadDto>, DocumentoUploadValidator>();
-
-QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
 builder.Services.AddScoped<ViagensService>();
 
 builder.Services.AddScoped<DashboardService>();
@@ -42,38 +42,35 @@ builder.Services.AddScoped<DashboardUtilizacaoService>();
 builder.Services.AddScoped<DashboardAlertasService>();
 builder.Services.AddScoped<DashboardManutencaoService>();
 
+QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
+// 5. CONFIGURAÇÃO DE SEGURANÇA NO SWAGGER
 builder.Services.AddSwaggerGen(c =>
 {
     c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
     {
-        Description = "Insira o token JWT desta forma: Bearer SEU_TOKEN_AQUI",
+        Description = "Insira o token desta forma: Bearer SEU_TOKEN_AQUI",
         Name = "Authorization",
         In = Microsoft.OpenApi.Models.ParameterLocation.Header,
         Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
         Scheme = "Bearer"
     });
-
     c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
     {
         {
             new Microsoft.OpenApi.Models.OpenApiSecurityScheme
             {
-                Reference = new Microsoft.OpenApi.Models.OpenApiReference
-                {
-                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
+                Reference = new Microsoft.OpenApi.Models.OpenApiReference { Type = Microsoft.OpenApi.ReferenceType.SecurityScheme, Id = "Bearer" }
             },
             new string[] {}
         }
     });
 });
 
+// 6. AUTENTICAÇÃO JWT TRATADA COM CORREÇÃO CRÍTICA DE ASSINATURA
 var chaveSecretaGlobal = "CHAVE_SECRETA_CENTRALIZADA_DO_PORTAL_INTERNO_2026";
-
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -85,13 +82,12 @@ builder.Services.AddAuthentication(options =>
     options.SaveToken = true;
     options.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuerSigningKey = false,
+        ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(chaveSecretaGlobal)),
         ValidateIssuer = false,
         ValidateAudience = false,
         RoleClaimType = "roles"
     };
-
     options.Events = new JwtBearerEvents
     {
         OnTokenValidated = context =>
@@ -112,62 +108,44 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    context.Database.Migrate();
-    AppDbContext.SeedData(context);
-}
-
+// 7. PIPELINE HTTP E INTERFACES GRAFICAS
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-
     app.MapScalarApiReference(options =>
     {
-        options.WithTitle("Gestão de Frotas API")
-               .WithTheme(ScalarTheme.DeepSpace)
-               .WithOpenApiRoutePattern("/swagger/v1/swagger.json");
+        options.WithTitle("Gestão de Frotas API").WithTheme(ScalarTheme.DeepSpace).WithOpenApiRoutePattern("/swagger/v1/swagger.json");
     });
 }
 
 app.UseHttpsRedirection();
-
-// Middleware de logging/auditoria (BD)
-app.UseMiddleware<LoggingMiddleware>();
-
+app.UseMiddleware<LoggingMiddleware>(); // <--- AGORA SEU MIDDLEWARE REAL JÁ CONSEGUE ENTRAR NO PIPELINE DE FORMA SEGURA
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseStaticFiles();
 
+// 8. GERADOR DE TOKEN DE TESTE
 app.MapPost("/api/auth/teste-token", [Microsoft.AspNetCore.Authorization.AllowAnonymous] (string cargo) =>
 {
     var tokenHandler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
     var chave = Encoding.ASCII.GetBytes(chaveSecretaGlobal);
-
     var tokenDescriptor = new SecurityTokenDescriptor
     {
-        Subject = new ClaimsIdentity(new[]
-        {
-            new Claim(ClaimTypes.Name, "EstagiarioFrotas"),
-            new Claim("roles", cargo)
-        }),
+        Subject = new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, "EstagiarioFrotas"), new Claim("roles", cargo) }),
         Expires = DateTime.UtcNow.AddHours(2),
         SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(chave), SecurityAlgorithms.HmacSha256Signature)
     };
-
-    var token = tokenHandler.CreateToken(tokenDescriptor);
-    return Results.Ok(new { token = tokenHandler.WriteToken(token) });
+    return Results.Ok(new { token = tokenHandler.WriteToken(tokenHandler.CreateToken(tokenDescriptor)) });
 });
 
+// 9. RESOLUÇÃO COMPLETA DO ERRO DE DOUBLE-SEEDING E MIGRATIONS CONCORRENTES
 using (var scope = app.Services.CreateScope())
 {
-    var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<AppDbContext>();
-    GestoreDeFrotas.Data.DbInitializer.Seed(context);
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    context.Database.Migrate();
+    DbInitializer.Seed(context);
 }
 
 app.MapControllers();
-
 app.Run();
