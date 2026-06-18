@@ -1,5 +1,4 @@
-﻿// CORRIGIDO — DashboardManutencaoService.cs
-using GestoreDeFrotas.Data;
+﻿using GestoreDeFrotas.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace GestoreDeFrotas.Services
@@ -13,46 +12,28 @@ namespace GestoreDeFrotas.Services
             _context = context;
         }
 
-        public async Task<object> ObterEstadoManutencoesAsync()
+        public async Task<object> ObterResumoAsync()
         {
             var veiculos = await _context.Veiculos.ToListAsync();
-            var hoje = DateTime.Now;
 
-            var lista = new List<object>();
-
-            foreach (var v in veiculos)
+            int manutencaoAtrasada = veiculos.Count(v =>
             {
-                int intervalo = 15000; // regra de negócio
+                int kmProx = v.ProximaManutencaoKm ?? 0;
+                return (kmProx > 0 && v.KmAtual >= kmProx)
+                       || (v.ProximaManutencaoData != null && v.ProximaManutencaoData <= DateTime.Today);
+            });
 
-                int kmDesdeUltima = v.KmAtual - v.UltimaManutencaoKm;
-
-                double percent = ((double)kmDesdeUltima / intervalo) * 100;
-
-                string estado =
-                    percent >= 120 ? "Atrasada" :
-                    percent >= 90 ? "Próxima" :
-                    "OK";
-
-                lista.Add(new
-                {
-                    VeiculoId = v.Id,
-                    v.Marca,
-                    v.Modelo,
-                    v.Matricula,
-                    Estado = estado,
-                    Percentagem = Math.Round(percent, 1),
-                    KmDesdeUltima = kmDesdeUltima,
-                    ProximaManutencaoKm = intervalo - kmDesdeUltima
-                });
-            }
+            int manutencaoProxima = veiculos.Count(v =>
+            {
+                int kmProx = v.ProximaManutencaoKm ?? 0;
+                return (kmProx > 0 && v.KmAtual >= kmProx - 1000)
+                       || (v.ProximaManutencaoData != null && v.ProximaManutencaoData <= DateTime.Today.AddDays(30));
+            });
 
             return new
             {
-                Total = lista.Count,
-                Ok = lista.Count(x => ((dynamic)x).Estado == "OK"),
-                Proxima = lista.Count(x => ((dynamic)x).Estado == "Próxima"),
-                Atrasada = lista.Count(x => ((dynamic)x).Estado == "Atrasada"),
-                Veiculos = lista
+                Atrasada = manutencaoAtrasada,
+                Proxima = manutencaoProxima
             };
         }
     }

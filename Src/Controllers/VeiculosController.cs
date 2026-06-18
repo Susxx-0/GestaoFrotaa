@@ -14,17 +14,22 @@ namespace GestoreDeFrotas.Controllers
     {
         private readonly VeiculosService _veiculoService;
 
-        public VeiculosController(VeiculosService veiculoService) => _veiculoService = veiculoService;
+        public VeiculosController(VeiculosService veiculoService)
+        {
+            _veiculoService = veiculoService;
+        }
 
         [HttpGet("ativos")]
-        public async Task<IActionResult> ObterAtivos([FromQuery] string? ordenarPor) =>
-            Ok(await _veiculoService.ObterTodosAtivosAsync(ordenarPor));
+        public async Task<IActionResult> ObterAtivos([FromQuery] string? ordenarPor)
+        {
+            return Ok(await _veiculoService.ObterTodosAtivosAsync(ordenarPor));
+        }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> ObterPorId(int id)
         {
             var v = await _veiculoService.ObterPorIdAsync(id);
-            if (v == null) return NotFound(new { mensagem = "Veículo não localizado ou inativo." });
+            if (v == null) return NotFound(new { mensagem = "Veículo não encontrado." });
             return Ok(v);
         }
 
@@ -43,24 +48,15 @@ namespace GestoreDeFrotas.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             var sucesso = await _veiculoService.AtualizarAsync(id, v);
-            if (!sucesso) return NotFound(new { mensagem = "Não foi possível atualizar. Veículo inexistente." });
+            if (!sucesso) return NotFound(new { mensagem = "Veículo não encontrado." });
             return NoContent();
         }
 
-        [HttpPut("{id}/estado-manutencao")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> AlterarManutencao(int id, [FromQuery] bool colocarEmManutencao)
+        // 🔥 Endpoint: Veículos com manutenção atrasada
+        [HttpGet("manutencao-atrasada")]
+        public async Task<IActionResult> ObterManutencaoAtrasada()
         {
-            try
-            {
-                var alterou = await _veiculoService.AlterarEstadoManutencaoAsync(id, colocarEmManutencao);
-                if (!alterou) return NotFound(new { mensagem = "Veículo não encontrado." });
-                return Ok(new { mensagem = $"Estado de manutenção alterado para: {colocarEmManutencao}" });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { erro = ex.Message });
-            }
+            return Ok(await _veiculoService.ObterManutencaoAtrasadaAsync());
         }
 
         [HttpDelete("{id}")]

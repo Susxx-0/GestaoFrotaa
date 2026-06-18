@@ -1,9 +1,4 @@
-﻿// CORRIGIDO — DashboardAlertasService.cs
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using GestoreDeFrotas.Data;
+﻿using GestoreDeFrotas.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace GestoreDeFrotas.Services
@@ -19,110 +14,36 @@ namespace GestoreDeFrotas.Services
 
         public async Task<object> ObterAlertasAsync()
         {
-            var hoje = DateTime.Now;
-
-            var abastecimentos = await _context.Abastecimentos
-                .Include(a => a.Veiculo)
-                .OrderBy(a => a.VeiculoId)
-                .ThenBy(a => a.Data)
-                .ToListAsync();
-
             var veiculos = await _context.Veiculos.ToListAsync();
 
-            var alertas = new List<object>();
-
-            // Consumo anormal
-            foreach (var ab in abastecimentos.Where(a => a.ConsumoMedio > 12))
+            int manutencaoAtrasada = veiculos.Count(v =>
             {
-                alertas.Add(new
-                {
-                    Tipo = "Consumo Anormal",
-                    Mensagem = $"O veículo {ab.Veiculo.Marca} {ab.Veiculo.Modelo} ({ab.Veiculo.Matricula}) apresentou consumo de {ab.ConsumoMedio} L/100km.",
-                    Data = ab.Data
-                });
-            }
+                int kmProx = v.ProximaManutencaoKm ?? 0;
+                return (kmProx > 0 && v.KmAtual >= kmProx)
+                       || (v.ProximaManutencaoData != null && v.ProximaManutencaoData <= DateTime.Today);
+            });
 
-            // KM incoerentes
-            var abastecimentosPorVeiculo = abastecimentos.GroupBy(a => a.VeiculoId);
+            int ipoExpira = veiculos.Count(v =>
+                v.DataProximaIpo != null &&
+                v.DataProximaIpo <= DateTime.Today.AddDays(7)
+            );
 
-            foreach (var grupo in abastecimentosPorVeiculo)
-            {
-                var lista = grupo.OrderBy(a => a.Data).ToList();
+            int seguroExpira = veiculos.Count(v =>
+                v.DataSeguro != null &&
+                v.DataSeguro <= DateTime.Today.AddDays(7)
+            );
 
-                for (int i = 1; i < lista.Count; i++)
-                {
-                    if (lista[i].KmAtual < lista[i - 1].KmAtual)
-                    {
-                        alertas.Add(new
-                        {
-                            Tipo = "KM Incoerente",
-                            Mensagem = $"O veículo {lista[i].Veiculo.Marca} {lista[i].Veiculo.Modelo} ({lista[i].Veiculo.Matricula}) registou KM inferior ao anterior.",
-                            Data = lista[i].Data
-                        });
-                    }
-                }
-            }
-
-            // Veículos parados há mais de 30 dias
-            foreach (var v in veiculos)
-            {
-                var ultimoAb = abastecimentos
-                    .Where(a => a.VeiculoId == v.Id)
-                    .OrderByDescending(a => a.Data)
-                    .FirstOrDefault();
-
-                if (ultimoAb != null)
-                {
-                    var dias = (hoje - ultimoAb.Data).TotalDays;
-
-                    if (dias > 30)
-                    {
-                        alertas.Add(new
-                        {
-                            Tipo = "Veículo Parado",
-                            Mensagem = $"O veículo {v.Marca} {v.Modelo} ({v.Matricula}) está parado há {Math.Round(dias)} dias.",
-                            Data = ultimoAb.Data
-                        });
-                    }
-                }
-            }
-
-            // Manutenção atrasada / próxima
-            foreach (var v in veiculos)
-            {
-                // O teu modelo NÃO tem IntervaloManutencaoKm → substituímos por 15000 (regra de negócio)
-                int intervalo = 15000;
-
-                int kmDesdeUltima = v.KmAtual - v.UltimaManutencaoKm;
-
-                double percent = ((double)kmDesdeUltima / intervalo) * 100;
-
-                if (percent >= 120)
-                {
-                    alertas.Add(new
-                    {
-                        Tipo = "Manutenção Atrasada",
-                        Mensagem = $"O veículo {v.Marca} {v.Modelo} ({v.Matricula}) ultrapassou o limite de manutenção.",
-                        Percentagem = Math.Round(percent, 1),
-                        Data = hoje
-                    });
-                }
-                else if (percent >= 90)
-                {
-                    alertas.Add(new
-                    {
-                        Tipo = "Manutenção Próxima",
-                        Mensagem = $"O veículo {v.Marca} {v.Modelo} ({v.Matricula}) está próximo da manutenção.",
-                        Percentagem = Math.Round(percent, 1),
-                        Data = hoje
-                    });
-                }
-            }
+            int inspecaoExpira = veiculos.Count(v =>
+                v.DataInspecao != null &&
+                v.DataInspecao <= DateTime.Today.AddDays(7)
+            );
 
             return new
             {
-                TotalAlertas = alertas.Count,
-                Alertas = alertas
+                ManutencaoAtrasada = manutencaoAtrasada,
+                IPOExpira = ipoExpira,
+                SeguroExpira = seguroExpira,
+                InspecaoExpira = inspecaoExpira
             };
         }
     }

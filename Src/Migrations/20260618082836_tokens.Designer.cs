@@ -4,6 +4,7 @@ using GestoreDeFrotas.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GestoreDeFrotas.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260618082836_tokens")]
+    partial class tokens
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -232,18 +235,10 @@ namespace GestoreDeFrotas.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Cor")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("DataCriacao")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DataInspecao")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime?>("DataProximaIpo")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DataSeguro")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("EstaAtivo")
@@ -252,6 +247,9 @@ namespace GestoreDeFrotas.Migrations
                     b.Property<string>("Estado")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("IntervaloManutencaoKm")
+                        .HasColumnType("int");
 
                     b.Property<int>("KmAtual")
                         .HasColumnType("int");
@@ -268,16 +266,10 @@ namespace GestoreDeFrotas.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("ProximaManutencaoData")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("ProximaManutencaoKm")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("UltimaManutencaoData")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UltimaManutencaoKm")
+                    b.Property<int>("UltimaManutencaoKm")
                         .HasColumnType("int");
 
                     b.HasKey("Id");

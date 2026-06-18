@@ -1,30 +1,49 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace GestoreDeFrotas.Models
 {
     public class Veiculo
     {
         public int Id { get; set; }
-        public string Marca { get; set; } = string.Empty;
-        public string Modelo { get; set; } = string.Empty;
-        public string Matricula { get; set; } = string.Empty;
+
+        [Required]
+        public string Marca { get; set; } = null!;
+
+        [Required]
+        public string Modelo { get; set; } = null!;
+
+        [Required]
+        public string Matricula { get; set; } = null!;
+
         public int Ano { get; set; }
-        public string Cor { get; set; } = string.Empty; // Resuelve el error en VeiculosPesquisaController
-        public string Estado { get; set; } = "Disponível"; // Disponível, Em uso, Em Manutenção
-        public string CategoriaUsuario { get; set; } = string.Empty;
+
+        public string CategoriaUsuario { get; set; } = null!;
+
+        public string Estado { get; set; } = "Disponível";
+
         public bool EstaAtivo { get; set; } = true;
+
+        // NOVO: Cor
+        public string? Cor { get; set; }
+
+        // KM
         public int KmAtual { get; set; }
 
-        // Control de Mantenimiento e Inspección (IPO)
-        public int UltimaManutencaoKm { get; set; }
+        // Manutenção
+        public int? UltimaManutencaoKm { get; set; }
         public DateTime? UltimaManutencaoData { get; set; }
 
-        // Definido como int? para solucionar los errores de '.HasValue' y '.Value'
-        public int? IntervaloManutencaoKm { get; set; } = 15000;
-        public DateTime? DataProximaIpo { get; set; } // Resuelve el error en DashboardService
+        public int? ProximaManutencaoKm { get; set; }
+        public DateTime? ProximaManutencaoData { get; set; }
 
-        // Propiedades calculadas limpias
-        public int ProximaManutencaoKm => UltimaManutencaoKm + (IntervaloManutencaoKm ?? 15000);
-        public DateTime ProximaManutencaoData => UltimaManutencaoData?.AddMonths(12) ?? DateTime.Now.AddMonths(12);
+        // NOVO: Próxima IPO (inspeção)
+        public DateTime? DataProximaIpo { get; set; }
+
+        // Datas importantes
+        public DateTime? DataInspecao { get; set; }
+        public DateTime? DataSeguro { get; set; }
+
+        public DateTime DataCriacao { get; set; } = DateTime.Now;
     }
 }

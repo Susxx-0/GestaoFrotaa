@@ -2,7 +2,6 @@
 using GestoreDeFrotas.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,66 +10,48 @@ namespace GestoreDeFrotas.Services
     public class NotificacoesService
     {
         private readonly AppDbContext _context;
-        public NotificacoesService(AppDbContext context) => _context = context;
+        private readonly AuditoriaService _auditoria;
 
-        public async Task EnviarNotificacaoAsync(string mensagem, string grau, int? veiculoId = null, string destinatarioId = "Admin")
+        public NotificacoesService(AppDbContext context, AuditoriaService auditoria)
         {
-            var notificacao = new Notificacao
-            {
-                Mensagem = mensagem,
-                Grau = grau,
-                VeiculoId = veiculoId,
-                DestinatarioId = destinatarioId,
-                DataCriacao = DateTime.Now,
-                Lida = false
-            };
-            _context.Notificacoes.Add(notificacao);
-            await _context.SaveChangesAsync();
+            _context = context;
+            _auditoria = auditoria;
         }
 
-        public async Task VerificarEGerarAlertasAgendadosAsync()
+        // 🔥 Verificar datas a expirar (seguro, inspeção, manutenção)
+        public async Task VerificarDatasAsync()
         {
-            var hoje = DateTime.Now;
+            var veiculos = await _context.Veiculos.ToListAsync();
 
-            // Verificar Veículos com Manutenção Prazos ou Quilometragem em Atraso
-            var veiculosEmRisco = await _context.Veiculos
-                .Where(v => v.EstaAtivo && (v.KmAtual >= (v.UltimaManutencaoKm + 15000) || (v.UltimaManutencaoData != null && hoje >= v.UltimaManutencaoData.Value.AddMonths(12))))
-                .ToListAsync();
-
-            foreach (var carro in veiculosEmRisco)
+            foreach (var v in veiculos)
             {
-                bool jaNotificado = await _context.Notificacoes
-                    .AnyAsync(n => n.VeiculoId == carro.Id && n.Grau == "Admin" && !n.Lida && n.Mensagem.Contains("manutenção atrasada"));
-
-                if (!jaNotificado)
+                if (v.ProximaManutencaoData != null &&
+                    v.ProximaManutencaoData <= DateTime.Today.AddDays(7))
                 {
-                    await EnviarNotificacaoAsync(
-                        $"O veículo {carro.Marca} {carro.Modelo} ({carro.Matricula}) está com a manutenção atrasada! KM Atual: {carro.KmAtual}.",
-                        "Admin",
-                        carro.Id
+                    await _auditoria.CriarNotificacaoAsync(
+                        $"A manutenção do veículo {v.Matricula} expira em breve.",
+                        "Aviso",
+                        v.Id
                     );
                 }
-            }
 
-            // Verificar Viagens que ultrapassaram a data limite prevista de entrega
-            var viagensAtrasadas = await _context.Viagens
-                .Include(v => v.Veiculo)
-                .Where(v => v.EstaAtiva && hoje > v.DataLimitePrevista)
-                .ToListAsync();
-
-            foreach (var viagem in viagensAtrasadas)
-            {
-                bool jaNotificadoAtraso = await _context.Notificacoes
-                    .AnyAsync(n => n.DestinatarioId == viagem.CondutorPrincipalId && !n.Lida && n.Mensagem.Contains("tempo limite"));
-
-                if (!jaNotificadoAtraso)
+                if (v.DataInspecao != null &&
+                    v.DataInspecao <= DateTime.Today.AddDays(7))
                 {
-                    var matricula = viagem.Veiculo?.Matricula ?? "Desconhecida";
-                    await EnviarNotificacaoAsync(
-                        $"Excedeu o tempo limite de utilização do veículo ({matricula}). Submeta um pedido de prorrogação ou entregue o carro.",
+                    await _auditoria.CriarNotificacaoAsync(
+                        $"A inspeção do veículo {v.Matricula} expira em breve.",
                         "Aviso",
-                        viagem.VeiculoId,
-                        viagem.CondutorPrincipalId
+                        v.Id
+                    );
+                }
+
+                if (v.DataSeguro != null &&
+                    v.DataSeguro <= DateTime.Today.AddDays(7))
+                {
+                    await _auditoria.CriarNotificacaoAsync(
+                        $"O seguro do veículo {v.Matricula} expira em breve.",
+                        "Aviso",
+                        v.Id
                     );
                 }
             }

@@ -1,63 +1,90 @@
 ﻿using GestoreDeFrotas.Data;
 using GestoreDeFrotas.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace GestoreDeFrotas.Services
 {
     public class AuditoriaService
     {
         private readonly AppDbContext _context;
-        public AuditoriaService(AppDbContext context) => _context = context;
 
-        public async Task RegistarLogAsync(string user, string metodo, string rota, string desc, int status)
+        public AuditoriaService(AppDbContext context)
         {
-            _context.LogsSistema.Add(new LogSistema
+            _context = context;
+        }
+
+        // ---------------------------------------------------------
+        // 🔥 LOGS
+        // ---------------------------------------------------------
+        public async Task<List<LogSistema>> ObterTodosAsync()
+        {
+            return await _context.LogsSistema
+                .OrderByDescending(l => l.DataRegisto)
+                .ToListAsync();
+        }
+
+        public async Task<LogSistema?> ObterPorIdAsync(int id)
+        {
+            return await _context.LogsSistema.FindAsync(id);
+        }
+
+        public async Task RegistarLogAsync(
+            string user,
+            string metodo,
+            string rota,
+            string descricao,
+            string metodoHttp,
+            int status)
+        {
+            var log = new LogSistema
             {
-                Utilizador = user,
-                Metodo = metodo,
-                MetodoHttp = metodo,
-                Rota = rota,
-                Descricao = desc,
-                StatusCode = status,
                 Data = DateTime.Now,
-                DataRegisto = DateTime.Now
-            });
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task<List<Notificacao>> ObterNotificacoesAtivasAsync() =>
-            await _context.Notificacoes.Where(n => !n.Lida).ToListAsync();
-
-        public async Task<bool> MarcarComoLidaAsync(int id)
-        {
-            var n = await _context.Notificacoes.FindAsync(id);
-            if (n == null) return false;
-            n.Lida = true;
-            await _context.SaveChangesAsync();
-            return true;
-        }
-
-        public async Task<List<LogSistema>> ObterLogsAsync() =>
-            await _context.LogsSistema.OrderByDescending(l => l.DataRegisto).ToListAsync();
-
-        // 🔥 MÉTODO EM FALTA — AGORA COMPLETO
-        public async Task CriarNotificacaoAsync(string mensagem, string grau = "Aviso", int? veiculoId = null)
-        {
-            var n = new Notificacao
-            {
-                Mensagem = mensagem,
-                Grau = grau,
-                VeiculoId = veiculoId,
-                DestinatarioId = "Sistema",
-                DataCriacao = DateTime.Now,
-                Lida = false
+                DataRegisto = DateTime.Now,
+                Metodo = metodo,
+                MetodoHttp = metodoHttp,
+                Rota = rota,
+                Descricao = descricao,
+                StatusCode = status,
+                Utilizador = user ?? "Sistema"
             };
 
-            _context.Notificacoes.Add(n);
+            _context.LogsSistema.Add(log);
+            await _context.SaveChangesAsync();
+        }
+
+        // ---------------------------------------------------------
+        // 🔥 NOTIFICAÇÕES
+        // ---------------------------------------------------------
+        public async Task CriarNotificacaoAsync(string mensagem, string tipo, int? veiculoId = null)
+        {
+            var notif = new Notificacao
+            {
+                Mensagem = mensagem,
+                Tipo = tipo,
+                Grau = "Info",
+                DataCriacao = DateTime.Now,
+                Lida = false,
+                VeiculoId = veiculoId
+            };
+
+            _context.Notificacoes.Add(notif);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<Notificacao>> ObterNotificacoesAtivasAsync()
+        {
+            return await _context.Notificacoes
+                .Where(n => !n.Lida)
+                .OrderByDescending(n => n.DataCriacao)
+                .ToListAsync();
+        }
+
+        public async Task MarcarComoLidaAsync(int id)
+        {
+            var notif = await _context.Notificacoes.FindAsync(id);
+            if (notif == null) return;
+
+            notif.Lida = true;
             await _context.SaveChangesAsync();
         }
     }

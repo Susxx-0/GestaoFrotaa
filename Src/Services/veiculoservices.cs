@@ -1,31 +1,33 @@
 ﻿using GestoreDeFrotas.Data;
 using GestoreDeFrotas.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace GestoreDeFrotas.Services
 {
     public class VeiculosService
     {
         private readonly AppDbContext _context;
-        public VeiculosService(AppDbContext context) => _context = context;
+        private readonly AuditoriaService _auditoria;
 
-        public async Task<List<Veiculo>> ObterTodosAtivosAsync(string? criterioOrdenacao = null)
+        public VeiculosService(AppDbContext context, AuditoriaService auditoria)
         {
-            var query = _context.Veiculos.Where(v => v.EstaAtivo);
+            _context = context;
+            _auditoria = auditoria;
+        }
 
-            query = criterioOrdenacao?.ToLower() switch
+        public async Task<List<Veiculo>> ObterTodosAtivosAsync(string? ordenar)
+        {
+            var q = _context.Veiculos.Where(v => v.EstaAtivo);
+
+            q = ordenar?.ToLower() switch
             {
-                "marca" => query.OrderBy(v => v.Marca).ThenBy(v => v.Modelo),
-                "km" => query.OrderByDescending(v => v.KmAtual),
-                "ano" => query.OrderByDescending(v => v.Ano),
-                "estado" => query.OrderBy(v => v.Estado),
-                _ => query.OrderBy(v => v.Id)
+                "marca" => q.OrderBy(v => v.Marca),
+                "km" => q.OrderByDescending(v => v.KmAtual),
+                "ano" => q.OrderByDescending(v => v.Ano),
+                _ => q.OrderBy(v => v.Id)
             };
 
-            return await query.ToListAsync();
+            return await q.ToListAsync();
         }
 
         public async Task<Veiculo?> ObterPorIdAsync(int id) =>
@@ -48,25 +50,30 @@ namespace GestoreDeFrotas.Services
             v.Matricula = dados.Matricula;
             v.Ano = dados.Ano;
             v.CategoriaUsuario = dados.CategoriaUsuario;
+            v.Estado = dados.Estado;
+            v.KmAtual = dados.KmAtual;
 
-            if (dados.KmAtual >= v.KmAtual)
-                v.KmAtual = dados.KmAtual;
+            v.UltimaManutencaoKm = dados.UltimaManutencaoKm;
+            v.UltimaManutencaoData = dados.UltimaManutencaoData;
+
+            v.ProximaManutencaoKm = dados.ProximaManutencaoKm;
+            v.ProximaManutencaoData = dados.ProximaManutencaoData;
+
+            v.DataInspecao = dados.DataInspecao;
+            v.DataSeguro = dados.DataSeguro;
 
             await _context.SaveChangesAsync();
             return true;
         }
 
-        public async Task<bool> AlterarEstadoManutencaoAsync(int id, bool emManutencao)
+        public async Task<List<Veiculo>> ObterManutencaoAtrasadaAsync()
         {
-            var v = await ObterPorIdAsync(id);
-            if (v == null) return false;
-
-            if (emManutencao && v.Estado == "Em uso")
-                throw new System.Exception("Não é possível enviar para manutenção um veículo que está em viagem ativa.");
-
-            v.Estado = emManutencao ? "Em Manutenção" : "Disponível";
-            await _context.SaveChangesAsync();
-            return true;
+            return await _context.Veiculos
+                .Where(v =>
+                    (v.ProximaManutencaoKm != null && v.KmAtual >= v.ProximaManutencaoKm) ||
+                    (v.ProximaManutencaoData != null && v.ProximaManutencaoData <= DateTime.Today)
+                )
+                .ToListAsync();
         }
 
         public async Task<bool> EliminarAsync(int id)

@@ -1,5 +1,5 @@
 ﻿using GestoreDeFrotas.Models;
-using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace GestoreDeFrotas.Data
 {
@@ -7,15 +7,45 @@ namespace GestoreDeFrotas.Data
     {
         public static void Seed(AppDbContext context)
         {
-            context.Database.EnsureCreated();
+            context.Database.Migrate();
 
-            if (context.Veiculos.Any()) return;
+            if (!context.Veiculos.Any())
+            {
+                context.Veiculos.AddRange(
+                    new Veiculo
+                    {
+                        Marca = "Renault",
+                        Modelo = "Clio",
+                        Matricula = "AA-11-CC",
+                        Ano = 2018,
+                        KmAtual = 120000,
+                        UltimaManutencaoKm = 110000,
+                        UltimaManutencaoData = DateTime.Now.AddMonths(-6),
+                        ProximaManutencaoKm = 130000,
+                        ProximaManutencaoData = DateTime.Now.AddMonths(6),
+                        DataInspecao = DateTime.Now.AddMonths(2),
+                        DataSeguro = DateTime.Now.AddMonths(3),
+                        EstaAtivo = true
+                    },
+                    new Veiculo
+                    {
+                        Marca = "Volkswagen",
+                        Modelo = "Golf",
+                        Matricula = "BB-22-DD",
+                        Ano = 2020,
+                        KmAtual = 80000,
+                        UltimaManutencaoKm = 70000,
+                        UltimaManutencaoData = DateTime.Now.AddMonths(-4),
+                        ProximaManutencaoKm = 90000,
+                        ProximaManutencaoData = DateTime.Now.AddMonths(8),
+                        DataInspecao = DateTime.Now.AddMonths(1),
+                        DataSeguro = DateTime.Now.AddMonths(5),
+                        EstaAtivo = true
+                    }
+                );
 
-            var v1 = new Veiculo { Marca = "Renault", Modelo = "Clio", Matricula = "AA00XX", Ano = 2022, Estado = "Disponível", CategoriaUsuario = "Empresa", EstaAtivo = true, KmAtual = 10000, UltimaManutencaoKm = 10000 };
-            var v2 = new Veiculo { Marca = "BMW", Modelo = "320d", Matricula = "99ZZ11", Ano = 2021, Estado = "Disponível", CategoriaUsuario = "Empresa", EstaAtivo = true, KmAtual = 30000, UltimaManutencaoKm = 30000 };
-
-            context.Veiculos.AddRange(v1, v2);
-            context.SaveChanges();
+                context.SaveChanges();
+            }
         }
     }
 }

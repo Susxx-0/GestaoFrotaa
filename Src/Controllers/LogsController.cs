@@ -1,128 +1,48 @@
-﻿using GestoreDeFrotas.Data;
-using GestoreDeFrotas.Services;
+﻿using GestoreDeFrotas.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace GestoreDeFrotas.Controllers
 {
     [ApiController]
-    [Route("api/logs")]
-    [Authorize]
+    [Route("api/[controller]")]
+    [Authorize(Roles = "Admin")]
     public class LogsController : ControllerBase
     {
-        private readonly AppDbContext _context;
-        private readonly AuditoriaService _auditoriaService;
+        private readonly AuditoriaService _auditoria;
 
-        public LogsController(AppDbContext context, AuditoriaService auditoriaService)
+        public LogsController(AuditoriaService auditoria)
         {
-            _context = context;
-            _auditoriaService = auditoriaService;
+            _auditoria = auditoria;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetLogs()
+        public async Task<IActionResult> GetTodos()
         {
-            var logs = await _auditoriaService.ObterLogsAsync();
-            return Ok(logs);
+            return Ok(await _auditoria.ObterTodosAsync());
         }
 
-        [HttpGet("pesquisa")]
-        public async Task<IActionResult> Pesquisar(
-            [FromQuery] string? q,
-            [FromQuery] string? utilizador,
-            [FromQuery] string? metodo,
-            [FromQuery] string? rota,
-            [FromQuery] int? statusMin,
-            [FromQuery] int? statusMax,
-            [FromQuery] DateTime? dataMin,
-            [FromQuery] DateTime? dataMax,
-            [FromQuery] string? sort = "data,desc",
-            [FromQuery] int page = 1,
-            [FromQuery] int pageSize = 20)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetPorId(int id)
         {
-            if (page < 1) page = 1;
-            if (pageSize < 1) pageSize = 20;
-            if (pageSize > 100) pageSize = 100;
-
-            var query = _context.LogsSistema.AsQueryable();
-
-            if (!string.IsNullOrWhiteSpace(q))
-            {
-                query = query.Where(l =>
-                    (l.Utilizador != null && l.Utilizador.Contains(q)) ||
-                    l.MetodoHttp.Contains(q) ||
-                    l.Rota.Contains(q) ||
-                    l.Descricao.Contains(q));
-            }
-
-            if (!string.IsNullOrWhiteSpace(utilizador))
-                query = query.Where(l => l.Utilizador != null && l.Utilizador.Contains(utilizador));
-
-            if (!string.IsNullOrWhiteSpace(metodo))
-                query = query.Where(l => l.MetodoHttp.Contains(metodo));
-
-            if (!string.IsNullOrWhiteSpace(rota))
-                query = query.Where(l => l.Rota.Contains(rota));
-
-            if (statusMin.HasValue)
-                query = query.Where(l => l.StatusCode >= statusMin.Value);
-
-            if (statusMax.HasValue)
-                query = query.Where(l => l.StatusCode <= statusMax.Value);
-
-            if (dataMin.HasValue)
-                query = query.Where(l => l.Data >= dataMin.Value);
-
-            if (dataMax.HasValue)
-                query = query.Where(l => l.Data <= dataMax.Value);
-
-            var total = await query.CountAsync();
-
-            query = ApplyLogsSorting(query, sort);
-
-            var items = await query
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-
-            var totalPages = (int)Math.Ceiling(total / (double)pageSize);
-
-            return Ok(new
-            {
-                Items = items,
-                Total = total,
-                Page = page,
-                PageSize = pageSize,
-                TotalPages = totalPages
-            });
+            var log = await _auditoria.ObterPorIdAsync(id);
+            if (log == null) return NotFound();
+            return Ok(log);
         }
 
-        private IQueryable<Models.LogSistema> ApplyLogsSorting(IQueryable<Models.LogSistema> query, string? sort)
+        [HttpPost("teste")]
+        public async Task<IActionResult> CriarTeste()
         {
-            var sortField = "data";
-            var sortDir = "desc";
+            await _auditoria.RegistarLogAsync(
+                user: "Teste",
+                metodo: "LogsController.CriarTeste",
+                rota: "/api/logs/teste",
+                descricao: "Log de teste criado.",
+                metodoHttp: "POST",
+                status: 200
+            );
 
-            if (!string.IsNullOrWhiteSpace(sort))
-            {
-                var parts = sort.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-                if (parts.Length >= 1) sortField = parts[0].ToLower();
-                if (parts.Length >= 2) sortDir = parts[1].ToLower();
-            }
-
-            bool desc = sortDir == "desc";
-
-            return sortField switch
-            {
-                "statuscode" => desc ? query.OrderByDescending(l => l.StatusCode).ThenByDescending(l => l.Data)
-                                     : query.OrderBy(l => l.StatusCode).ThenByDescending(l => l.Data),
-                "metodohttp" => desc ? query.OrderByDescending(l => l.MetodoHttp).ThenByDescending(l => l.Data)
-                                     : query.OrderBy(l => l.MetodoHttp).ThenByDescending(l => l.Data),
-                "rota" => desc ? query.OrderByDescending(l => l.Rota).ThenByDescending(l => l.Data)
-                               : query.OrderBy(l => l.Rota).ThenByDescending(l => l.Data),
-                _ => desc ? query.OrderByDescending(l => l.Data)
-                          : query.OrderBy(l => l.Data),
-            };
+            return Ok("Log criado.");
         }
     }
 }
