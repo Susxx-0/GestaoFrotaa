@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using GestoreDeFrotas.Models;
-using System;
 
 namespace GestoreDeFrotas.Validators
 {
@@ -8,13 +7,29 @@ namespace GestoreDeFrotas.Validators
     {
         public AbastecimentoValidator()
         {
-            RuleFor(a => a.VeiculoId).GreaterThan(0).WithMessage("Selecione um veículo válido.");
-            RuleFor(a => a.Litros).GreaterThan(0).WithMessage("Litros devem ser maiores que zero.");
-            RuleFor(a => a.PrecoPorLitro).GreaterThan(0).WithMessage("Preço por litro inválido.");
-            RuleFor(a => a.KmAtual).GreaterThan(0).WithMessage("Quilometragem atual inválida.");
-            RuleFor(a => a.Combustivel).NotEmpty().WithMessage("Combustível é obrigatório.");
-            RuleFor(a => a.Posto).NotEmpty().WithMessage("Posto é obrigatório.");
-            RuleFor(a => a.Data).LessThanOrEqualTo(DateTime.Now).WithMessage("Data do abastecimento inválida.");
+            RuleFor(x => x.VeiculoId)
+                .GreaterThan(0)
+                .WithMessage("O ID do veículo é obrigatório.");
+
+            RuleFor(x => x.Litros)
+                .GreaterThan(0)
+                .WithMessage("A quantidade de litros deve ser superior a zero.");
+
+            RuleFor(x => x.PrecoPorLitro)
+                .GreaterThan(0)
+                .WithMessage("O preço por litro deve ser superior a zero.");
+
+            RuleFor(x => x.KmAtual)
+                .GreaterThan(0)
+                .WithMessage("O KM atual deve ser superior a zero.");
+
+            RuleFor(x => x.Combustivel)
+                .NotEmpty()
+                .WithMessage("O tipo de combustível é obrigatório.");
+
+            RuleFor(x => x.Posto)
+                .NotEmpty()
+                .WithMessage("O posto de abastecimento é obrigatório.");
         }
     }
 }

@@ -31,13 +31,8 @@ namespace GestoreDeFrotas.Controllers
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 20)
         {
-            if (page < 1) page = 1;
-            if (pageSize < 1) pageSize = 20;
-            if (pageSize > 100) pageSize = 100;
-
             var query = _context.Veiculos.AsQueryable();
 
-            // Pesquisa global
             if (!string.IsNullOrWhiteSpace(q))
             {
                 query = query.Where(v =>
@@ -48,7 +43,6 @@ namespace GestoreDeFrotas.Controllers
                     v.Estado.Contains(q));
             }
 
-            // Filtros específicos
             if (!string.IsNullOrWhiteSpace(marca))
                 query = query.Where(v => v.Marca.Contains(marca));
 
@@ -70,19 +64,14 @@ namespace GestoreDeFrotas.Controllers
             if (anoMax.HasValue)
                 query = query.Where(v => v.Ano <= anoMax.Value);
 
-            // Total antes da paginação
             var total = await query.CountAsync();
 
-            //  Ordenação
-            query = ApplySorting(query, sort);
+            query = AplicarOrdenacao(query, sort);
 
-            //  Paginação
             var items = await query
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
-
-            var totalPages = (int)Math.Ceiling(total / (double)pageSize);
 
             return Ok(new
             {
@@ -90,25 +79,25 @@ namespace GestoreDeFrotas.Controllers
                 Total = total,
                 Page = page,
                 PageSize = pageSize,
-                TotalPages = totalPages
+                TotalPages = (int)Math.Ceiling(total / (double)pageSize)
             });
         }
 
-        private IQueryable<Models.Veiculo> ApplySorting(IQueryable<Models.Veiculo> query, string? sort)
+        private IQueryable<Models.Veiculo> AplicarOrdenacao(IQueryable<Models.Veiculo> query, string? sort)
         {
-            var sortField = "marca";
-            var sortDir = "asc";
+            var campo = "marca";
+            var direcao = "asc";
 
             if (!string.IsNullOrWhiteSpace(sort))
             {
-                var parts = sort.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-                if (parts.Length >= 1) sortField = parts[0].ToLower();
-                if (parts.Length >= 2) sortDir = parts[1].ToLower();
+                var partes = sort.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                if (partes.Length >= 1) campo = partes[0].ToLower();
+                if (partes.Length >= 2) direcao = partes[1].ToLower();
             }
 
-            bool desc = sortDir == "desc";
+            bool desc = direcao == "desc";
 
-            return sortField switch
+            return campo switch
             {
                 "modelo" => desc ? query.OrderByDescending(v => v.Modelo) : query.OrderBy(v => v.Modelo),
                 "matricula" => desc ? query.OrderByDescending(v => v.Matricula) : query.OrderBy(v => v.Matricula),

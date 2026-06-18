@@ -1,6 +1,7 @@
-﻿using GestoreDeFrotas.Services;
+﻿using GestoreDeFrotas.Services.Sistema;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace GestoreDeFrotas.Controllers
 {
@@ -19,14 +20,17 @@ namespace GestoreDeFrotas.Controllers
         [HttpGet]
         public async Task<IActionResult> GetTodos()
         {
-            return Ok(await _auditoria.ObterTodosAsync());
+            var logs = await _auditoria.ObterTodosAsync();
+            return Ok(logs);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPorId(int id)
         {
             var log = await _auditoria.ObterPorIdAsync(id);
-            if (log == null) return NotFound();
+            if (log == null)
+                return NotFound();
+
             return Ok(log);
         }
 
@@ -34,12 +38,11 @@ namespace GestoreDeFrotas.Controllers
         public async Task<IActionResult> CriarTeste()
         {
             await _auditoria.RegistarLogAsync(
-                user: "Teste",
+                utilizador: "Teste",
                 metodo: "LogsController.CriarTeste",
                 rota: "/api/logs/teste",
                 descricao: "Log de teste criado.",
-                metodoHttp: "POST",
-                status: 200
+                statusCode: 200
             );
 
             return Ok("Log criado.");

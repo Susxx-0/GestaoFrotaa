@@ -1,11 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using GestoreDeFrotas.Models;
-using GestoreDeFrotas.Services;
-using System;
-using System.Threading.Tasks;
+﻿using GestoreDeFrotas.Models;
+using GestoreDeFrotas.Services.Veiculos;
 using FluentValidation;
-using System.Linq;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace GestoreDeFrotas.Controllers
 {
@@ -15,7 +12,7 @@ namespace GestoreDeFrotas.Controllers
     public class AbastecimentosController : ControllerBase
     {
         private readonly AbastecimentosService _service;
-        private readonly IValidator<Abastecimento> _validator; 
+        private readonly IValidator<Abastecimento> _validator;
 
         public AbastecimentosController(AbastecimentosService service, IValidator<Abastecimento> validator)
         {
@@ -24,32 +21,27 @@ namespace GestoreDeFrotas.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> ObterTodos()
         {
             return Ok(await _service.ObterTodosAsync());
         }
 
         [HttpGet("veiculo/{id}")]
-        public async Task<IActionResult> GetByVeiculo(int id)
+        public async Task<IActionResult> ObterPorVeiculo(int id)
         {
             return Ok(await _service.ObterPorVeiculoAsync(id));
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Abastecimento ab)
+        public async Task<IActionResult> Criar([FromBody] Abastecimento ab)
         {
-            // Executa a validação do FluentValidation antes de avançar
-            var validationResult = await _validator.ValidateAsync(ab);
-
-            if (!validationResult.IsValid)
-            {
-                // Devolve erro 400 com os detalhes das falhas
-                return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage));
-            }
+            var valid = await _validator.ValidateAsync(ab);
+            if (!valid.IsValid)
+                return BadRequest(valid.Errors.Select(e => e.ErrorMessage));
 
             try
             {
-                var novo = await _service.AdicionarAsync(ab);
+                var novo = await _service.CriarAsync(ab);
                 return Ok(novo);
             }
             catch (Exception ex)
@@ -59,10 +51,11 @@ namespace GestoreDeFrotas.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Eliminar(int id)
         {
             var ok = await _service.EliminarAsync(id);
             if (!ok) return NotFound();
+
             return NoContent();
         }
     }

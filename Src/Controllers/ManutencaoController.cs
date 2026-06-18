@@ -1,32 +1,31 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using GestoreDeFrotas.Models;
-using GestoreDeFrotas.Services;
 using FluentValidation;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
+using GestoreDeFrotas.Services.Manutencao;
 
-namespace GestaoDeFrotas.Controllers
+namespace GestoreDeFrotas.Controllers
 {
     [ApiController]
     [Route("api/maintenance")]
     [Authorize]
     public class ManutencaoController : ControllerBase
     {
-        private readonly ManutencaoService _manutencaoService;
+        private readonly MaintenanceService _maintenanceService;
         private readonly IValidator<RegistoManutencao> _validator;
 
-        public ManutencaoController(ManutencaoService manutencaoService, IValidator<RegistoManutencao> validator)
+        public ManutencaoController(MaintenanceService maintenanceService, IValidator<RegistoManutencao> validator)
         {
-            _manutencaoService = manutencaoService;
+            _maintenanceService = maintenanceService;
             _validator = validator;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var registos = await _manutencaoService.ObterTodosAsync();
+            var registos = await _maintenanceService.ObterTodasAsync();
             return Ok(registos);
         }
 
@@ -37,15 +36,14 @@ namespace GestaoDeFrotas.Controllers
             if (!validationResult.IsValid)
                 return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage));
 
-            await _manutencaoService.AdicionarAsync(registo);
+            await _maintenanceService.CriarAsync(registo);
             return Ok(registo);
         }
 
-        // ✔ CORRIGIDO
         [HttpGet("estado/{veiculoId}")]
         public async Task<IActionResult> Estado(int veiculoId)
         {
-            var estado = await _manutencaoService.ObterEstadoManutencaoAsync(veiculoId);
+            var estado = await _maintenanceService.ObterEstadoManutencaoAsync(veiculoId);
             return Ok(estado);
         }
     }

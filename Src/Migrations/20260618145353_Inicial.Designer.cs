@@ -4,6 +4,7 @@ using GestoreDeFrotas.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GestoreDeFrotas.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260618145353_Inicial")]
+    partial class Inicial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -93,10 +96,6 @@ namespace GestoreDeFrotas.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Tipo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("TipoDocumento")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -104,41 +103,11 @@ namespace GestoreDeFrotas.Migrations
                     b.Property<int>("VeiculoId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("VeiculoId1")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("VeiculoId");
-
-                    b.HasIndex("VeiculoId1");
 
                     b.ToTable("DocumentosVeiculos");
-                });
-
-            modelBuilder.Entity("GestoreDeFrotas.Models.HistoricoVeiculo", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Acao")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("Data")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("VeiculoId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("VeiculoId");
-
-                    b.ToTable("HistoricoVeiculos");
                 });
 
             modelBuilder.Entity("GestoreDeFrotas.Models.LogSistema", b =>
@@ -191,9 +160,6 @@ namespace GestoreDeFrotas.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("Data")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime>("DataCriacao")
                         .HasColumnType("datetime2");
 
@@ -212,21 +178,12 @@ namespace GestoreDeFrotas.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Titulo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int?>("VeiculoId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("VeiculoId1")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("VeiculoId");
-
-                    b.HasIndex("VeiculoId1");
 
                     b.ToTable("Notificacoes");
                 });
@@ -244,12 +201,6 @@ namespace GestoreDeFrotas.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("Data")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DataConclusao")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DataPrevista")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Descricao")
@@ -409,23 +360,6 @@ namespace GestoreDeFrotas.Migrations
                         .HasForeignKey("VeiculoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("GestoreDeFrotas.Models.Veiculo", "Veiculo")
-                        .WithMany()
-                        .HasForeignKey("VeiculoId1");
-
-                    b.Navigation("Veiculo");
-                });
-
-            modelBuilder.Entity("GestoreDeFrotas.Models.HistoricoVeiculo", b =>
-                {
-                    b.HasOne("GestoreDeFrotas.Models.Veiculo", "Veiculo")
-                        .WithMany()
-                        .HasForeignKey("VeiculoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Veiculo");
                 });
 
             modelBuilder.Entity("GestoreDeFrotas.Models.Notificacao", b =>
@@ -434,12 +368,6 @@ namespace GestoreDeFrotas.Migrations
                         .WithMany()
                         .HasForeignKey("VeiculoId")
                         .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("GestoreDeFrotas.Models.Veiculo", "Veiculo")
-                        .WithMany()
-                        .HasForeignKey("VeiculoId1");
-
-                    b.Navigation("Veiculo");
                 });
 
             modelBuilder.Entity("GestoreDeFrotas.Models.RegistoManutencao", b =>

@@ -1,27 +1,30 @@
-﻿using GestoreDeFrotas.Services;
+﻿using GestoreDeFrotas.Services.Sistema;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace GestoreDeFrotas.Middleware
 {
     public class LoggingMiddleware
     {
         private readonly RequestDelegate _next;
-        public LoggingMiddleware(RequestDelegate next) => _next = next;
 
-        public async Task InvokeAsync(HttpContext context, AuditoriaService auditoriaService)
+        public LoggingMiddleware(RequestDelegate next)
+        {
+            _next = next;
+        }
+
+        public async Task InvokeAsync(HttpContext context, AuditoriaService auditoria)
         {
             await _next(context);
 
-            var user = context.User.Identity?.IsAuthenticated == true
+            var utilizador = context.User.Identity?.IsAuthenticated == true
                 ? context.User.FindFirst(ClaimTypes.Name)?.Value ?? "Anónimo"
                 : "Anónimo";
 
-            await auditoriaService.RegistarLogAsync(
-                user,
+            await auditoria.RegistarLogAsync(
+                utilizador,
                 context.Request.Method,
-                context.Request.Path.ToString(),
+                context.Request.Path,
                 $"Pedido HTTP {context.Request.Method} processado em {context.Request.Path}",
                 context.Response.StatusCode
             );

@@ -1,135 +1,98 @@
-﻿using GestoreDeFrotas.Data;
-using GestoreDeFrotas.Models;
+﻿using GestoreDeFrotas.Models;
+using GestoreDeFrotas.Services.Documentos;
 using GestoreDeFrotas.Validators;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using FluentValidation;
-using System;
-using System.IO;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace GestoreDeFrotas.Controllers
 {
     [ApiController]
     [Route("api/documentos")]
+    [Authorize]
     public class DocumentosController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly DocumentosService _service;
         private readonly IValidator<DocumentoUploadDto> _validator;
 
-        public DocumentosController(AppDbContext context, IValidator<DocumentoUploadDto> validator)
+        public DocumentosController(DocumentosService service, IValidator<DocumentoUploadDto> validator)
         {
-            _context = context;
+            _service = service;
             _validator = validator;
         }
 
         [HttpPost("upload")]
         [Consumes("multipart/form-data")]
-        public async Task<IActionResult> UploadDocumento([FromForm] DocumentoUploadDto dto)
+        public async Task<IActionResult> Upload([FromForm] DocumentoUploadDto dto)
         {
-            var validationResult = await _validator.ValidateAsync(dto);
-            if (!validationResult.IsValid)
-                return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage));
+            var valid = await _validator.ValidateAsync(dto);
+            if (!valid.IsValid)
+                return BadRequest(valid.Errors.Select(e => e.ErrorMessage));
 
-            var extensao = Path.GetExtension(dto.Ficheiro!.FileName).ToLower();
-            var extensoesPermitidas = new[] { ".pdf", ".jpg", ".jpeg", ".png" };
+            var ext = Path.GetExtension(dto.Ficheiro!.FileName).ToLower();
+            var permitidas = new[] { ".pdf", ".jpg", ".jpeg", ".png" };
 
-            if (!extensoesPermitidas.Contains(extensao))
+            if (!permitidas.Contains(ext))
                 return BadRequest("Apenas PDF, JPG, JPEG ou PNG são permitidos.");
 
-            var pastaUploads = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
-            if (!Directory.Exists(pastaUploads))
-                Directory.CreateDirectory(pastaUploads);
+            var pasta = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+            if (!Directory.Exists(pasta))
+                Directory.CreateDirectory(pasta);
 
-            var nomeFicheiroUnico = $"{Guid.NewGuid()}_{Path.GetFileName(dto.Ficheiro.FileName)}";
-            var caminhoCompleto = Path.Combine(pastaUploads, nomeFicheiroUnico);
+            var nome = $"{Guid.NewGuid()}_{dto.Ficheiro.FileName}";
+            var caminho = Path.Combine(pasta, nome);
 
-            using (var stream = new FileStream(caminhoCompleto, FileMode.Create))
+            using (var stream = new FileStream(caminho, FileMode.Create))
                 await dto.Ficheiro.CopyToAsync(stream);
 
-            var novoDocumento = new DocumentoVeiculo
+            var doc = new DocumentoVeiculo
             {
                 VeiculoId = dto.VeiculoId,
                 TipoDocumento = dto.TipoDocumento,
                 NomeFicheiroOriginal = dto.Ficheiro.FileName,
-                CaminhoFicheiro = $"/uploads/{nomeFicheiroUnico}",
+                CaminhoFicheiro = $"/uploads/{nome}",
                 DataValidade = dto.DataValidade
             };
 
-            _context.DocumentosVeiculos.Add(novoDocumento);
-            await _context.SaveChangesAsync();
+            await _service.CriarAsync(doc);
 
-            if (dto.DataValidade.HasValue && dto.DataValidade.Value < DateTime.Now)
-            {
-                var auditoriaService = HttpContext.RequestServices.GetService(typeof(GestoreDeFrotas.Services.AuditoriaService)) as GestoreDeFrotas.Services.AuditoriaService;
-
-                if (auditoriaService != null)
-                {
-                    await auditoriaService.CriarNotificacaoAsync(
-                        $"Foi enviado um documento ({dto.TipoDocumento}) já expirado.",
-                        "Warning",
-                        dto.VeiculoId
-                    );
-                }
-            }
-
-            return Ok(novoDocumento);
+            return Ok(doc);
         }
 
         [HttpGet("expirados")]
-        public async Task<IActionResult> ObterDocumentosExpirados()
+        public async Task<IActionResult> Expirados()
         {
-            var hoje = DateTime.Now;
-            var daquiA30Dias = hoje.AddDays(30);
-
-            var expiradosOuQuase = await _context.DocumentosVeiculos
-                .Where(d => d.DataValidade != null && d.DataValidade <= daquiA30Dias)
-                .OrderBy(d => d.DataValidade)
-                .ToListAsync();
-
-            return Ok(expiradosOuQuase);
+            return Ok(await _service.ObterExpiradosAsync());
         }
 
         [HttpGet("veiculo/{veiculoId}")]
-        public async Task<IActionResult> ObterDocumentosPorVeiculo(int veiculoId)
+        public async Task<IActionResult> PorVeiculo(int veiculoId)
         {
-            var documentos = await _context.DocumentosVeiculos
-                .Where(d => d.VeiculoId == veiculoId)
-                .OrderByDescending(d => d.DataUpload)
-                .ToListAsync();
-
-            return Ok(documentos);
+            return Ok(await _service.ObterPorVeiculoAsync(veiculoId));
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> ApagarDocumento(int id)
+        public async Task<IActionResult> Apagar(int id)
         {
-            var documento = await _context.DocumentosVeiculos.FindAsync(id);
-            if (documento == null) return NotFound("Documento não encontrado.");
-
-            var caminhoFisico = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", documento.CaminhoFicheiro.TrimStart('/'));
-
-            if (System.IO.File.Exists(caminhoFisico))
-                System.IO.File.Delete(caminhoFisico);
-
-            _context.DocumentosVeiculos.Remove(documento);
-            await _context.SaveChangesAsync();
+            var ok = await _service.EliminarAsync(id);
+            if (!ok) return NotFound();
 
             return NoContent();
         }
 
         [HttpGet("{id}/download")]
-        public async Task<IActionResult> DescarregarDocumento(int id)
+        public async Task<IActionResult> Download(int id)
         {
-            var doc = await _context.DocumentosVeiculos.FindAsync(id);
-            if (doc == null) return NotFound("Documento não encontrado.");
+            var doc = await _service.ObterPorIdAsync(id);
+            if (doc == null) return NotFound();
 
-            var caminhoFisico = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", doc.CaminhoFicheiro.TrimStart('/'));
-            if (!System.IO.File.Exists(caminhoFisico)) return NotFound("Ficheiro físico não encontrado.");
+            var caminho = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", doc.CaminhoFicheiro.TrimStart('/'));
 
-            var bytes = await System.IO.File.ReadAllBytesAsync(caminhoFisico);
+            if (!System.IO.File.Exists(caminho))
+                return NotFound("Ficheiro não encontrado.");
+
+            var bytes = await System.IO.File.ReadAllBytesAsync(caminho);
 
             return File(bytes, "application/octet-stream", doc.NomeFicheiroOriginal);
         }

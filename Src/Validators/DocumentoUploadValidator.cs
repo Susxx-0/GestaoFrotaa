@@ -1,24 +1,27 @@
 ﻿using FluentValidation;
-using Microsoft.AspNetCore.Http;
-using System;
+using GestoreDeFrotas.Models;
 
 namespace GestoreDeFrotas.Validators
 {
-    public class DocumentoUploadDto
-    {
-        public int VeiculoId { get; set; }
-        public string TipoDocumento { get; set; } = string.Empty;
-        public DateTime? DataValidade { get; set; }
-        public IFormFile? Ficheiro { get; set; }
-    }
-
     public class DocumentoUploadValidator : AbstractValidator<DocumentoUploadDto>
     {
         public DocumentoUploadValidator()
         {
-            RuleFor(d => d.VeiculoId).GreaterThan(0);
-            RuleFor(d => d.TipoDocumento).NotEmpty().MaximumLength(100);
-            RuleFor(d => d.Ficheiro).NotNull().Must(f => f == null || f.Length > 0).WithMessage("Ficheiro inválido.");
+            RuleFor(x => x.VeiculoId)
+                .GreaterThan(0)
+                .WithMessage("O ID do veículo é obrigatório.");
+
+            RuleFor(x => x.TipoDocumento)
+                .NotEmpty()
+                .WithMessage("O tipo de documento é obrigatório.");
+
+            RuleFor(x => x.Ficheiro)
+                .NotNull()
+                .WithMessage("É necessário enviar um ficheiro.");
+
+            RuleFor(x => x.Ficheiro!.Length)
+                .LessThanOrEqualTo(10 * 1024 * 1024)
+                .WithMessage("O ficheiro não pode exceder 10 MB.");
         }
     }
 }

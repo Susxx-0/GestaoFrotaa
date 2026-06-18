@@ -1,6 +1,16 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using GestoreDeFrotas.Data;
-using GestoreDeFrotas.Services;
 using GestoreDeFrotas.Middleware;
+using GestoreDeFrotas.Services;
+using GestoreDeFrotas.Services.Dashboard;
+using GestoreDeFrotas.Services.Documentos;
+using GestoreDeFrotas.Services.Manutencao;
+using GestoreDeFrotas.Services.Notificacoes;
+using GestoreDeFrotas.Services.Sistema;
+using GestoreDeFrotas.Services.Veiculos;
+using GestoreDeFrotas.Services.Viagens;
+using GestoreDeFrotas.Validators;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -8,120 +18,115 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddFluentValidationClientsideAdapters();
+builder.Services.AddValidatorsFromAssemblyContaining<RegistoManutencaoValidator>();
 
-// Base de Dados
-builder.Services.AddDbContext<AppDbContext>(opt =>
-    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+// ----------------------------
+//  DATABASE
+// ----------------------------
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Serviços
-builder.Services.AddScoped<VeiculosService>();
-builder.Services.AddScoped<ViagensService>();
+// ----------------------------
+//  SERVICES
+// ----------------------------
+builder.Services.AddScoped<VehicleService>();
+builder.Services.AddScoped<MaintenanceService>();
+builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<AuditoriaService>();
-builder.Services.AddScoped<ManutencaoService>();
-builder.Services.AddScoped<DashboardCombustivelService>();
+builder.Services.AddScoped<AbastecimentosService>();
+builder.Services.AddScoped<ViagensService>();
+builder.Services.AddScoped<DocumentosService>();
+builder.Services.AddScoped<DocumentosPesquisaService>();
+builder.Services.AddScoped<DashboardService>();
+builder.Services.AddScoped<AuthService>();
+// ----------------------------
+//  AUTENTICAÇÃO JWT
+// ----------------------------
+var key = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]);
 
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(key)
+    };
+});
+
+
+// ----------------------------
+//  CONTROLLERS
+// ----------------------------
 builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
 
-// Swagger
+// ----------------------------
+//  SWAGGER + JWT
+// ----------------------------
+builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "GestoreDeFrotas API", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Gestore de Frotas", Version = "v1" });
 
+    // Adicionar suporte a JWT no Swagger
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Description = "JWT Authorization header usando o esquema Bearer.",
+        Description = "Insere o token JWT assim: Bearer {teu_token}",
         Name = "Authorization",
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.ApiKey,
         Scheme = "Bearer"
     });
 
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement {
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
         {
-            new OpenApiSecurityScheme {
-                Reference = new OpenApiReference {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
                     Type = ReferenceType.SecurityScheme,
                     Id = "Bearer"
                 }
             },
-            Array.Empty<string>()
+            new string[] {}
         }
     });
 });
 
-// Autenticação JWT
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(opt =>
-    {
-        opt.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.ASCII.GetBytes("CHAVE_SECRETA_CENTRALIZADA_DO_PORTAL_INTERNO_2026")
-            ),
-            ValidateIssuer = false,
-            ValidateAudience = false
-        };
-    });
-
 var app = builder.Build();
 
-// Swagger no Dev
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+// ----------------------------
+//  MIDDLEWARE
+// ----------------------------
+app.UseDeveloperExceptionPage();
 
-// HTTPS
+app.UseSwagger();
+app.UseSwaggerUI();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Gestore de Frotas v2");
+    c.RoutePrefix = "swagger";
+});
 app.UseHttpsRedirection();
 
-// Middleware Global
-app.UseMiddleware<LoggingMiddleware>();
-
-// Auth
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Controllers
+app.UseMiddleware<LoggingMiddleware>();
+
 app.MapControllers();
-
-
-// 🔥 RESTAURADO — Endpoint de Teste para Geração de Token JWT
-app.MapPost("/api/auth/teste-token",
-    [Microsoft.AspNetCore.Authorization.AllowAnonymous] (string cargo) =>
-    {
-        var tokenHandler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
-        var chave = Encoding.ASCII.GetBytes("CHAVE_SECRETA_CENTRALIZADA_DO_PORTAL_INTERNO_2026");
-
-        var tokenDescriptor = new SecurityTokenDescriptor
-        {
-            Subject = new System.Security.Claims.ClaimsIdentity(new[]
-            {
-            new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Name, "UtilizadorTeste"),
-            new System.Security.Claims.Claim("roles", cargo)
-        }),
-            Expires = DateTime.UtcNow.AddHours(2),
-            SigningCredentials = new SigningCredentials(
-                new SymmetricSecurityKey(chave),
-                SecurityAlgorithms.HmacSha256Signature
-            )
-        };
-
-        var token = tokenHandler.CreateToken(tokenDescriptor);
-        var tokenString = tokenHandler.WriteToken(token);
-
-        return Results.Ok(new { token = tokenString });
-    });
-
-
-// 🔥 RESTAURADO — Seed da Base de Dados
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<AppDbContext>();
-    GestoreDeFrotas.Data.DbInitializer.Seed(context);
-}
 
 app.Run();

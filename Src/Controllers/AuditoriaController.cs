@@ -1,7 +1,6 @@
-﻿using GestoreDeFrotas.Services;
+﻿using GestoreDeFrotas.Services.Sistema;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace GestoreDeFrotas.Controllers
 {
@@ -18,10 +17,9 @@ namespace GestoreDeFrotas.Controllers
         }
 
         [HttpGet("notificacoes")]
-        public async Task<IActionResult> GetNotificacoes()
+        public async Task<IActionResult> ObterNotificacoes()
         {
-            var notificacoes = await _service.ObterNotificacoesAtivasAsync();
-            return Ok(notificacoes);
+            return Ok(await _service.ObterNotificacoesAtivasAsync());
         }
 
         [HttpPut("notificacoes/{id}/ler")]

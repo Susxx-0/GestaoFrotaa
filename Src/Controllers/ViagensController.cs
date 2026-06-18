@@ -1,12 +1,9 @@
-﻿using GestoreDeFrotas.Filtro;
-using GestoreDeFrotas.Models;
-using GestoreDeFrotas.Services;
+﻿using GestoreDeFrotas.Models.DTOs;
+using GestoreDeFrotas.Services.Viagens;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Security.Claims;
-using System.Threading.Tasks;
-
+using GestoreDeFrotas.Models;
 namespace GestoreDeFrotas.Controllers
 {
     [ApiController]
@@ -14,26 +11,31 @@ namespace GestoreDeFrotas.Controllers
     [Authorize]
     public class ViagensController : ControllerBase
     {
-        private readonly ViagensService _viagensService;
+        private readonly ViagensService _service;
 
-        public ViagensController(ViagensService viagensService)
+        public ViagensController(ViagensService service)
         {
-            _viagensService = viagensService;
+            _service = service;
         }
 
-        // 1. INICIAR VIAGEM
+        // INICIAR VIAGEM
         [HttpPost("iniciar/{veiculoId}")]
-        public async Task<IActionResult> IniciarViagem(int veiculoId, [FromQuery] string? condutorSecundarioId = null)
+        public async Task<IActionResult> Iniciar(int veiculoId, [FromQuery] string? condutorSecundarioId = null)
         {
             try
             {
-                // Tenta apanhar o NameIdentifier (geralmente o ID ou Username nas claims do JWT)
-                var condutorPrincipalId = User.Identity?.Name
-                                          ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                                          ?? "Condutor Anónimo";
+                var condutorPrincipalId =
+                    User.Identity?.Name ??
+                    User.FindFirst(ClaimTypes.NameIdentifier)?.Value ??
+                    "Condutor Anónimo";
 
-                var novaViagem = await _viagensService.IniciarViagemAsync(veiculoId, condutorPrincipalId, condutorSecundarioId);
-                return Ok(novaViagem);
+                var viagem = await _service.IniciarViagemAsync(
+                    veiculoId,
+                    condutorPrincipalId,
+                    condutorSecundarioId
+                );
+
+                return Ok(viagem);
             }
             catch (Exception ex)
             {
@@ -41,15 +43,14 @@ namespace GestoreDeFrotas.Controllers
             }
         }
 
-        // 2. FINALIZAR VIAGEM
+        // FINALIZAR VIAGEM
         [HttpPost("finalizar/{viagemId}")]
-        public async Task<IActionResult> FinalizarViagem(int viagemId, [FromBody] FinalizarViagemDto dados)
+        public async Task<IActionResult> Finalizar(int viagemId, [FromBody] FinalizarViagemDto dto)
         {
             try
             {
-                // Passa o ID da viagem, os KM finais e as observações para o serviço
-                await _viagensService.FinalizarViagemAsync(viagemId, dados.KmFinais, dados.ObservacoesEntrega);
-                return Ok(new { mensagem = "Viagem finalizada e veículo libertado com sucesso!" });
+                await _service.FinalizarViagemAsync(viagemId, dto.KmFinais, dto.ObservacoesEntrega);
+                return Ok(new { mensagem = "Viagem finalizada com sucesso." });
             }
             catch (Exception ex)
             {
@@ -57,108 +58,32 @@ namespace GestoreDeFrotas.Controllers
             }
         }
 
-        // 3. PEDIR MAIS TEMPO
+        // PRORROGAÇÃO
         [HttpPost("{id}/prorrogacao")]
-        [TypeFilter(typeof(AuditarAcaoFilter))]
-        public async Task<IActionResult> SolicitarProrrogacao(int id, [FromQuery] int horas = 2)
+        public async Task<IActionResult> Prorrogar(int id, [FromQuery] int horas = 2)
         {
-            try
-            {
-                await _viagensService.SolicitarMaisTempoAsync(id, horas);
-                return Ok(new { message = $"Prorrogação de {horas} horas registada." });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { erro = ex.Message });
-            }
+            var ok = await _service.SolicitarMaisTempoAsync(id, horas);
+            if (!ok)
+                return BadRequest(new { mensagem = "Não foi possível prorrogar a viagem." });
+
+            return Ok(new { mensagem = $"Prorrogação de {horas} horas registada." });
         }
 
-        // 4. VERIFICAÇÃO AUTOMÁTICA
+        // VERIFICAR ATRASOS
         [HttpPost("verificar-atrasos")]
         [AllowAnonymous]
         public async Task<IActionResult> VerificarAtrasos()
         {
-            try
-            {
-                await _viagensService.VerificarEAlertarAtrasosAsync();
-                return Ok(new { mensagem = "Verificação concluída." });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { mensagem = ex.Message });
-            }
+            await _service.VerificarEAlertarAtrasosAsync();
+            return Ok(new { mensagem = "Verificação concluída." });
         }
 
-
-
-
-        // 5. OBTER HISTÓRICO DE VIAGENS DE UM VEÍCULO
+        // HISTÓRICO
         [HttpGet("historico/{veiculoId}")]
-        [Authorize(Roles = "Admin,Gerente,Tecnico,Visualizador")]
-        public async Task<IActionResult> ObterHistorico(int veiculoId)
+        public async Task<IActionResult> Historico(int veiculoId)
         {
-            try
-            {
-                var historico = await _viagensService.ObterHistoricoViagensAsync(veiculoId);
-                return Ok(historico);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { mensagem = "Erro ao carregar o histórico de viagens.", detalhe = ex.Message });
-            }
-        }
-
-        // 6. PRÉ-VISUALIZAR RELATÓRIO NO SWAGGER / BROWSER
-        [HttpGet("relatorio/visualizar/{veiculoId}")]
-        [Authorize(Roles = "Admin,Gerente,Tecnico,Visualizador")]
-        public async Task<IActionResult> VisualizarRelatorio(int veiculoId, [FromQuery] string formato = "pdf")
-        {
-            try
-            {
-                byte[] ficheiroBytes;
-                string contentType;
-                string extensao;
-
-                if (formato.ToLower() == "excel")
-                {
-                  
-                    ficheiroBytes = new byte[0];
-                    contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-                    extensao = "xlsx";
-                }
-                else // PDF
-                {
-             
-                    ficheiroBytes = new byte[0];
-                    contentType = "application/pdf";
-                    extensao = "pdf";
-                }
-
-                // Se o serviço ainda não devolver bytes, evita enviar um ficheiro corrompido
-                if (ficheiroBytes == null || ficheiroBytes.Length == 0)
-                {
-                    return BadRequest(new { mensagem = "O serviço de relatórios ainda não gerou dados para este veículo." });
-                }
-
-                var contentDisposition = new Microsoft.Net.Http.Headers.ContentDispositionHeaderValue("inline")
-                {
-                    FileName = $"Relatorio_Veiculo_{veiculoId}.{extensao}"
-                };
-                Response.Headers.Add(Microsoft.Net.Http.Headers.HeaderNames.ContentDisposition, contentDisposition.ToString());
-
-                return File(ficheiroBytes, contentType);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { mensagem = "Erro ao gerar a pré-visualização.", detalhe = ex.Message });
-            }
-        }
-
-
-        public class FinalizarViagemDto
-        {
-            public int KmFinais { get; set; }
-            public string? ObservacoesEntrega { get; set; }
+            var historico = await _service.ObterHistoricoViagensAsync(veiculoId);
+            return Ok(historico);
         }
     }
 }

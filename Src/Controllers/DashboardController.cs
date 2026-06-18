@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using GestoreDeFrotas.Services; 
-using GestoreDeFrotas.Filtro;   
+﻿using GestoreDeFrotas.Services.Dashboard;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
-namespace GestoreDeFrotas.Controllers 
-
+namespace GestoreDeFrotas.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/dashboard")]
+    [Authorize]
     public class DashboardController : ControllerBase
     {
         private readonly DashboardService _dashboardService;
@@ -17,28 +17,28 @@ namespace GestoreDeFrotas.Controllers
             _dashboardService = dashboardService;
         }
 
-        // MANTIDO: O teu endpoint original de resumo geral
+        // GET: api/dashboard/resumo
         [HttpGet("resumo")]
-        public async Task<IActionResult> ObterResumoGeral()
+        public async Task<IActionResult> ObterResumo()
         {
-            var resultado = await _dashboardService.ObterResumoGeralAsync();
-            return Ok(resultado);
+            var resumo = await _dashboardService.ObterResumoGeralAsync();
+            return Ok(resumo);
         }
 
-        // NOVO: Endpoint para listar os veículos na rua com a data de início real
-        [HttpGet("veiculos-em-uso")]
+        // GET: api/dashboard/veiculos-uso
+        [HttpGet("veiculos-uso")]
         public async Task<IActionResult> ObterVeiculosEmUso()
         {
-            var resultado = await _dashboardService.ObterVeiculosEmUsoDashboardAsync();
-            return Ok(resultado);
+            var dados = await _dashboardService.ObterVeiculosEmUsoDashboardAsync();
+            return Ok(dados);
         }
 
-        // NOVO: Endpoint para listar alertas de inspeção (IPO) críticas
+        // GET: api/dashboard/alertas-ipo
         [HttpGet("alertas-ipo")]
         public async Task<IActionResult> ObterAlertasIpo()
         {
-            var resultado = await _dashboardService.ObterAlertasIpoDashboardAsync();
-            return Ok(resultado);
+            var alertas = await _dashboardService.ObterAlertasIpoDashboardAsync();
+            return Ok(alertas);
         }
     }
 }
