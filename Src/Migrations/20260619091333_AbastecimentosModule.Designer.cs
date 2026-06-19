@@ -4,6 +4,7 @@ using GestoreDeFrotas.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GestoreDeFrotas.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260619091333_AbastecimentosModule")]
+    partial class AbastecimentosModule
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,30 +37,32 @@ namespace GestoreDeFrotas.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("ConsumoMedio")
+                    b.Property<double?>("ConsumoMedio")
                         .HasColumnType("float");
 
-                    b.Property<decimal>("CustoTotal")
+                    b.Property<double>("CustoTotal")
                         .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("float(18)");
 
                     b.Property<DateTime>("Data")
                         .HasColumnType("datetime2");
 
-                    b.Property<double>("KmAtual")
+                    b.Property<int>("KmAtual")
+                        .HasColumnType("int");
+
+                    b.Property<double?>("KmPorLitro")
                         .HasColumnType("float");
 
-                    b.Property<decimal>("Litros")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("Litros")
+                        .HasColumnType("float");
 
                     b.Property<string>("Posto")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("PrecoPorLitro")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("PrecoPorLitro")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("float(18)");
 
                     b.Property<int>("VeiculoId")
                         .HasColumnType("int");

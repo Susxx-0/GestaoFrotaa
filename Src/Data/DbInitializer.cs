@@ -16,7 +16,7 @@ namespace GestoreDeFrotas.Data
                     {
                         Marca = "Renault",
                         Modelo = "Clio",
-                        Matricula = "AA-11-CC",
+                        Matricula = "AA11CC",
                         Ano = 2018,
                         KmAtual = 120000,
                         UltimaManutencaoKm = 110000,
@@ -31,7 +31,7 @@ namespace GestoreDeFrotas.Data
                     {
                         Marca = "Volkswagen",
                         Modelo = "Golf",
-                        Matricula = "BB-22-DD",
+                        Matricula = "BB22DD",
                         Ano = 2020,
                         KmAtual = 80000,
                         UltimaManutencaoKm = 70000,

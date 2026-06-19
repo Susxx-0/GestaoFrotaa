@@ -16,6 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using GestoreDeFrotas.Services.Abastecimentos;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddFluentValidationAutoValidation();
@@ -35,7 +36,7 @@ builder.Services.AddScoped<VehicleService>();
 builder.Services.AddScoped<MaintenanceService>();
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<AuditoriaService>();
-builder.Services.AddScoped<AbastecimentosService>();
+builder.Services.AddScoped<AbastecimentoService>();
 builder.Services.AddScoped<ViagensService>();
 builder.Services.AddScoped<DocumentosService>();
 builder.Services.AddScoped<DocumentosPesquisaService>();

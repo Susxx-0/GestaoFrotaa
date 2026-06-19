@@ -2,22 +2,13 @@
 using GestoreDeFrotas.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace GestoreDeFrotas.Services.Veiculos
+namespace GestoreDeFrotas.Services.Abastecimentos
 {
-    public class AbastecimentosService
+    public class AbastecimentoService
     {
         private readonly AppDbContext _context;
 
-        private readonly Dictionary<string, int> _limitesPorMarca = new()
-        {
-            { "BMW", 95 }, { "Mercedes", 90 }, { "Audi", 85 }, { "Volkswagen", 80 },
-            { "Renault", 70 }, { "Peugeot", 70 }, { "Ford", 80 }, { "Toyota", 85 },
-            { "Volvo", 85 }, { "Tesla", 0 }
-        };
-
-        private const int LimiteGeral = 100;
-
-        public AbastecimentosService(AppDbContext context)
+        public AbastecimentoService(AppDbContext context)
         {
             _context = context;
         }
@@ -45,62 +36,50 @@ namespace GestoreDeFrotas.Services.Veiculos
                 .FirstOrDefaultAsync(a => a.Id == id);
         }
 
-        public async Task<Abastecimento> CriarAsync(Abastecimento ab)
+        public async Task<Abastecimento> CriarAsync(Abastecimento abastecimento)
         {
-            var veiculo = await _context.Veiculos.FindAsync(ab.VeiculoId);
+            var veiculo = await _context.Veiculos.FindAsync(abastecimento.VeiculoId);
             if (veiculo == null)
-                throw new Exception("Veículo não encontrado.");
+                throw new InvalidOperationException("Veículo não encontrado.");
 
-            int limiteLitros = _limitesPorMarca.ContainsKey(veiculo.Marca)
-                ? _limitesPorMarca[veiculo.Marca]
-                : LimiteGeral;
+            abastecimento.Data = DateTime.Now;
+            abastecimento.CustoTotal = abastecimento.Litros * abastecimento.PrecoPorLitro;
+            abastecimento.ConsumoMedio = abastecimento.KmAtual > 0 && abastecimento.Litros > 0
+                ? Math.Round(abastecimento.KmAtual / (double)abastecimento.Litros, 2)
+                : 0;
 
-            if (ab.Litros > limiteLitros)
-                throw new Exception($"A marca {veiculo.Marca} permite no máximo {limiteLitros} litros por abastecimento.");
-
-            ab.CustoTotal = Math.Round(ab.Litros * ab.PrecoPorLitro, 2);
-
-            var ultimo = await _context.Abastecimentos
-                .Where(a => a.VeiculoId == ab.VeiculoId)
-                .OrderByDescending(a => a.Data)
-                .FirstOrDefaultAsync();
-
-            int kmPercorridos = 0;
-
-            if (ultimo != null)
-            {
-                if (ab.KmAtual < ultimo.KmAtual)
-                    throw new Exception("O KM atual não pode ser inferior ao do último registo.");
-
-                kmPercorridos = ab.KmAtual - ultimo.KmAtual;
-            }
-
-            if (kmPercorridos > 0)
-            {
-                ab.KmPorLitro = Math.Round((double)kmPercorridos / ab.Litros, 2);
-                ab.ConsumoMedio = Math.Round((ab.Litros / kmPercorridos) * 100, 2);
-            }
-            else
-            {
-                ab.KmPorLitro = 0;
-                ab.ConsumoMedio = 0;
-            }
-
-            veiculo.KmAtual = ab.KmAtual;
-
-            _context.Abastecimentos.Add(ab);
+            _context.Abastecimentos.Add(abastecimento);
             await _context.SaveChangesAsync();
 
-            return ab;
+            return abastecimento;
         }
 
-        public async Task<bool> EliminarAsync(int id)
+        public async Task<Abastecimento?> AtualizarAsync(int id, Abastecimento dados)
         {
-            var ab = await _context.Abastecimentos.FindAsync(id);
-            if (ab == null)
+            var abastecimento = await _context.Abastecimentos.FindAsync(id);
+            if (abastecimento == null)
+                return null;
+
+            abastecimento.Litros = dados.Litros;
+            abastecimento.PrecoPorLitro = dados.PrecoPorLitro;
+            abastecimento.CustoTotal = dados.Litros * dados.PrecoPorLitro;
+            abastecimento.Combustivel = dados.Combustivel;
+            abastecimento.Posto = dados.Posto;
+            abastecimento.KmAtual = dados.KmAtual;
+            abastecimento.ConsumoMedio = dados.ConsumoMedio;
+            abastecimento.Data = dados.Data;
+
+            await _context.SaveChangesAsync();
+            return abastecimento;
+        }
+
+        public async Task<bool> ApagarAsync(int id)
+        {
+            var abastecimento = await _context.Abastecimentos.FindAsync(id);
+            if (abastecimento == null)
                 return false;
 
-            _context.Abastecimentos.Remove(ab);
+            _context.Abastecimentos.Remove(abastecimento);
             await _context.SaveChangesAsync();
             return true;
         }

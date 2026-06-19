@@ -17,12 +17,20 @@ namespace GestoreDeFrotas.Controllers
             _context = context;
         }
 
+        // ============================
+        // RESUMO GERAL DA FROTA
+        // ============================
         [HttpGet("resumo-geral")]
         public async Task<IActionResult> ResumoGeral()
         {
             var totalVeiculos = await _context.Veiculos.CountAsync();
-            var totalManutencoes = await _context.RegistosManutencao.SumAsync(m => (decimal)m.Custo);
-            var totalAbastecimentos = await _context.Abastecimentos.SumAsync(a => (decimal)a.CustoTotal);
+
+            decimal totalManutencoes = await _context.RegistosManutencao
+                .SumAsync(m => m.Custo);
+
+            decimal totalAbastecimentos = await _context.Abastecimentos
+                .SumAsync(a => a.CustoTotal);
+
             return Ok(new
             {
                 totalVeiculos,
@@ -35,22 +43,31 @@ namespace GestoreDeFrotas.Controllers
             });
         }
 
+        // ============================
+        // ESTATÍSTICAS POR VEÍCULO
+        // ============================
         [HttpGet("veiculo/{id}")]
         public async Task<IActionResult> EstatisticasVeiculo(int id)
         {
             var v = await _context.Veiculos.FindAsync(id);
-            if (v == null) return NotFound();
+            if (v == null)
+                return NotFound("Veículo não encontrado.");
 
-            var custosManutencao = await _context.RegistosManutencao
+            // CUSTOS DE MANUTENÇÃO (decimal)
+            decimal custosManutencao = await _context.RegistosManutencao
                 .Where(m => m.VeiculoId == id)
-                .SumAsync(m => (double)m.Custo);
+                .SumAsync(m => m.Custo);
 
+            // LISTA DE ABASTECIMENTOS
             var abastecimentos = await _context.Abastecimentos
                 .Where(a => a.VeiculoId == id)
                 .ToListAsync();
 
-            var custosAbastecimento = abastecimentos.Sum(a => a.CustoTotal);
-            var totalLitros = abastecimentos.Sum(a => a.Litros);
+            // CUSTOS DE ABASTECIMENTO (decimal)
+            decimal custosAbastecimento = abastecimentos.Sum(a => a.CustoTotal);
+
+            // TOTAL DE LITROS
+            decimal totalLitros = abastecimentos.Sum(a => a.Litros);
 
             return Ok(new
             {
@@ -60,12 +77,16 @@ namespace GestoreDeFrotas.Controllers
                 v.Marca,
                 v.Ano,
                 v.Estado,
+
+      
                 custoTotalAcumulado = custosManutencao + custosAbastecimento,
+
                 custosSeparados = new
                 {
                     manutencao = custosManutencao,
                     abastecimento = custosAbastecimento
                 },
+
                 totalAbastecimentosRealizados = abastecimentos.Count,
                 totalLitrosConsumidos = totalLitros
             });

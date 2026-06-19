@@ -13,16 +13,10 @@ namespace GestoreDeFrotas.Services.Veiculos
             _context = context;
         }
 
-        // ============================
-        // 1. OBTER TODOS (com pesquisa + sorting)
-        // ============================
-        public async Task<IEnumerable<Veiculo>> ObterTodosAsync(
-            string? pesquisa = null,
-            string? ordenarPor = null)
+        public async Task<IEnumerable<Veiculo>> ObterTodosAsync(string? pesquisa, string? ordenarPor)
         {
             var query = _context.Veiculos.AsQueryable();
 
-            // FILTRO DE PESQUISA
             if (!string.IsNullOrWhiteSpace(pesquisa))
             {
                 query = query.Where(v =>
@@ -31,7 +25,6 @@ namespace GestoreDeFrotas.Services.Veiculos
                     v.Matricula.Contains(pesquisa));
             }
 
-            // SORTING
             query = ordenarPor switch
             {
                 "marca" => query.OrderBy(v => v.Marca),
@@ -45,17 +38,11 @@ namespace GestoreDeFrotas.Services.Veiculos
             return await query.AsNoTracking().ToListAsync();
         }
 
-        // ============================
-        // 2. OBTER POR ID
-        // ============================
         public async Task<Veiculo?> ObterPorIdAsync(int id)
         {
             return await _context.Veiculos.FindAsync(id);
         }
 
-        // ============================
-        // 3. CRIAR VEÍCULO
-        // ============================
         public async Task<Veiculo> CriarAsync(Veiculo veiculo)
         {
             veiculo.Estado = "Disponível";
@@ -67,14 +54,11 @@ namespace GestoreDeFrotas.Services.Veiculos
             return veiculo;
         }
 
-        // ============================
-        // 4. ATUALIZAR VEÍCULO
-        // ============================
-        public async Task<bool> AtualizarAsync(int id, Veiculo dados)
+        public async Task<Veiculo?> AtualizarAsync(int id, Veiculo dados)
         {
             var veiculo = await _context.Veiculos.FindAsync(id);
             if (veiculo == null)
-                return false;
+                return null;
 
             veiculo.Marca = dados.Marca;
             veiculo.Modelo = dados.Modelo;
@@ -84,27 +68,23 @@ namespace GestoreDeFrotas.Services.Veiculos
             veiculo.DataSeguro = dados.DataSeguro;
 
             await _context.SaveChangesAsync();
-            return true;
+            return veiculo;
         }
 
-        // ============================
-        // 5. ALTERAR ESTADO DO VEÍCULO
-        // ============================
         public async Task<bool> AlterarEstadoAsync(int id, string novoEstado)
         {
             var veiculo = await _context.Veiculos.FindAsync(id);
             if (veiculo == null)
                 return false;
 
-            // Regras de negócio
             if (novoEstado == "Alugado" && veiculo.Estado == "Em Manutenção")
                 throw new InvalidOperationException("Veículo em manutenção não pode ser alugado.");
 
             if (novoEstado == "Alugado" && veiculo.DataProximaIpo < DateTime.Now)
-                throw new InvalidOperationException("Veículo com IPO expirada não pode iniciar viagem.");
+                throw new InvalidOperationException("IPO expirada.");
 
             if (novoEstado == "Alugado" && veiculo.DataSeguro < DateTime.Now)
-                throw new InvalidOperationException("Veículo com seguro expirado não pode iniciar viagem.");
+                throw new InvalidOperationException("Seguro expirado.");
 
             veiculo.Estado = novoEstado;
             await _context.SaveChangesAsync();
@@ -112,9 +92,6 @@ namespace GestoreDeFrotas.Services.Veiculos
             return true;
         }
 
-        // ============================
-        // 6. DESATIVAR VEÍCULO
-        // ============================
         public async Task<bool> DesativarAsync(int id)
         {
             var veiculo = await _context.Veiculos.FindAsync(id);
@@ -128,9 +105,19 @@ namespace GestoreDeFrotas.Services.Veiculos
             return true;
         }
 
-        // ============================
-        // 7. HISTÓRICO DE ALTERAÇÕES
-        // ============================
+        public async Task<bool> AtivarAsync(int id)
+        {
+            var veiculo = await _context.Veiculos.FindAsync(id);
+            if (veiculo == null)
+                return false;
+
+            veiculo.EstaAtivo = true;
+            veiculo.Estado = "Disponível";
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
         public async Task RegistarHistoricoAsync(int veiculoId, string acao)
         {
             var historico = new HistoricoVeiculo
@@ -144,9 +131,6 @@ namespace GestoreDeFrotas.Services.Veiculos
             await _context.SaveChangesAsync();
         }
 
-        // ============================
-        // 8. VERIFICAR SE VEÍCULO PODE INICIAR VIAGEM
-        // ============================
         public async Task ValidarDisponibilidadeParaViagem(int veiculoId)
         {
             var v = await _context.Veiculos.FindAsync(veiculoId);
@@ -155,16 +139,16 @@ namespace GestoreDeFrotas.Services.Veiculos
                 throw new InvalidOperationException("Veículo não encontrado.");
 
             if (!v.EstaAtivo)
-                throw new InvalidOperationException("Veículo desativado não pode iniciar viagem.");
+                throw new InvalidOperationException("Veículo desativado.");
 
             if (v.Estado == "Em Manutenção")
-                throw new InvalidOperationException("Veículo em manutenção não pode iniciar viagem.");
+                throw new InvalidOperationException("Veículo em manutenção.");
 
             if (v.DataProximaIpo < DateTime.Now)
-                throw new InvalidOperationException("IPO expirada — não pode iniciar viagem.");
+                throw new InvalidOperationException("IPO expirada.");
 
             if (v.DataSeguro < DateTime.Now)
-                throw new InvalidOperationException("Seguro expirado — não pode iniciar viagem.");
+                throw new InvalidOperationException("Seguro expirado.");
         }
     }
 }

@@ -14,13 +14,12 @@ namespace GestoreDeFrotas.Data
         //           DBSETS
         // ============================
 
-
+        public DbSet<Abastecimento> Abastecimentos { get; set; }
         public DbSet<Veiculo> Veiculos { get; set; }
         public DbSet<RegistoManutencao> RegistosManutencao { get; set; }
         public DbSet<DocumentoVeiculo> DocumentosVeiculos { get; set; }
         public DbSet<Notificacao> Notificacoes { get; set; }
         public DbSet<HistoricoVeiculo> HistoricoVeiculos { get; set; }
-        public DbSet<Abastecimento> Abastecimentos { get; set; }
         public DbSet<Viagem> Viagens { get; set; }
         public DbSet<LogSistema> LogsSistema { get; set; }
 
@@ -34,12 +33,16 @@ namespace GestoreDeFrotas.Data
 
             // PRECISÃO DECIMAL
             modelBuilder.Entity<Abastecimento>()
-                .Property(a => a.CustoTotal)
-                .HasPrecision(18, 2);
+        .Property(a => a.CustoTotal)
+        .HasPrecision(18, 2);
 
             modelBuilder.Entity<Abastecimento>()
                 .Property(a => a.PrecoPorLitro)
-                .HasPrecision(18, 3);
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<Abastecimento>()
+                .Property(a => a.Litros)
+                .HasPrecision(18, 2);
 
             modelBuilder.Entity<RegistoManutencao>()
                 .Property(m => m.Custo)
@@ -73,7 +76,7 @@ namespace GestoreDeFrotas.Data
                 .HasForeignKey(v => v.VeiculoId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // RELAÇÃO: Notificações -> Veículo (opcional)
+            // RELAÇÃO: Notificações -> Veículo 
             modelBuilder.Entity<Notificacao>()
                 .HasOne<Veiculo>()
                 .WithMany()
