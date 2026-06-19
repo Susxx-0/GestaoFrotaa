@@ -23,17 +23,20 @@ namespace GestoreDeFrotas.Services.Dashboard
                     AnoMes = d.ToString("yyyy-MM"),
                     TotalLitros = _context.Abastecimentos
                         .Where(a => a.Data.Year == d.Year && a.Data.Month == d.Month)
-                        .Sum(a => (double?)a.Litros) ?? 0,
+                        .Sum(a => (decimal?)a.Litros) ?? 0,
                     TotalGasto = _context.Abastecimentos
                         .Where(a => a.Data.Year == d.Year && a.Data.Month == d.Month)
-                        .Sum(a => (double?)a.CustoTotal) ?? 0
+                        .Sum(a => (decimal?)a.CustoTotal) ?? 0
                 })
                 .OrderBy(x => x.AnoMes)
                 .ToList();
 
+            decimal mediaConsumo = await _context.Abastecimentos
+                .AverageAsync(a => (decimal?)a.ConsumoMedio) ?? 0;
+
             return new
             {
-                MediaGeralL100Km = await _context.Abastecimentos.AverageAsync(a => (double?)a.ConsumoMedio) ?? 0,
+                MediaGeralL100Km = mediaConsumo,
                 Evolucao = dados
             };
         }

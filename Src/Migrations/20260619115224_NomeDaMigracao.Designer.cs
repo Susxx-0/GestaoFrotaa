@@ -4,6 +4,7 @@ using GestoreDeFrotas.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GestoreDeFrotas.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260619115224_NomeDaMigracao")]
+    partial class NomeDaMigracao
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,8 +37,8 @@ namespace GestoreDeFrotas.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("ConsumoMedio")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("ConsumoMedio")
+                        .HasColumnType("float");
 
                     b.Property<decimal>("CustoTotal")
                         .HasPrecision(18, 2)
@@ -44,8 +47,8 @@ namespace GestoreDeFrotas.Migrations
                     b.Property<DateTime>("Data")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("KmAtual")
-                        .HasColumnType("int");
+                    b.Property<double>("KmAtual")
+                        .HasColumnType("float");
 
                     b.Property<decimal>("Litros")
                         .HasPrecision(18, 2)

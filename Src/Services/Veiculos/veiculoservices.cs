@@ -1,4 +1,5 @@
 ﻿using GestoreDeFrotas.Data;
+using GestoreDeFrotas.Dtos.Veiculos;
 using GestoreDeFrotas.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -43,10 +44,21 @@ namespace GestoreDeFrotas.Services.Veiculos
             return await _context.Veiculos.FindAsync(id);
         }
 
-        public async Task<Veiculo> CriarAsync(Veiculo veiculo)
+        public async Task<Veiculo> CriarAsync(VeiculoCreateDTO dto)
         {
-            veiculo.Estado = "Disponível";
-            veiculo.EstaAtivo = true;
+            var veiculo = new Veiculo
+            {
+                Marca = dto.Marca,
+                Modelo = dto.Modelo,
+                Matricula = dto.Matricula,
+                Ano = dto.Ano,
+                CategoriaUsuario = dto.CategoriaUsuario,
+                Estado = dto.Estado,
+                Cor = dto.Cor,
+                KmAtual = dto.KmAtual,
+                EstaAtivo = true,
+                DataCriacao = DateTime.Now
+            };
 
             _context.Veiculos.Add(veiculo);
             await _context.SaveChangesAsync();
@@ -54,18 +66,20 @@ namespace GestoreDeFrotas.Services.Veiculos
             return veiculo;
         }
 
-        public async Task<Veiculo?> AtualizarAsync(int id, Veiculo dados)
+        public async Task<Veiculo?> AtualizarAsync(int id, VeiculoUpdateDTO dto)
         {
             var veiculo = await _context.Veiculos.FindAsync(id);
             if (veiculo == null)
                 return null;
 
-            veiculo.Marca = dados.Marca;
-            veiculo.Modelo = dados.Modelo;
-            veiculo.Matricula = dados.Matricula;
-            veiculo.KmAtual = dados.KmAtual;
-            veiculo.DataProximaIpo = dados.DataProximaIpo;
-            veiculo.DataSeguro = dados.DataSeguro;
+            veiculo.Marca = dto.Marca;
+            veiculo.Modelo = dto.Modelo;
+            veiculo.Matricula = dto.Matricula;
+            veiculo.Ano = dto.Ano;
+            veiculo.CategoriaUsuario = dto.CategoriaUsuario;
+            veiculo.Estado = dto.Estado;
+            veiculo.Cor = dto.Cor;
+            veiculo.KmAtual = dto.KmAtual;
 
             await _context.SaveChangesAsync();
             return veiculo;
@@ -76,15 +90,6 @@ namespace GestoreDeFrotas.Services.Veiculos
             var veiculo = await _context.Veiculos.FindAsync(id);
             if (veiculo == null)
                 return false;
-
-            if (novoEstado == "Alugado" && veiculo.Estado == "Em Manutenção")
-                throw new InvalidOperationException("Veículo em manutenção não pode ser alugado.");
-
-            if (novoEstado == "Alugado" && veiculo.DataProximaIpo < DateTime.Now)
-                throw new InvalidOperationException("IPO expirada.");
-
-            if (novoEstado == "Alugado" && veiculo.DataSeguro < DateTime.Now)
-                throw new InvalidOperationException("Seguro expirado.");
 
             veiculo.Estado = novoEstado;
             await _context.SaveChangesAsync();
@@ -116,39 +121,6 @@ namespace GestoreDeFrotas.Services.Veiculos
 
             await _context.SaveChangesAsync();
             return true;
-        }
-
-        public async Task RegistarHistoricoAsync(int veiculoId, string acao)
-        {
-            var historico = new HistoricoVeiculo
-            {
-                VeiculoId = veiculoId,
-                Acao = acao,
-                Data = DateTime.Now
-            };
-
-            _context.HistoricoVeiculos.Add(historico);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task ValidarDisponibilidadeParaViagem(int veiculoId)
-        {
-            var v = await _context.Veiculos.FindAsync(veiculoId);
-
-            if (v == null)
-                throw new InvalidOperationException("Veículo não encontrado.");
-
-            if (!v.EstaAtivo)
-                throw new InvalidOperationException("Veículo desativado.");
-
-            if (v.Estado == "Em Manutenção")
-                throw new InvalidOperationException("Veículo em manutenção.");
-
-            if (v.DataProximaIpo < DateTime.Now)
-                throw new InvalidOperationException("IPO expirada.");
-
-            if (v.DataSeguro < DateTime.Now)
-                throw new InvalidOperationException("Seguro expirado.");
         }
     }
 }

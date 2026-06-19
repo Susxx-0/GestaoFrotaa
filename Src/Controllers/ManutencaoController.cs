@@ -47,40 +47,9 @@ namespace GestoreDeFrotas.Controllers
             return Ok(estado);
         }
 
-        [HttpGet("{id}/form")]
-        public async Task<IActionResult> ObterFormularioEdicao(int id)
-        {
-            var manutencao = await _maintenanceService.ObterPorIdAsync(id);
-            if (manutencao == null)
-                return NotFound("Registo de manutenção não encontrado.");
-
-            return Ok(new
-            {
-                dados = manutencao,
-                opcoes = new
-                {
-                    tipos = new[]
-                    {
-                "Revisão Geral",
-                "Troca de Óleo",
-                "Travões",
-                "Pneus",
-                "Suspensão",
-                "Motor",
-                "Eletricidade",
-                "Outros"
-            },
-                    oficinas = new[]
-                    {
-                "Oficina Oficial",
-                "Bosch Car Service",
-                "Midas",
-                "Norauto",
-                "Oficina Independente"
-            }
-                }
-            });
-        }
+        
+            
+        
 
 
 

@@ -42,6 +42,7 @@ builder.Services.AddScoped<DocumentosService>();
 builder.Services.AddScoped<DocumentosPesquisaService>();
 builder.Services.AddScoped<DashboardService>();
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<VehicleService>();
 // ----------------------------
 //  AUTENTICAÇÃO JWT
 // ----------------------------

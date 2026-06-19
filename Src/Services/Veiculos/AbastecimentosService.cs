@@ -1,5 +1,6 @@
 ﻿using GestoreDeFrotas.Data;
 using GestoreDeFrotas.Models;
+using GestoreDeFrotas.Models.Dtos.Abastecimentos;
 using Microsoft.EntityFrameworkCore;
 
 namespace GestoreDeFrotas.Services.Abastecimentos
@@ -21,14 +22,6 @@ namespace GestoreDeFrotas.Services.Abastecimentos
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Abastecimento>> ObterPorVeiculoAsync(int veiculoId)
-        {
-            return await _context.Abastecimentos
-                .Where(a => a.VeiculoId == veiculoId)
-                .OrderByDescending(a => a.Data)
-                .ToListAsync();
-        }
-
         public async Task<Abastecimento?> ObterPorIdAsync(int id)
         {
             return await _context.Abastecimentos
@@ -36,17 +29,26 @@ namespace GestoreDeFrotas.Services.Abastecimentos
                 .FirstOrDefaultAsync(a => a.Id == id);
         }
 
-        public async Task<Abastecimento> CriarAsync(Abastecimento abastecimento)
+        public async Task<Abastecimento> CriarAsync(AbastecimentoCreateDTO dto)
         {
-            var veiculo = await _context.Veiculos.FindAsync(abastecimento.VeiculoId);
+            var veiculo = await _context.Veiculos.FindAsync(dto.VeiculoId);
             if (veiculo == null)
                 throw new InvalidOperationException("Veículo não encontrado.");
 
-            abastecimento.Data = DateTime.Now;
-            abastecimento.CustoTotal = abastecimento.Litros * abastecimento.PrecoPorLitro;
-            abastecimento.ConsumoMedio = abastecimento.KmAtual > 0 && abastecimento.Litros > 0
-                ? Math.Round(abastecimento.KmAtual / (double)abastecimento.Litros, 2)
-                : 0;
+            var abastecimento = new Abastecimento
+            {
+                VeiculoId = dto.VeiculoId,
+                Litros = dto.Litros,
+                PrecoPorLitro = dto.PrecoPorLitro,
+                KmAtual = dto.KmAtual,
+                Combustivel = dto.Combustivel,
+                Posto = dto.Posto,
+                Data = DateTime.Now,
+                CustoTotal = dto.Litros * dto.PrecoPorLitro,
+                ConsumoMedio = dto.KmAtual > 0 && dto.Litros > 0
+                    ? Math.Round(dto.KmAtual / dto.Litros, 2)
+                    : 0
+            };
 
             _context.Abastecimentos.Add(abastecimento);
             await _context.SaveChangesAsync();
@@ -54,20 +56,22 @@ namespace GestoreDeFrotas.Services.Abastecimentos
             return abastecimento;
         }
 
-        public async Task<Abastecimento?> AtualizarAsync(int id, Abastecimento dados)
+        public async Task<Abastecimento?> AtualizarAsync(int id, AbastecimentoUpdateDTO dto)
         {
             var abastecimento = await _context.Abastecimentos.FindAsync(id);
             if (abastecimento == null)
                 return null;
 
-            abastecimento.Litros = dados.Litros;
-            abastecimento.PrecoPorLitro = dados.PrecoPorLitro;
-            abastecimento.CustoTotal = dados.Litros * dados.PrecoPorLitro;
-            abastecimento.Combustivel = dados.Combustivel;
-            abastecimento.Posto = dados.Posto;
-            abastecimento.KmAtual = dados.KmAtual;
-            abastecimento.ConsumoMedio = dados.ConsumoMedio;
-            abastecimento.Data = dados.Data;
+            abastecimento.Litros = dto.Litros;
+            abastecimento.PrecoPorLitro = dto.PrecoPorLitro;
+            abastecimento.CustoTotal = dto.Litros * dto.PrecoPorLitro;
+            abastecimento.Combustivel = dto.Combustivel;
+            abastecimento.Posto = dto.Posto;
+            abastecimento.KmAtual = dto.KmAtual;
+            abastecimento.ConsumoMedio = dto.KmAtual > 0 && dto.Litros > 0
+                ? Math.Round(dto.KmAtual / dto.Litros, 2)
+                : 0;
+            abastecimento.Data = dto.Data;
 
             await _context.SaveChangesAsync();
             return abastecimento;
