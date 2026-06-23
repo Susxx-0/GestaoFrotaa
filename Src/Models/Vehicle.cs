@@ -23,19 +23,21 @@ namespace GestoreDeFrotas.Models
         public string Cor { get; set; } = string.Empty;
 
         public int KmAtual { get; set; }
+        public bool EstaAtivo { get; set; }
 
-        
+        // Estes podem ser SEMPRE preenchidos → ficam como int e DateTime
         public int UltimaManutencaoKm { get; set; }
         public DateTime? UltimaManutencaoData { get; set; }
-        public int ProximaManutencaoKm { get; set; }
+
+        // Estes são previsões → DEVEM ser nullable
+        public int? ProximaManutencaoKm { get; set; }
         public DateTime? ProximaManutencaoData { get; set; }
 
-       
+        // Estes também são previsões → DEVEM ser nullable
         public DateTime? DataProximaIpo { get; set; }
         public DateTime? DataInspecao { get; set; }
         public DateTime? DataSeguro { get; set; }
 
-        
         public DateTime DataCriacao { get; set; } = DateTime.Now;
     }
 }

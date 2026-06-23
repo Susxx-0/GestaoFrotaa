@@ -3,10 +3,12 @@ using FluentValidation.AspNetCore;
 using GestoreDeFrotas.Data;
 using GestoreDeFrotas.Middleware;
 using GestoreDeFrotas.Services;
+using GestoreDeFrotas.Services.Abastecimentos;
 using GestoreDeFrotas.Services.Dashboard;
 using GestoreDeFrotas.Services.Documentos;
 using GestoreDeFrotas.Services.Manutencao;
 using GestoreDeFrotas.Services.Notificacoes;
+using GestoreDeFrotas.Services.Relatorios;
 using GestoreDeFrotas.Services.Sistema;
 using GestoreDeFrotas.Services.Veiculos;
 using GestoreDeFrotas.Services.Viagens;
@@ -16,7 +18,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using GestoreDeFrotas.Services.Abastecimentos;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddFluentValidationAutoValidation();
@@ -43,6 +44,10 @@ builder.Services.AddScoped<DocumentosPesquisaService>();
 builder.Services.AddScoped<DashboardService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<VehicleService>();
+builder.Services.AddScoped<MaintenanceService>();
+builder.Services.AddScoped<PDFService>();
+builder.Services.AddScoped<ExcelService>();
+
 // ----------------------------
 //  AUTENTICAÇÃO JWT
 // ----------------------------

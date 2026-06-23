@@ -17,23 +17,23 @@ namespace GestoreDeFrotas.Services.Dashboard
             var veiculos = await _context.Veiculos.ToListAsync();
 
             int manutencaoAtrasada = veiculos.Count(v =>
-                (v.ProximaManutencaoKm.HasValue && v.KmAtual >= v.ProximaManutencaoKm) ||
-                (v.ProximaManutencaoData.HasValue && v.ProximaManutencaoData <= DateTime.Today)
+                (v.ProximaManutencaoKm.HasValue && v.KmAtual >= v.ProximaManutencaoKm.Value) ||
+                (v.ProximaManutencaoData.HasValue && v.ProximaManutencaoData.Value <= DateTime.Today)
             );
 
             int ipoExpira = veiculos.Count(v =>
                 v.DataProximaIpo.HasValue &&
-                v.DataProximaIpo <= DateTime.Today.AddDays(7)
+                v.DataProximaIpo.Value <= DateTime.Today.AddDays(7)
             );
 
             int seguroExpira = veiculos.Count(v =>
                 v.DataSeguro.HasValue &&
-                v.DataSeguro <= DateTime.Today.AddDays(7)
+                v.DataSeguro.Value <= DateTime.Today.AddDays(7)
             );
 
             int inspecaoExpira = veiculos.Count(v =>
                 v.DataInspecao.HasValue &&
-                v.DataInspecao <= DateTime.Today.AddDays(7)
+                v.DataInspecao.Value <= DateTime.Today.AddDays(7)
             );
 
             return new
