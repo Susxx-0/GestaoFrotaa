@@ -12,12 +12,14 @@ namespace GestoreDeFrotas.Services.Dashboard
             _context = context;
         }
 
+        // ============================================================
+        // 1) RESUMO GERAL
+        // ============================================================
         public async Task<object> ObterResumoGeralAsync()
         {
             var hoje = DateTime.Now;
             var inicioMes = new DateTime(hoje.Year, hoje.Month, 1);
 
-           
             decimal totalCombustivel = await _context.Abastecimentos
                 .SumAsync(a => (decimal?)a.CustoTotal) ?? 0;
 
@@ -35,6 +37,13 @@ namespace GestoreDeFrotas.Services.Dashboard
             decimal mediaKm = await _context.Veiculos.AnyAsync()
                 ? await _context.Veiculos.AverageAsync(v => (decimal?)v.KmAtual) ?? 0
                 : 0;
+
+            int veiculosAtribuidos = await _context.AtribuicoesVeiculo
+                .CountAsync(a => a.Ativo);
+
+            int veiculosSemCondutor = await _context.Veiculos
+                .CountAsync(v => !_context.AtribuicoesVeiculo
+                    .Any(a => a.VeiculoId == v.Id && a.Ativo));
 
             return new
             {
@@ -55,10 +64,17 @@ namespace GestoreDeFrotas.Services.Dashboard
                 DocumentosExpirados = await _context.DocumentosVeiculos
                     .CountAsync(d => d.DataValidade != null && d.DataValidade < hoje),
 
-                MediaKmAtual = mediaKm
+                MediaKmAtual = mediaKm,
+
+                // NOVOS CAMPOS
+                VeiculosAtribuidos = veiculosAtribuidos,
+                VeiculosSemCondutor = veiculosSemCondutor
             };
         }
 
+        // ============================================================
+        // 2) VEÍCULOS EM USO (VIAGENS ATIVAS)
+        // ============================================================
         public async Task<object> ObterVeiculosEmUsoDashboardAsync()
         {
             var agora = DateTime.Now;
@@ -101,6 +117,9 @@ namespace GestoreDeFrotas.Services.Dashboard
             });
         }
 
+        // ============================================================
+        // 3) ALERTAS IPO
+        // ============================================================
         public async Task<object> ObterAlertasIpoDashboardAsync()
         {
             var hoje = DateTime.Now.Date;

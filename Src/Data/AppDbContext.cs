@@ -22,6 +22,9 @@ namespace GestoreDeFrotas.Data
         public DbSet<HistoricoVeiculo> HistoricoVeiculos { get; set; }
         public DbSet<Viagem> Viagens { get; set; }
         public DbSet<LogSistema> LogsSistema { get; set; }
+     
+        public DbSet<User> Users { get; set; }
+        public DbSet<AtribuicaoVeiculo> AtribuicoesVeiculo { get; set; }
 
         // ============================
         //        CONFIGURAÇÕES

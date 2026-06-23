@@ -47,6 +47,7 @@ builder.Services.AddScoped<VehicleService>();
 builder.Services.AddScoped<MaintenanceService>();
 builder.Services.AddScoped<PDFService>();
 builder.Services.AddScoped<ExcelService>();
+builder.Services.AddScoped<AtribuicaoVeiculoService>();
 
 // ----------------------------
 //  AUTENTICAÇÃO JWT
