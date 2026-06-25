@@ -8,6 +8,7 @@ using GestoreDeFrotas.Services.Dashboard;
 using GestoreDeFrotas.Services.Documentos;
 using GestoreDeFrotas.Services.Manutencao;
 using GestoreDeFrotas.Services.Notificacoes;
+using GestoreDeFrotas.Services.OCR;
 using GestoreDeFrotas.Services.Relatorios;
 using GestoreDeFrotas.Services.Sistema;
 using GestoreDeFrotas.Services.Veiculos;
@@ -34,6 +35,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 //  SERVICES
 // ----------------------------
 builder.Services.AddScoped<VehicleService>();
+builder.Services.AddSingleton<OcrService>();
+builder.Services.AddSingleton<CartaParserService>();
 builder.Services.AddScoped<MaintenanceService>();
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<AuditoriaService>();

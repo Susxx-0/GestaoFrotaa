@@ -37,7 +37,6 @@ namespace GestoreDeFrotas.Models
         public DateTime? DataProximaIpo { get; set; }
         public DateTime? DataInspecao { get; set; }
         public DateTime? DataSeguro { get; set; }
-
         public DateTime DataCriacao { get; set; } = DateTime.Now;
     }
 }
