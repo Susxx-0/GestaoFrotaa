@@ -54,7 +54,6 @@ namespace GestoreDeFrotas.Controllers
             return Ok(user);
         }
 
-
         // EDITAR UTILIZADOR
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, User updated)
@@ -69,8 +68,6 @@ namespace GestoreDeFrotas.Controllers
             await _context.SaveChangesAsync();
             return Ok(user);
         }
-
-
 
         // DESATIVAR
         [HttpPatch("{id}/desativar")]
@@ -96,24 +93,24 @@ namespace GestoreDeFrotas.Controllers
             return Ok("Utilizador ativado.");
         }
 
+        // UPLOAD DA CARTA DE CONDUÇÃO + OCR
         [HttpPost("upload-carta")]
         public async Task<IActionResult> UploadCarta(
-    [FromForm] IFormFile ficheiro,
-    [FromForm] int userId,
-    [FromServices] OcrService ocr,
-    [FromServices] CartaParserService parser)
+            [FromForm] UploadCartaDTO dto,
+            [FromServices] OcrService ocr,
+            [FromServices] CartaParserService parser)
         {
-            var user = await _context.Users.FindAsync(userId);
+            var user = await _context.Users.FindAsync(dto.UserId);
             if (user == null) return NotFound("Utilizador não encontrado.");
 
             var pasta = Path.Combine("wwwroot", "cartas");
             if (!Directory.Exists(pasta)) Directory.CreateDirectory(pasta);
 
-            var nomeFicheiro = $"{Guid.NewGuid()}_{ficheiro.FileName}";
+            var nomeFicheiro = $"{Guid.NewGuid()}_{dto.Ficheiro.FileName}";
             var caminho = Path.Combine(pasta, nomeFicheiro);
 
             using (var stream = new FileStream(caminho, FileMode.Create))
-                await ficheiro.CopyToAsync(stream);
+                await dto.Ficheiro.CopyToAsync(stream);
 
             // OCR
             var texto = ocr.LerTexto(caminho);
@@ -134,6 +131,5 @@ namespace GestoreDeFrotas.Controllers
                 user.CartaConducaoCategoria
             });
         }
-
     }
 }

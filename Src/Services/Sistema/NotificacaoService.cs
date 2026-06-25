@@ -13,38 +13,48 @@ namespace GestoreDeFrotas.Services.Notificacoes
             _context = context;
         }
 
-        // ============================
-        // 1. OBTER TODAS AS NOTIFICAÇÕES
-        // ============================
-        public async Task<IEnumerable<Notificacao>> ObterTodasAsync()
+        // ============================================================
+        // 1. Obter notificações de um utilizador
+        // ============================================================
+        public async Task<IEnumerable<Notificacao>> ObterPorUtilizadorAsync(int userId)
         {
             return await _context.Notificacoes
-                .OrderByDescending(n => n.Data)
+                .Where(n => n.UserId == userId)
+                .OrderByDescending(n => n.DataCriacao)
                 .AsNoTracking()
                 .ToListAsync();
         }
 
-        // ============================
-        // 2. CRIAR NOTIFICAÇÃO
-        // ============================
-        public async Task CriarAsync(string titulo, string mensagem, int? veiculoId = null)
+        // ============================================================
+        // 2. Criar notificação
+        // ============================================================
+        public async Task CriarAsync(
+            string titulo,
+            string mensagem,
+            int? userId = null,
+            int? veiculoId = null,
+            string tipo = "Info",
+            string grau = "Info")
         {
-            var notificacao = new Notificacao
+            var notif = new Notificacao
             {
                 Titulo = titulo,
                 Mensagem = mensagem,
+                UserId = userId,
                 VeiculoId = veiculoId,
-                Data = DateTime.Now,
+                Tipo = tipo,
+                Grau = grau,
+                DataCriacao = DateTime.Now,
                 Lida = false
             };
 
-            _context.Notificacoes.Add(notificacao);
+            _context.Notificacoes.Add(notif);
             await _context.SaveChangesAsync();
         }
 
-        // ============================
-        // 3. MARCAR COMO LIDA
-        // ============================
+        // ============================================================
+        // 3. Marcar como lida
+        // ============================================================
         public async Task<bool> MarcarComoLidaAsync(int id)
         {
             var notif = await _context.Notificacoes.FindAsync(id);
@@ -56,116 +66,145 @@ namespace GestoreDeFrotas.Services.Notificacoes
             return true;
         }
 
-        // ============================
-        // 4. NOTIFICAÇÕES DE IPO
-        // ============================
+        // ============================================================
+        // 4. Notificações de carta (para o próprio utilizador)
+        // ============================================================
+        public async Task GerarNotificacoesCartaAsync()
+        {
+            var hoje = DateTime.Today;
+            var limite = hoje.AddDays(30);
+
+            var users = await _context.Users
+                .Where(u => u.CartaConducaoValidade != null &&
+                            u.CartaConducaoValidade <= limite)
+                .ToListAsync();
+
+            foreach (var u in users)
+            {
+                var dias = (u.CartaConducaoValidade.Value - hoje).Days;
+
+                await CriarAsync(
+                    "Validade da Carta",
+                    $"A sua carta expira em {dias} dias.",
+                    userId: u.Id,
+                    tipo: "CartaExpira",
+                    grau: dias <= 5 ? "Urgente" : "Aviso"
+                );
+            }
+        }
+
+        // ============================================================
+        // 5. Notificações de IPO (para gestores)
+        // ============================================================
         public async Task GerarNotificacoesIPOAsync()
         {
-            var hoje = DateTime.Now.Date;
+            var hoje = DateTime.Today;
             var limite = hoje.AddDays(30);
 
+            var gestores = await _context.Users
+                .Where(u => u.Role == "Admin" || u.Role == "Gestor")
+                .ToListAsync();
+
             var veiculos = await _context.Veiculos
-                .Where(v => v.DataProximaIpo != null && v.DataProximaIpo <= limite)
+                .Where(v => v.DataProximaIpo != null &&
+                            v.DataProximaIpo <= limite)
                 .ToListAsync();
 
             foreach (var v in veiculos)
             {
-                string msg = v.DataProximaIpo < hoje
-                    ? "IPO expirada — veículo não pode circular."
-                    : $"IPO expira em {(v.DataProximaIpo.Value - hoje).Days} dias.";
+                var dias = (v.DataProximaIpo.Value - hoje).Days;
 
-                await CriarAsync(
-                    "Alerta de IPO",
-                    $"{v.Marca} {v.Modelo} ({v.Matricula}): {msg}",
-                    v.Id
-                );
+                foreach (var g in gestores)
+                {
+                    await CriarAsync(
+                        "IPO a Expirar",
+                        $"O veículo {v.Matricula} tem IPO a expirar em {dias} dias.",
+                        userId: g.Id,
+                        veiculoId: v.Id,
+                        tipo: "IPOExpira",
+                        grau: dias <= 5 ? "Urgente" : "Aviso"
+                    );
+                }
             }
         }
 
-        // ============================
-        // 5. NOTIFICAÇÕES DE SEGURO
-        // ============================
+        // ============================================================
+        // 6. Notificações de Seguro (para gestores)
+        // ============================================================
         public async Task GerarNotificacoesSeguroAsync()
         {
-            var hoje = DateTime.Now.Date;
+            var hoje = DateTime.Today;
             var limite = hoje.AddDays(30);
 
+            var gestores = await _context.Users
+                .Where(u => u.Role == "Admin" || u.Role == "Gestor")
+                .ToListAsync();
+
             var veiculos = await _context.Veiculos
-                .Where(v => v.DataSeguro != null && v.DataSeguro <= limite)
+                .Where(v => v.DataSeguro != null &&
+                            v.DataSeguro <= limite)
                 .ToListAsync();
 
             foreach (var v in veiculos)
             {
-                string msg = v.DataSeguro < hoje
-                    ? "Seguro expirado — veículo não pode circular."
-                    : $"Seguro expira em {(v.DataSeguro.Value - hoje).Days} dias.";
+                var dias = (v.DataSeguro.Value - hoje).Days;
 
-                await CriarAsync(
-                    "Alerta de Seguro",
-                    $"{v.Marca} {v.Modelo} ({v.Matricula}): {msg}",
-                    v.Id
-                );
+                foreach (var g in gestores)
+                {
+                    await CriarAsync(
+                        "Seguro a Expirar",
+                        $"O seguro do veículo {v.Matricula} expira em {dias} dias.",
+                        userId: g.Id,
+                        veiculoId: v.Id,
+                        tipo: "SeguroExpira",
+                        grau: dias <= 5 ? "Urgente" : "Aviso"
+                    );
+                }
             }
         }
 
-        // ============================
-        // 6. NOTIFICAÇÕES DE DOCUMENTOS
-        // ============================
-        public async Task GerarNotificacoesDocumentosAsync()
+        // ============================================================
+        // 7. Notificações de viagens atrasadas 
+        // ============================================================
+        public async Task GerarNotificacoesViagensAtrasadasAsync()
         {
-            var hoje = DateTime.Now.Date;
-            var limite = hoje.AddDays(30);
-
-            var docs = await _context.DocumentosVeiculos
-                .Include(d => d.Veiculo)
-                .Where(d => d.DataValidade != null && d.DataValidade <= limite)
+            var viagens = await _context.Viagens
+                .Where(v => v.DataFim == null)
                 .ToListAsync();
 
-            foreach (var d in docs)
+            foreach (var v in viagens)
             {
-                string msg = d.DataValidade < hoje
-                    ? "Documento expirado."
-                    : $"Documento expira em {(d.DataValidade.Value - hoje).Days} dias.";
+                var horas = (DateTime.Now - v.DataInicio).TotalHours;
 
-                await CriarAsync(
-                    "Alerta de Documento",
-                    $"{d.Veiculo.Marca} {d.Veiculo.Modelo} ({d.Veiculo.Matricula}): {msg}",
-                    d.VeiculoId
-                );
+                if (horas >= 8) // podes mudar este valor
+                {
+                    var condutor = await _context.Users
+                        .FirstOrDefaultAsync(u => u.Username == v.CondutorPrincipalId);
+
+                    if (condutor != null)
+                    {
+                        await CriarAsync(
+                            "Viagem Atrasada",
+                            $"A viagem iniciada às {v.DataInicio} já ultrapassou o limite de tempo.",
+                            userId: condutor.Id,
+                            veiculoId: v.VeiculoId,
+                            tipo: "ViagemAtrasada",
+                            grau: "Urgente"
+                        );
+                    }
+                }
             }
         }
 
-        // ============================
-        // 7. NOTIFICAÇÕES DE MANUTENÇÃO ATRASADA
-        // ============================
-        public async Task GerarNotificacoesManutencaoAtrasadaAsync()
-        {
-            var hoje = DateTime.Now.Date;
-
-            var atrasadas = await _context.RegistosManutencao
-                .Include(m => m.Veiculo)
-                .Where(m => m.DataPrevista != null && m.DataPrevista < hoje && m.DataConclusao == null)
-                .ToListAsync();
-
-            foreach (var m in atrasadas)
-            {
-                await CriarAsync(
-                    "Manutenção Atrasada",
-                    $"{m.Veiculo.Marca} {m.Veiculo.Modelo} ({m.Veiculo.Matricula}): manutenção atrasada há {(hoje - m.DataPrevista.Value).Days} dias.",
-                    m.VeiculoId
-                );
-            }
-        }
-
-        // ============================
-        // 8. EXECUTAR TODAS AS NOTIFICAÇÕES
-        // ============================
+        // ============================================================
+        // 8. Executar todas as notificações
+        // ============================================================
         public async Task GerarTodasAsync()
         {
+            await GerarNotificacoesCartaAsync();
             await GerarNotificacoesIPOAsync();
             await GerarNotificacoesSeguroAsync();
-            await GerarNotificacoesDocumentosAsync();
-            await GerarNotificacoesManutencaoAtrasadaAsync();
+            await GerarNotificacoesViagensAtrasadasAsync();
         }
     }
 }

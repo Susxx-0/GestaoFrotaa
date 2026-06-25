@@ -4,6 +4,7 @@ using GestoreDeFrotas.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GestoreDeFrotas.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260625135407_AtualizarUserCarta")]
+    partial class AtualizarUserCarta
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -134,9 +137,14 @@ namespace GestoreDeFrotas.Migrations
                     b.Property<int>("VeiculoId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("VeiculoId1")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("VeiculoId");
+
+                    b.HasIndex("VeiculoId1");
 
                     b.ToTable("DocumentosVeiculos");
                 });
@@ -241,17 +249,17 @@ namespace GestoreDeFrotas.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int?>("VeiculoId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("VeiculoId")
+                    b.Property<int?>("VeiculoId1")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
-
                     b.HasIndex("VeiculoId");
+
+                    b.HasIndex("VeiculoId1");
 
                     b.ToTable("Notificacoes");
                 });
@@ -505,11 +513,15 @@ namespace GestoreDeFrotas.Migrations
 
             modelBuilder.Entity("GestoreDeFrotas.Models.DocumentoVeiculo", b =>
                 {
-                    b.HasOne("GestoreDeFrotas.Models.Veiculo", "Veiculo")
+                    b.HasOne("GestoreDeFrotas.Models.Veiculo", null)
                         .WithMany()
                         .HasForeignKey("VeiculoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("GestoreDeFrotas.Models.Veiculo", "Veiculo")
+                        .WithMany()
+                        .HasForeignKey("VeiculoId1");
 
                     b.Navigation("Veiculo");
                 });
@@ -527,16 +539,14 @@ namespace GestoreDeFrotas.Migrations
 
             modelBuilder.Entity("GestoreDeFrotas.Models.Notificacao", b =>
                 {
-                    b.HasOne("User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.HasOne("GestoreDeFrotas.Models.Veiculo", "Veiculo")
+                    b.HasOne("GestoreDeFrotas.Models.Veiculo", null)
                         .WithMany()
                         .HasForeignKey("VeiculoId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.Navigation("User");
+                    b.HasOne("GestoreDeFrotas.Models.Veiculo", "Veiculo")
+                        .WithMany()
+                        .HasForeignKey("VeiculoId1");
 
                     b.Navigation("Veiculo");
                 });

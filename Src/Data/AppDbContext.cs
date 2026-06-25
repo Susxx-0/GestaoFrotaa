@@ -22,7 +22,7 @@ namespace GestoreDeFrotas.Data
         public DbSet<HistoricoVeiculo> HistoricoVeiculos { get; set; }
         public DbSet<Viagem> Viagens { get; set; }
         public DbSet<LogSistema> LogsSistema { get; set; }
-     
+
         public DbSet<User> Users { get; set; }
         public DbSet<AtribuicaoVeiculo> AtribuicoesVeiculo { get; set; }
 
@@ -34,10 +34,13 @@ namespace GestoreDeFrotas.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            // ============================
             // PRECISÃO DECIMAL
+            // ============================
+
             modelBuilder.Entity<Abastecimento>()
-        .Property(a => a.CustoTotal)
-        .HasPrecision(18, 2);
+                .Property(a => a.CustoTotal)
+                .HasPrecision(18, 2);
 
             modelBuilder.Entity<Abastecimento>()
                 .Property(a => a.PrecoPorLitro)
@@ -51,40 +54,58 @@ namespace GestoreDeFrotas.Data
                 .Property(m => m.Custo)
                 .HasPrecision(18, 2);
 
-            // RELAÇÃO: Veículo -> Abastecimentos
+            // ============================
+            // RELAÇÕES
+            // ============================
+
+            // Abastecimento → Veículo
             modelBuilder.Entity<Abastecimento>()
                 .HasOne(a => a.Veiculo)
                 .WithMany()
                 .HasForeignKey(a => a.VeiculoId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // RELAÇÃO: Veículo -> Documentos
+            // DocumentoVeiculo → Veículo
             modelBuilder.Entity<DocumentoVeiculo>()
-                .HasOne<Veiculo>()
+                .HasOne(d => d.Veiculo)
                 .WithMany()
                 .HasForeignKey(d => d.VeiculoId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // RELAÇÃO: Veículo -> Manutenção
+            // RegistoManutencao → Veículo
             modelBuilder.Entity<RegistoManutencao>()
                 .HasOne(r => r.Veiculo)
                 .WithMany()
                 .HasForeignKey(r => r.VeiculoId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // RELAÇÃO: Veículo -> Viagens
+            // Viagem → Veículo
             modelBuilder.Entity<Viagem>()
                 .HasOne(v => v.Veiculo)
                 .WithMany()
                 .HasForeignKey(v => v.VeiculoId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // RELAÇÃO: Notificações -> Veículo 
+            // Notificação → Veículo (opcional)
             modelBuilder.Entity<Notificacao>()
-                .HasOne<Veiculo>()
+                .HasOne(n => n.Veiculo)
                 .WithMany()
                 .HasForeignKey(n => n.VeiculoId)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            // Atribuição → User
+            modelBuilder.Entity<AtribuicaoVeiculo>()
+                .HasOne(a => a.User)
+                .WithMany()
+                .HasForeignKey(a => a.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Atribuição → Veículo
+            modelBuilder.Entity<AtribuicaoVeiculo>()
+                .HasOne(a => a.Veiculo)
+                .WithMany()
+                .HasForeignKey(a => a.VeiculoId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
